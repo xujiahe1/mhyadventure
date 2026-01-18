@@ -8,7 +8,8 @@
     "trust": 50,
     "level": "P8",
     "status": "在职",
-    "mood": 80
+    "mood": 80,
+    "relations": {}
   },
   "Dawei": {
     "id": "Dawei",
@@ -19,7 +20,8 @@
     "trust": 60,
     "level": "P9",
     "status": "在职",
-    "mood": 80
+    "mood": 80,
+    "relations": {}
   },
   "Luo": {
     "id": "Luo",
@@ -30,21 +32,23 @@
     "trust": 50,
     "level": "P8",
     "status": "在职",
-    "mood": 80
+    "mood": 80,
+    "relations": {}
   },
-  "Shao": {
-    "id": "Shao",
-    "name": "Shao (烧鸡)",
+  "NPC_0074": {
+    "id": "NPC_0074",
+    "name": "Shao",
     "role": "编剧",
     "traits": "文青, 刀子手",
     "project": "Honkai3",
     "trust": 50,
     "level": "P7",
     "status": "在职",
-    "mood": 80
+    "mood": 80,
+    "relations": {}
   },
-  "Chep": {
-    "id": "Chep",
+  "NPC_0075": {
+    "id": "NPC_0075",
     "name": "Chep",
     "role": "美术总监",
     "traits": "强迫症, 唯美",
@@ -52,10 +56,11 @@
     "trust": 50,
     "level": "P7",
     "status": "在职",
-    "mood": 80
+    "mood": 80,
+    "relations": {}
   },
-  "Z": {
-    "id": "Z",
+  "NPC_0076": {
+    "id": "NPC_0076",
     "name": "Z",
     "role": "音乐总监",
     "traits": "随性, 灵感",
@@ -63,21 +68,23 @@
     "trust": 50,
     "level": "P7",
     "status": "在职",
-    "mood": 80
+    "mood": 80,
+    "relations": {}
   },
-  "CiCi": {
-    "id": "CiCi",
-    "name": "CiCi (HRBP)",
+  "NPC_0077": {
+    "id": "NPC_0077",
+    "name": "CiCi",
     "role": "HR负责人",
     "traits": "知性, 关怀",
     "project": "HR",
     "trust": 50,
     "level": "P7",
     "status": "在职",
-    "mood": 80
+    "mood": 80,
+    "relations": {}
   },
-  "Aquila": {
-    "id": "Aquila",
+  "NPC_0078": {
+    "id": "NPC_0078",
     "name": "Aquila",
     "role": "基础设施负责人",
     "traits": "稳重, 可靠",
@@ -85,10 +92,11 @@
     "trust": 50,
     "level": "P7",
     "status": "在职",
-    "mood": 80
+    "mood": 80,
+    "relations": {}
   },
-  "Fish": {
-    "id": "Fish",
+  "NPC_0079": {
+    "id": "NPC_0079",
     "name": "Fish",
     "role": "市场负责人",
     "traits": "活跃, 整活",
@@ -96,10 +104,11 @@
     "trust": 50,
     "level": "P7",
     "status": "在职",
-    "mood": 80
+    "mood": 80,
+    "relations": {}
   },
-  "AI-Chan": {
-    "id": "AI-Chan",
+  "NPC_0080": {
+    "id": "NPC_0080",
     "name": "爱酱",
     "role": "系统看板娘",
     "traits": "打破第四面墙, 引导",
@@ -107,7 +116,8 @@
     "trust": 100,
     "level": "P10",
     "status": "在职",
-    "mood": 80
+    "mood": 80,
+    "relations": {}
   },
   "NPC_0001": {
     "id": "NPC_0001",
@@ -118,7 +128,8 @@
     "trust": 60,
     "mood": 75,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0002": {
     "id": "NPC_0002",
@@ -129,7 +140,8 @@
     "trust": 55,
     "mood": 80,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0003": {
     "id": "NPC_0003",
@@ -140,84 +152,92 @@
     "trust": 65,
     "mood": 70,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0004": {
     "id": "NPC_0004",
-    "name": "白雪 (Art)",
+    "name": "白雪",
     "role": "Art",
     "traits": "唯美主义，对画面要求近乎苛刻",
     "project": "ZZZ",
     "trust": 50,
     "mood": 85,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0005": {
     "id": "NPC_0005",
-    "name": "韩博 (HR)",
+    "name": "韩博",
     "role": "HR",
     "traits": "嘴上温柔，手里握着绩效表",
     "project": "HR",
     "trust": 58,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0006": {
     "id": "NPC_0006",
-    "name": "派蒙 (品牌)",
+    "name": "派蒙",
     "role": "Brand",
     "traits": "话多、爱吐槽，自称是官方代言人",
     "project": "Genshin",
     "trust": 70,
     "mood": 90,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0007": {
     "id": "NPC_0007",
-    "name": "琪亚娜 (社区)",
+    "name": "琪亚娜",
     "role": "Community",
     "traits": "热情、人来疯，特别会带节奏",
     "project": "Honkai3",
     "trust": 65,
     "mood": 85,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0008": {
     "id": "NPC_0008",
-    "name": "布洛妮娅 (数据)",
+    "name": "布洛妮娅",
     "role": "Data",
     "traits": "冷静、理工直球，凡事都要看报表",
     "project": "HSR",
     "trust": 60,
     "mood": 70,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0009": {
     "id": "NPC_0009",
-    "name": "符华 (运营)",
+    "name": "符华",
     "role": "OpsLead",
     "traits": "严谨、执行力极强，对排期零容忍",
     "project": "Honkai3",
     "trust": 55,
     "mood": 75,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0010": {
     "id": "NPC_0010",
-    "name": "丹恒 (策划)",
+    "name": "丹恒",
     "role": "Designer",
     "traits": "惜字如金，提案文档一针见血",
     "project": "HSR",
     "trust": 52,
     "mood": 68,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0011": {
     "id": "NPC_0011",
@@ -261,7 +281,7 @@
     "mood": 70,
     "level": "P8",
     "status": "在职",
-    "manager_id": "Aquila",
+    "manager_id": "NPC_0078",
     "relations": {
       "NPC_0011": "下属",
       "NPC_0012": "下属"
@@ -276,7 +296,8 @@
     "trust": 62,
     "mood": 76,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0015": {
     "id": "NPC_0015",
@@ -287,7 +308,8 @@
     "trust": 58,
     "mood": 72,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0016": {
     "id": "NPC_0016",
@@ -298,7 +320,8 @@
     "trust": 57,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0017": {
     "id": "NPC_0017",
@@ -309,7 +332,8 @@
     "trust": 55,
     "mood": 69,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0018": {
     "id": "NPC_0018",
@@ -320,7 +344,8 @@
     "trust": 63,
     "mood": 80,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0019": {
     "id": "NPC_0019",
@@ -331,7 +356,8 @@
     "trust": 54,
     "mood": 68,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0020": {
     "id": "NPC_0020",
@@ -342,7 +368,8 @@
     "trust": 59,
     "mood": 77,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0021": {
     "id": "NPC_0021",
@@ -353,7 +380,8 @@
     "trust": 61,
     "mood": 73,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0022": {
     "id": "NPC_0022",
@@ -364,7 +392,8 @@
     "trust": 56,
     "mood": 71,
     "level": "P8",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0023": {
     "id": "NPC_0023",
@@ -375,7 +404,8 @@
     "trust": 60,
     "mood": 74,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0024": {
     "id": "NPC_0024",
@@ -386,7 +416,8 @@
     "trust": 64,
     "mood": 82,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0025": {
     "id": "NPC_0025",
@@ -397,7 +428,8 @@
     "trust": 59,
     "mood": 77,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0026": {
     "id": "NPC_0026",
@@ -408,7 +440,8 @@
     "trust": 62,
     "mood": 79,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0027": {
     "id": "NPC_0027",
@@ -419,7 +452,8 @@
     "trust": 57,
     "mood": 73,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0028": {
     "id": "NPC_0028",
@@ -430,7 +464,8 @@
     "trust": 66,
     "mood": 85,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0029": {
     "id": "NPC_0029",
@@ -441,7 +476,8 @@
     "trust": 58,
     "mood": 88,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0030": {
     "id": "NPC_0030",
@@ -452,7 +488,8 @@
     "trust": 55,
     "mood": 70,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0031": {
     "id": "NPC_0031",
@@ -463,7 +500,8 @@
     "trust": 60,
     "mood": 81,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0032": {
     "id": "NPC_0032",
@@ -474,7 +512,8 @@
     "trust": 67,
     "mood": 83,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0033": {
     "id": "NPC_0033",
@@ -485,7 +524,8 @@
     "trust": 61,
     "mood": 75,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0034": {
     "id": "NPC_0034",
@@ -496,7 +536,8 @@
     "trust": 60,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0035": {
     "id": "NPC_0035",
@@ -507,7 +548,8 @@
     "trust": 57,
     "mood": 74,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0036": {
     "id": "NPC_0036",
@@ -518,7 +560,8 @@
     "trust": 63,
     "mood": 82,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0037": {
     "id": "NPC_0037",
@@ -529,7 +572,8 @@
     "trust": 56,
     "mood": 71,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0038": {
     "id": "NPC_0038",
@@ -540,7 +584,8 @@
     "trust": 65,
     "mood": 84,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0039": {
     "id": "NPC_0039",
@@ -551,7 +596,8 @@
     "trust": 62,
     "mood": 86,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0040": {
     "id": "NPC_0040",
@@ -562,7 +608,8 @@
     "trust": 54,
     "mood": 70,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0041": {
     "id": "NPC_0041",
@@ -573,7 +620,8 @@
     "trust": 58,
     "mood": 83,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0042": {
     "id": "NPC_0042",
@@ -584,7 +632,8 @@
     "trust": 60,
     "mood": 79,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0043": {
     "id": "NPC_0043",
@@ -595,7 +644,8 @@
     "trust": 61,
     "mood": 75,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0044": {
     "id": "NPC_0044",
@@ -606,7 +656,8 @@
     "trust": 63,
     "mood": 80,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0045": {
     "id": "NPC_0045",
@@ -617,7 +668,8 @@
     "trust": 57,
     "mood": 74,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0046": {
     "id": "NPC_0046",
@@ -628,7 +680,8 @@
     "trust": 61,
     "mood": 79,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0047": {
     "id": "NPC_0047",
@@ -639,7 +692,8 @@
     "trust": 55,
     "mood": 72,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0048": {
     "id": "NPC_0048",
@@ -650,7 +704,8 @@
     "trust": 64,
     "mood": 85,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0049": {
     "id": "NPC_0049",
@@ -661,7 +716,8 @@
     "trust": 60,
     "mood": 82,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0050": {
     "id": "NPC_0050",
@@ -672,7 +728,8 @@
     "trust": 56,
     "mood": 71,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0051": {
     "id": "NPC_0051",
@@ -683,7 +740,8 @@
     "trust": 59,
     "mood": 86,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0052": {
     "id": "NPC_0052",
@@ -694,7 +752,8 @@
     "trust": 58,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0053": {
     "id": "NPC_0053",
@@ -705,7 +764,8 @@
     "trust": 62,
     "mood": 75,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0054": {
     "id": "NPC_0054",
@@ -716,7 +776,8 @@
     "trust": 60,
     "mood": 80,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0055": {
     "id": "NPC_0055",
@@ -727,7 +788,8 @@
     "trust": 57,
     "mood": 74,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0056": {
     "id": "NPC_0056",
@@ -738,7 +800,8 @@
     "trust": 62,
     "mood": 82,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0057": {
     "id": "NPC_0057",
@@ -749,7 +812,8 @@
     "trust": 56,
     "mood": 71,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0058": {
     "id": "NPC_0058",
@@ -760,7 +824,8 @@
     "trust": 65,
     "mood": 87,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0059": {
     "id": "NPC_0059",
@@ -771,7 +836,8 @@
     "trust": 61,
     "mood": 84,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0060": {
     "id": "NPC_0060",
@@ -782,7 +848,8 @@
     "trust": 59,
     "mood": 89,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0061": {
     "id": "NPC_0061",
@@ -793,7 +860,8 @@
     "trust": 57,
     "mood": 76,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0062": {
     "id": "NPC_0062",
@@ -804,7 +872,8 @@
     "trust": 58,
     "mood": 79,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0063": {
     "id": "NPC_0063",
@@ -815,7 +884,8 @@
     "trust": 60,
     "mood": 75,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0064": {
     "id": "NPC_0064",
@@ -826,7 +896,8 @@
     "trust": 59,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0065": {
     "id": "NPC_0065",
@@ -837,7 +908,8 @@
     "trust": 57,
     "mood": 74,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0066": {
     "id": "NPC_0066",
@@ -848,7 +920,8 @@
     "trust": 62,
     "mood": 81,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0067": {
     "id": "NPC_0067",
@@ -859,7 +932,8 @@
     "trust": 60,
     "mood": 79,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0068": {
     "id": "NPC_0068",
@@ -870,7 +944,8 @@
     "trust": 61,
     "mood": 77,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0069": {
     "id": "NPC_0069",
@@ -881,7 +956,8 @@
     "trust": 58,
     "mood": 73,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0070": {
     "id": "NPC_0070",
@@ -892,7 +968,8 @@
     "trust": 59,
     "mood": 85,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0071": {
     "id": "NPC_0071",
@@ -903,7 +980,8 @@
     "trust": 57,
     "mood": 76,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0072": {
     "id": "NPC_0072",
@@ -914,7 +992,8 @@
     "trust": 58,
     "mood": 79,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
   "NPC_0073": {
     "id": "NPC_0073",
@@ -925,10 +1004,11 @@
     "trust": 60,
     "mood": 75,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "GSN_0101": {
-    "id": "GSN_0101",
+  "NPC_0081": {
+    "id": "NPC_0081",
     "name": "赵昱",
     "role": "Lead",
     "traits": "稳健推进，强调质量优先",
@@ -939,8 +1019,8 @@
     "status": "在职",
     "relations": {}
   },
-  "GSN_0102": {
-    "id": "GSN_0102",
+  "NPC_0082": {
+    "id": "NPC_0082",
     "name": "顾年",
     "role": "Dev",
     "traits": "战斗数值程序，偏好严谨验证",
@@ -950,10 +1030,12 @@
     "level": "P6",
     "status": "在职",
     "manager_id": "Cai",
-    "relations": { "GSN_0101": "上级" }
+    "relations": {
+      "NPC_0081": "上级"
+    }
   },
-  "GSN_0103": {
-    "id": "GSN_0103",
+  "NPC_0083": {
+    "id": "NPC_0083",
     "name": "林初",
     "role": "Product",
     "traits": "体验派，擅长打磨交互细节",
@@ -963,10 +1045,13 @@
     "level": "P6",
     "status": "在职",
     "manager_id": "Cai",
-    "relations": { "GSN_0102": "合作", "GSN_0101": "上级" }
+    "relations": {
+      "NPC_0082": "合作",
+      "NPC_0081": "上级"
+    }
   },
-  "GSN_0104": {
-    "id": "GSN_0104",
+  "NPC_0084": {
+    "id": "NPC_0084",
     "name": "白屿",
     "role": "Art",
     "traits": "场景美术，偏爱自然风格",
@@ -976,10 +1061,13 @@
     "level": "P6",
     "status": "在职",
     "manager_id": "Cai",
-    "relations": { "GSN_0105": "合作", "GSN_0101": "上级" }
+    "relations": {
+      "NPC_0085": "合作",
+      "NPC_0081": "上级"
+    }
   },
-  "GSN_0105": {
-    "id": "GSN_0105",
+  "NPC_0085": {
+    "id": "NPC_0085",
     "name": "程苒",
     "role": "Animator",
     "traits": "角色动作设计，追求节奏与表现",
@@ -989,10 +1077,13 @@
     "level": "P6",
     "status": "在职",
     "manager_id": "Cai",
-    "relations": { "GSN_0104": "合作", "GSN_0101": "上级" }
+    "relations": {
+      "NPC_0084": "合作",
+      "NPC_0081": "上级"
+    }
   },
-  "GSN_0106": {
-    "id": "GSN_0106",
+  "NPC_0086": {
+    "id": "NPC_0086",
     "name": "沈砚",
     "role": "Audio",
     "traits": "环境音效，注重临场感",
@@ -1002,10 +1093,13 @@
     "level": "P6",
     "status": "在职",
     "manager_id": "Cai",
-    "relations": { "GSN_0104": "合作", "GSN_0101": "上级" }
+    "relations": {
+      "NPC_0084": "合作",
+      "NPC_0081": "上级"
+    }
   },
-  "GSN_0107": {
-    "id": "GSN_0107",
+  "NPC_0087": {
+    "id": "NPC_0087",
     "name": "唐砺",
     "role": "Data",
     "traits": "关注留存与长线数据",
@@ -1015,10 +1109,13 @@
     "level": "P7",
     "status": "在职",
     "manager_id": "Cai",
-    "relations": { "GSN_0103": "合作", "GSN_0101": "上级" }
+    "relations": {
+      "NPC_0083": "合作",
+      "NPC_0081": "上级"
+    }
   },
-  "GSN_0108": {
-    "id": "GSN_0108",
+  "NPC_0088": {
+    "id": "NPC_0088",
     "name": "洛宁",
     "role": "Dev",
     "traits": "工具链程序，喜欢自动化",
@@ -1028,10 +1125,14 @@
     "level": "P5",
     "status": "在职",
     "manager_id": "Cai",
-    "relations": { "GSN_0102": "合作", "GSN_0110": "对立", "GSN_0101": "上级" }
+    "relations": {
+      "NPC_0082": "合作",
+      "NPC_0090": "对立",
+      "NPC_0081": "上级"
+    }
   },
-  "GSN_0109": {
-    "id": "GSN_0109",
+  "NPC_0089": {
+    "id": "NPC_0089",
     "name": "言岚",
     "role": "Ops",
     "traits": "上线统筹，擅长跨部门沟通",
@@ -1040,10 +1141,12 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "relations": { "GSN_0103": "合作" }
+    "relations": {
+      "NPC_0083": "合作"
+    }
   },
-  "GSN_0110": {
-    "id": "GSN_0110",
+  "NPC_0090": {
+    "id": "NPC_0090",
     "name": "顾衡",
     "role": "QA",
     "traits": "边界用例专家，追踪缺陷到根因",
@@ -1052,10 +1155,12 @@
     "mood": 76,
     "level": "P6",
     "status": "在职",
-    "relations": { "GSN_0108": "对立" }
+    "relations": {
+      "NPC_0088": "对立"
+    }
   },
-  "GSN_0111": {
-    "id": "GSN_0111",
+  "NPC_0091": {
+    "id": "NPC_0091",
     "name": "白洛",
     "role": "Community",
     "traits": "玩家社群运营，善于风向把控",
@@ -1063,10 +1168,11 @@
     "trust": 63,
     "mood": 83,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "GSN_0112": {
-    "id": "GSN_0112",
+  "NPC_0092": {
+    "id": "NPC_0092",
     "name": "沈临",
     "role": "Product",
     "traits": "偏叙事体验，重视故事节奏",
@@ -1075,10 +1181,12 @@
     "mood": 79,
     "level": "P6",
     "status": "在职",
-    "relations": { "GSN_0107": "合作" }
+    "relations": {
+      "NPC_0087": "合作"
+    }
   },
-  "GSN_0113": {
-    "id": "GSN_0113",
+  "NPC_0093": {
+    "id": "NPC_0093",
     "name": "唐棠",
     "role": "Dev",
     "traits": "客户端性能优化达人",
@@ -1086,10 +1194,11 @@
     "trust": 58,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "GSN_0114": {
-    "id": "GSN_0114",
+  "NPC_0094": {
+    "id": "NPC_0094",
     "name": "言行",
     "role": "Dev",
     "traits": "服务端玩法模块，代码洁癖",
@@ -1098,10 +1207,12 @@
     "mood": 73,
     "level": "P5",
     "status": "在职",
-    "relations": { "GSN_0113": "合作" }
+    "relations": {
+      "NPC_0093": "合作"
+    }
   },
-  "GSN_0115": {
-    "id": "GSN_0115",
+  "NPC_0095": {
+    "id": "NPC_0095",
     "name": "顾砚",
     "role": "Designer",
     "traits": "玩法设计，钟爱高难与层次感",
@@ -1109,10 +1220,11 @@
     "trust": 56,
     "mood": 75,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "GSN_0116": {
-    "id": "GSN_0116",
+  "NPC_0096": {
+    "id": "NPC_0096",
     "name": "白舟",
     "role": "Art",
     "traits": "角色主美，追求风格统一",
@@ -1120,10 +1232,11 @@
     "trust": 60,
     "mood": 86,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "GSN_0117": {
-    "id": "GSN_0117",
+  "NPC_0097": {
+    "id": "NPC_0097",
     "name": "林深",
     "role": "Audio",
     "traits": "BGM 编曲，偏古风器乐",
@@ -1131,10 +1244,11 @@
     "trust": 58,
     "mood": 80,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "GSN_0118": {
-    "id": "GSN_0118",
+  "NPC_0098": {
+    "id": "NPC_0098",
     "name": "言至",
     "role": "Data",
     "traits": "埋点与分析，偏长期趋势",
@@ -1142,10 +1256,11 @@
     "trust": 61,
     "mood": 76,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "GSN_0119": {
-    "id": "GSN_0119",
+  "NPC_0099": {
+    "id": "NPC_0099",
     "name": "顾晏",
     "role": "Ops",
     "traits": "版本统筹，擅长排期管理",
@@ -1153,10 +1268,11 @@
     "trust": 60,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "GSN_0120": {
-    "id": "GSN_0120",
+  "NPC_0100": {
+    "id": "NPC_0100",
     "name": "唐苏",
     "role": "QA",
     "traits": "自动化测试构建者",
@@ -1164,11 +1280,11 @@
     "trust": 62,
     "mood": 77,
     "level": "P6",
-    "status": "在职"
-  }
-  ,
-  "HK3_0201": {
-    "id": "HK3_0201",
+    "status": "在职",
+    "relations": {}
+  },
+  "NPC_0101": {
+    "id": "NPC_0101",
     "name": "沈曜",
     "role": "Lead",
     "traits": "稳中求进，偏好保守上线策略",
@@ -1176,10 +1292,11 @@
     "trust": 57,
     "mood": 77,
     "level": "P8",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HK3_0202": {
-    "id": "HK3_0202",
+  "NPC_0102": {
+    "id": "NPC_0102",
     "name": "卓行",
     "role": "Dev",
     "traits": "关卡程序，热爱调优手感",
@@ -1189,10 +1306,12 @@
     "level": "P6",
     "status": "在职",
     "manager_id": "Dawei",
-    "relations": { "HK3_0201": "上级" }
+    "relations": {
+      "NPC_0101": "上级"
+    }
   },
-  "HK3_0203": {
-    "id": "HK3_0203",
+  "NPC_0103": {
+    "id": "NPC_0103",
     "name": "凌安",
     "role": "Product",
     "traits": "活动策划风格保守但稳定",
@@ -1202,10 +1321,12 @@
     "level": "P6",
     "status": "在职",
     "manager_id": "Dawei",
-    "relations": { "HK3_0202": "合作" }
+    "relations": {
+      "NPC_0102": "合作"
+    }
   },
-  "HK3_0204": {
-    "id": "HK3_0204",
+  "NPC_0104": {
+    "id": "NPC_0104",
     "name": "许临",
     "role": "Art",
     "traits": "角色立绘主美，注重光影",
@@ -1214,10 +1335,11 @@
     "mood": 85,
     "level": "P6",
     "status": "在职",
-    "manager_id": "HK3_0201"
+    "manager_id": "NPC_0101",
+    "relations": {}
   },
-  "HK3_0205": {
-    "id": "HK3_0205",
+  "NPC_0105": {
+    "id": "NPC_0105",
     "name": "白砺",
     "role": "Animator",
     "traits": "动作设计追求张力与冲击",
@@ -1226,10 +1348,12 @@
     "mood": 78,
     "level": "P6",
     "status": "在职",
-    "relations": { "HK3_0204": "合作" }
+    "relations": {
+      "NPC_0104": "合作"
+    }
   },
-  "HK3_0206": {
-    "id": "HK3_0206",
+  "NPC_0106": {
+    "id": "NPC_0106",
     "name": "唐玟",
     "role": "Audio",
     "traits": "战斗音效，强调反馈清晰",
@@ -1237,10 +1361,11 @@
     "trust": 58,
     "mood": 80,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HK3_0207": {
-    "id": "HK3_0207",
+  "NPC_0107": {
+    "id": "NPC_0107",
     "name": "林砚",
     "role": "Data",
     "traits": "活动留存观察者，偏长期视角",
@@ -1248,10 +1373,11 @@
     "trust": 60,
     "mood": 76,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HK3_0208": {
-    "id": "HK3_0208",
+  "NPC_0108": {
+    "id": "NPC_0108",
     "name": "洛衡",
     "role": "Dev",
     "traits": "工具链工程师，自动化拥趸",
@@ -1260,10 +1386,12 @@
     "mood": 73,
     "level": "P5",
     "status": "在职",
-    "relations": { "HK3_0210": "对立" }
+    "relations": {
+      "NPC_0110": "对立"
+    }
   },
-  "HK3_0209": {
-    "id": "HK3_0209",
+  "NPC_0109": {
+    "id": "NPC_0109",
     "name": "言珂",
     "role": "Ops",
     "traits": "版本统筹，跨部门协调",
@@ -1271,10 +1399,11 @@
     "trust": 61,
     "mood": 82,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HK3_0210": {
-    "id": "HK3_0210",
+  "NPC_0110": {
+    "id": "NPC_0110",
     "name": "顾砺",
     "role": "QA",
     "traits": "极限压力测试，擅长发现临界问题",
@@ -1282,10 +1411,11 @@
     "trust": 62,
     "mood": 77,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HK3_0211": {
-    "id": "HK3_0211",
+  "NPC_0111": {
+    "id": "NPC_0111",
     "name": "白行",
     "role": "Community",
     "traits": "社群运营，擅长维护核心玩家",
@@ -1293,10 +1423,11 @@
     "trust": 63,
     "mood": 84,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HK3_0212": {
-    "id": "HK3_0212",
+  "NPC_0112": {
+    "id": "NPC_0112",
     "name": "沈砥",
     "role": "Product",
     "traits": "数值体验均衡，偏保守",
@@ -1304,10 +1435,11 @@
     "trust": 57,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HK3_0213": {
-    "id": "HK3_0213",
+  "NPC_0113": {
+    "id": "NPC_0113",
     "name": "唐衡",
     "role": "Dev",
     "traits": "服务端战斗模块，代码严谨",
@@ -1315,10 +1447,11 @@
     "trust": 58,
     "mood": 79,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HK3_0214": {
-    "id": "HK3_0214",
+  "NPC_0114": {
+    "id": "NPC_0114",
     "name": "言槿",
     "role": "Dev",
     "traits": "客户端优化，追求稳定帧率",
@@ -1326,10 +1459,11 @@
     "trust": 55,
     "mood": 73,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HK3_0215": {
-    "id": "HK3_0215",
+  "NPC_0115": {
+    "id": "NPC_0115",
     "name": "顾砚",
     "role": "Designer",
     "traits": "玩法设计，偏挑战模式",
@@ -1337,10 +1471,11 @@
     "trust": 56,
     "mood": 75,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HK3_0216": {
-    "id": "HK3_0216",
+  "NPC_0116": {
+    "id": "NPC_0116",
     "name": "白舟",
     "role": "Art",
     "traits": "角色主美，注重风格统一",
@@ -1348,10 +1483,11 @@
     "trust": 60,
     "mood": 86,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HK3_0217": {
-    "id": "HK3_0217",
+  "NPC_0117": {
+    "id": "NPC_0117",
     "name": "林深",
     "role": "Audio",
     "traits": "BGM 编曲，强调战斗节奏",
@@ -1359,10 +1495,11 @@
     "trust": 58,
     "mood": 80,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HK3_0218": {
-    "id": "HK3_0218",
+  "NPC_0118": {
+    "id": "NPC_0118",
     "name": "言至",
     "role": "Data",
     "traits": "长期数据观察与分析",
@@ -1370,10 +1507,11 @@
     "trust": 61,
     "mood": 76,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HK3_0219": {
-    "id": "HK3_0219",
+  "NPC_0119": {
+    "id": "NPC_0119",
     "name": "顾晏",
     "role": "Ops",
     "traits": "版本统筹，擅长排期管理",
@@ -1381,10 +1519,11 @@
     "trust": 60,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HK3_0220": {
-    "id": "HK3_0220",
+  "NPC_0120": {
+    "id": "NPC_0120",
     "name": "唐苏",
     "role": "QA",
     "traits": "自动化测试，覆盖严密",
@@ -1392,11 +1531,11 @@
     "trust": 62,
     "mood": 77,
     "level": "P6",
-    "status": "在职"
-  }
-  ,
-  "HSR_0301": {
-    "id": "HSR_0301",
+    "status": "在职",
+    "relations": {}
+  },
+  "NPC_0121": {
+    "id": "NPC_0121",
     "name": "池行",
     "role": "Lead",
     "traits": "偏创新但注重验证闭环",
@@ -1404,10 +1543,11 @@
     "trust": 58,
     "mood": 78,
     "level": "P8",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0302": {
-    "id": "HSR_0302",
+  "NPC_0122": {
+    "id": "NPC_0122",
     "name": "顾宁",
     "role": "Dev",
     "traits": "战斗系统程序，爱优化手感",
@@ -1416,10 +1556,11 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "manager_id": "Dawei"
+    "manager_id": "Dawei",
+    "relations": {}
   },
-  "HSR_0303": {
-    "id": "HSR_0303",
+  "NPC_0123": {
+    "id": "NPC_0123",
     "name": "林槿",
     "role": "Product",
     "traits": "数值体验均衡派",
@@ -1428,10 +1569,12 @@
     "mood": 79,
     "level": "P6",
     "status": "在职",
-    "relations": { "HSR_0302": "合作" }
+    "relations": {
+      "NPC_0122": "合作"
+    }
   },
-  "HSR_0304": {
-    "id": "HSR_0304",
+  "NPC_0124": {
+    "id": "NPC_0124",
     "name": "白屿",
     "role": "Art",
     "traits": "场景视觉，偏蒸汽未来风",
@@ -1439,10 +1582,11 @@
     "trust": 59,
     "mood": 85,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0305": {
-    "id": "HSR_0305",
+  "NPC_0125": {
+    "id": "NPC_0125",
     "name": "程砚",
     "role": "Animator",
     "traits": "强调动势与反馈",
@@ -1450,10 +1594,11 @@
     "trust": 56,
     "mood": 77,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0306": {
-    "id": "HSR_0306",
+  "NPC_0126": {
+    "id": "NPC_0126",
     "name": "沈音",
     "role": "Audio",
     "traits": "环境音与BGM混音",
@@ -1461,10 +1606,11 @@
     "trust": 58,
     "mood": 79,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0307": {
-    "id": "HSR_0307",
+  "NPC_0127": {
+    "id": "NPC_0127",
     "name": "唐衡",
     "role": "Data",
     "traits": "看长线趋势，逻辑严谨",
@@ -1472,10 +1618,11 @@
     "trust": 60,
     "mood": 74,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0308": {
-    "id": "HSR_0308",
+  "NPC_0128": {
+    "id": "NPC_0128",
     "name": "洛行",
     "role": "Dev",
     "traits": "工具链工程师，自动化偏好",
@@ -1484,10 +1631,12 @@
     "mood": 72,
     "level": "P5",
     "status": "在职",
-    "relations": { "HSR_0310": "对立" }
+    "relations": {
+      "NPC_0130": "对立"
+    }
   },
-  "HSR_0309": {
-    "id": "HSR_0309",
+  "NPC_0129": {
+    "id": "NPC_0129",
     "name": "言澜",
     "role": "Ops",
     "traits": "版本统筹与上线安排",
@@ -1495,10 +1644,11 @@
     "trust": 61,
     "mood": 80,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0310": {
-    "id": "HSR_0310",
+  "NPC_0130": {
+    "id": "NPC_0130",
     "name": "顾衡",
     "role": "QA",
     "traits": "压力测试与边界用例",
@@ -1506,10 +1656,11 @@
     "trust": 62,
     "mood": 77,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0311": {
-    "id": "HSR_0311",
+  "NPC_0131": {
+    "id": "NPC_0131",
     "name": "白行",
     "role": "Community",
     "traits": "玩家社群维护，风向把控",
@@ -1517,10 +1668,11 @@
     "trust": 63,
     "mood": 84,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0312": {
-    "id": "HSR_0312",
+  "NPC_0132": {
+    "id": "NPC_0132",
     "name": "沈砥",
     "role": "Product",
     "traits": "活动与数值体验均衡",
@@ -1528,10 +1680,11 @@
     "trust": 57,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0313": {
-    "id": "HSR_0313",
+  "NPC_0133": {
+    "id": "NPC_0133",
     "name": "唐槿",
     "role": "Dev",
     "traits": "服务端战斗模块，代码严谨",
@@ -1539,10 +1692,11 @@
     "trust": 58,
     "mood": 79,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0314": {
-    "id": "HSR_0314",
+  "NPC_0134": {
+    "id": "NPC_0134",
     "name": "言栎",
     "role": "Dev",
     "traits": "客户端优化，追求稳定",
@@ -1550,10 +1704,11 @@
     "trust": 55,
     "mood": 73,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0315": {
-    "id": "HSR_0315",
+  "NPC_0135": {
+    "id": "NPC_0135",
     "name": "顾砚",
     "role": "Designer",
     "traits": "玩法设计，偏挑战模式",
@@ -1561,10 +1716,11 @@
     "trust": 56,
     "mood": 75,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0316": {
-    "id": "HSR_0316",
+  "NPC_0136": {
+    "id": "NPC_0136",
     "name": "白舟",
     "role": "Art",
     "traits": "角色主美，注重风格统一",
@@ -1572,10 +1728,11 @@
     "trust": 60,
     "mood": 86,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0317": {
-    "id": "HSR_0317",
+  "NPC_0137": {
+    "id": "NPC_0137",
     "name": "林深",
     "role": "Audio",
     "traits": "BGM 编曲，强调节奏",
@@ -1583,10 +1740,11 @@
     "trust": 58,
     "mood": 80,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0318": {
-    "id": "HSR_0318",
+  "NPC_0138": {
+    "id": "NPC_0138",
     "name": "言至",
     "role": "Data",
     "traits": "长期数据观察与分析",
@@ -1594,10 +1752,11 @@
     "trust": 61,
     "mood": 76,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0319": {
-    "id": "HSR_0319",
+  "NPC_0139": {
+    "id": "NPC_0139",
     "name": "顾晏",
     "role": "Ops",
     "traits": "版本统筹，擅长排期管理",
@@ -1605,10 +1764,11 @@
     "trust": 60,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HSR_0320": {
-    "id": "HSR_0320",
+  "NPC_0140": {
+    "id": "NPC_0140",
     "name": "唐苏",
     "role": "QA",
     "traits": "自动化测试，覆盖严密",
@@ -1616,11 +1776,11 @@
     "trust": 62,
     "mood": 77,
     "level": "P6",
-    "status": "在职"
-  }
-  ,
-  "ZZZ_0401": {
-    "id": "ZZZ_0401",
+    "status": "在职",
+    "relations": {}
+  },
+  "NPC_0141": {
+    "id": "NPC_0141",
     "name": "辛行",
     "role": "Lead",
     "traits": "潮流派领导，鼓励风格创新",
@@ -1628,10 +1788,11 @@
     "trust": 58,
     "mood": 78,
     "level": "P8",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0402": {
-    "id": "ZZZ_0402",
+  "NPC_0142": {
+    "id": "NPC_0142",
     "name": "陆衡",
     "role": "Dev",
     "traits": "城市关卡程序，追求细节真实",
@@ -1640,10 +1801,11 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "manager_id": "Dawei"
+    "manager_id": "Dawei",
+    "relations": {}
   },
-  "ZZZ_0403": {
-    "id": "ZZZ_0403",
+  "NPC_0143": {
+    "id": "NPC_0143",
     "name": "闻行",
     "role": "Product",
     "traits": "节奏与手感双重把控",
@@ -1652,10 +1814,12 @@
     "mood": 79,
     "level": "P6",
     "status": "在职",
-    "relations": { "ZZZ_0402": "合作" }
+    "relations": {
+      "NPC_0142": "合作"
+    }
   },
-  "ZZZ_0404": {
-    "id": "ZZZ_0404",
+  "NPC_0144": {
+    "id": "NPC_0144",
     "name": "尹屿",
     "role": "Art",
     "traits": "霓虹与涂鸦融合风格",
@@ -1663,10 +1827,11 @@
     "trust": 59,
     "mood": 85,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0405": {
-    "id": "ZZZ_0405",
+  "NPC_0145": {
+    "id": "NPC_0145",
     "name": "南砚",
     "role": "Animator",
     "traits": "动势与节奏营造专家",
@@ -1674,10 +1839,11 @@
     "trust": 56,
     "mood": 77,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0406": {
-    "id": "ZZZ_0406",
+  "NPC_0146": {
+    "id": "NPC_0146",
     "name": "时音",
     "role": "Audio",
     "traits": "城市环境音与电子乐融合",
@@ -1685,10 +1851,11 @@
     "trust": 58,
     "mood": 79,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0407": {
-    "id": "ZZZ_0407",
+  "NPC_0147": {
+    "id": "NPC_0147",
     "name": "顾至",
     "role": "Data",
     "traits": "预研阶段指标观察者",
@@ -1696,10 +1863,11 @@
     "trust": 60,
     "mood": 74,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0408": {
-    "id": "ZZZ_0408",
+  "NPC_0148": {
+    "id": "NPC_0148",
     "name": "白衡",
     "role": "Dev",
     "traits": "工具链与自动化建设者",
@@ -1708,10 +1876,12 @@
     "mood": 72,
     "level": "P5",
     "status": "在职",
-    "relations": { "ZZZ_0410": "对立" }
+    "relations": {
+      "NPC_0150": "对立"
+    }
   },
-  "ZZZ_0409": {
-    "id": "ZZZ_0409",
+  "NPC_0149": {
+    "id": "NPC_0149",
     "name": "林澜",
     "role": "Ops",
     "traits": "版本统筹，擅长排期与沟通",
@@ -1719,10 +1889,11 @@
     "trust": 61,
     "mood": 80,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0410": {
-    "id": "ZZZ_0410",
+  "NPC_0150": {
+    "id": "NPC_0150",
     "name": "唐衡",
     "role": "QA",
     "traits": "自动化测试与边界覆盖",
@@ -1730,10 +1901,11 @@
     "trust": 62,
     "mood": 77,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0411": {
-    "id": "ZZZ_0411",
+  "NPC_0151": {
+    "id": "NPC_0151",
     "name": "陆苒",
     "role": "Community",
     "traits": "潮流元素敏感，社群运营",
@@ -1741,10 +1913,11 @@
     "trust": 63,
     "mood": 84,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0412": {
-    "id": "ZZZ_0412",
+  "NPC_0152": {
+    "id": "NPC_0152",
     "name": "闻笛",
     "role": "Product",
     "traits": "数值体验兼顾，节奏把控",
@@ -1752,10 +1925,11 @@
     "trust": 57,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0413": {
-    "id": "ZZZ_0413",
+  "NPC_0153": {
+    "id": "NPC_0153",
     "name": "辛予",
     "role": "Ops",
     "traits": "宣发与整活，脑洞多",
@@ -1763,10 +1937,11 @@
     "trust": 65,
     "mood": 87,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0414": {
-    "id": "ZZZ_0414",
+  "NPC_0154": {
+    "id": "NPC_0154",
     "name": "顾砚",
     "role": "Designer",
     "traits": "玩法设计，偏挑战模式",
@@ -1774,10 +1949,11 @@
     "trust": 56,
     "mood": 75,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0415": {
-    "id": "ZZZ_0415",
+  "NPC_0155": {
+    "id": "NPC_0155",
     "name": "尹舟",
     "role": "Art",
     "traits": "城市主美，风格统一",
@@ -1785,10 +1961,11 @@
     "trust": 60,
     "mood": 86,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0416": {
-    "id": "ZZZ_0416",
+  "NPC_0156": {
+    "id": "NPC_0156",
     "name": "南珩",
     "role": "Animator",
     "traits": "动作节奏营造出色",
@@ -1796,10 +1973,11 @@
     "trust": 58,
     "mood": 80,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0417": {
-    "id": "ZZZ_0417",
+  "NPC_0157": {
+    "id": "NPC_0157",
     "name": "时砚",
     "role": "Audio",
     "traits": "音效与BGM混音",
@@ -1807,10 +1985,11 @@
     "trust": 58,
     "mood": 79,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0418": {
-    "id": "ZZZ_0418",
+  "NPC_0158": {
+    "id": "NPC_0158",
     "name": "顾潇",
     "role": "Data",
     "traits": "预研指标观察与分析",
@@ -1818,10 +1997,11 @@
     "trust": 60,
     "mood": 74,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0419": {
-    "id": "ZZZ_0419",
+  "NPC_0159": {
+    "id": "NPC_0159",
     "name": "顾晏",
     "role": "Ops",
     "traits": "版本统筹与排期管理",
@@ -1829,10 +2009,11 @@
     "trust": 60,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "ZZZ_0420": {
-    "id": "ZZZ_0420",
+  "NPC_0160": {
+    "id": "NPC_0160",
     "name": "唐苏",
     "role": "QA",
     "traits": "自动化测试覆盖严密",
@@ -1840,11 +2021,11 @@
     "trust": 62,
     "mood": 77,
     "level": "P6",
-    "status": "在职"
-  }
-  ,
-  "HYG_0501": {
-    "id": "HYG_0501",
+    "status": "在职",
+    "relations": {}
+  },
+  "NPC_0161": {
+    "id": "NPC_0161",
     "name": "池衡",
     "role": "Lead",
     "traits": "预研主导，鼓励大胆试验",
@@ -1852,10 +2033,11 @@
     "trust": 58,
     "mood": 78,
     "level": "P8",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0502": {
-    "id": "HYG_0502",
+  "NPC_0162": {
+    "id": "NPC_0162",
     "name": "顾临",
     "role": "Dev",
     "traits": "核心玩法程序，强调验证可行性",
@@ -1864,10 +2046,11 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "manager_id": "Luo"
+    "manager_id": "Luo",
+    "relations": {}
   },
-  "HYG_0503": {
-    "id": "HYG_0503",
+  "NPC_0163": {
+    "id": "NPC_0163",
     "name": "林行",
     "role": "Product",
     "traits": "体验派，关注用户动线",
@@ -1876,10 +2059,12 @@
     "mood": 79,
     "level": "P6",
     "status": "在职",
-    "relations": { "HYG_0502": "合作" }
+    "relations": {
+      "NPC_0162": "合作"
+    }
   },
-  "HYG_0504": {
-    "id": "HYG_0504",
+  "NPC_0164": {
+    "id": "NPC_0164",
     "name": "白屿",
     "role": "Art",
     "traits": "探索新IP视觉方向",
@@ -1887,10 +2072,11 @@
     "trust": 59,
     "mood": 85,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0505": {
-    "id": "HYG_0505",
+  "NPC_0165": {
+    "id": "NPC_0165",
     "name": "程砚",
     "role": "Animator",
     "traits": "动作节奏探索者",
@@ -1898,10 +2084,11 @@
     "trust": 56,
     "mood": 77,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0506": {
-    "id": "HYG_0506",
+  "NPC_0166": {
+    "id": "NPC_0166",
     "name": "沈音",
     "role": "Audio",
     "traits": "实验性BGM与环境音",
@@ -1909,10 +2096,11 @@
     "trust": 58,
     "mood": 79,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0507": {
-    "id": "HYG_0507",
+  "NPC_0167": {
+    "id": "NPC_0167",
     "name": "唐衡",
     "role": "Data",
     "traits": "记录每次测试结果，严谨复盘",
@@ -1920,10 +2108,11 @@
     "trust": 60,
     "mood": 74,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0508": {
-    "id": "HYG_0508",
+  "NPC_0168": {
+    "id": "NPC_0168",
     "name": "洛行",
     "role": "Dev",
     "traits": "工具链与自动化建设",
@@ -1932,10 +2121,12 @@
     "mood": 72,
     "level": "P5",
     "status": "在职",
-    "relations": { "HYG_0510": "对立" }
+    "relations": {
+      "NPC_0170": "对立"
+    }
   },
-  "HYG_0509": {
-    "id": "HYG_0509",
+  "NPC_0169": {
+    "id": "NPC_0169",
     "name": "言澜",
     "role": "Ops",
     "traits": "统筹排期，跨部门协调",
@@ -1943,10 +2134,11 @@
     "trust": 61,
     "mood": 80,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0510": {
-    "id": "HYG_0510",
+  "NPC_0170": {
+    "id": "NPC_0170",
     "name": "顾衡",
     "role": "QA",
     "traits": "压力测试与边界场景",
@@ -1954,10 +2146,11 @@
     "trust": 62,
     "mood": 77,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0511": {
-    "id": "HYG_0511",
+  "NPC_0171": {
+    "id": "NPC_0171",
     "name": "白行",
     "role": "Community",
     "traits": "维护核心玩家与测试招募",
@@ -1965,10 +2158,11 @@
     "trust": 63,
     "mood": 84,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0512": {
-    "id": "HYG_0512",
+  "NPC_0172": {
+    "id": "NPC_0172",
     "name": "沈砥",
     "role": "Product",
     "traits": "体验与数值均衡",
@@ -1976,10 +2170,11 @@
     "trust": 57,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0513": {
-    "id": "HYG_0513",
+  "NPC_0173": {
+    "id": "NPC_0173",
     "name": "唐槿",
     "role": "Dev",
     "traits": "服务端验证模块，代码严谨",
@@ -1987,10 +2182,11 @@
     "trust": 58,
     "mood": 79,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0514": {
-    "id": "HYG_0514",
+  "NPC_0174": {
+    "id": "NPC_0174",
     "name": "言栎",
     "role": "Dev",
     "traits": "客户端原型优化",
@@ -1998,10 +2194,11 @@
     "trust": 55,
     "mood": 73,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0515": {
-    "id": "HYG_0515",
+  "NPC_0175": {
+    "id": "NPC_0175",
     "name": "顾砚",
     "role": "Designer",
     "traits": "新玩法设计与迭代",
@@ -2009,10 +2206,11 @@
     "trust": 56,
     "mood": 75,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0516": {
-    "id": "HYG_0516",
+  "NPC_0176": {
+    "id": "NPC_0176",
     "name": "白舟",
     "role": "Art",
     "traits": "新IP角色主美",
@@ -2020,10 +2218,11 @@
     "trust": 60,
     "mood": 86,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0517": {
-    "id": "HYG_0517",
+  "NPC_0177": {
+    "id": "NPC_0177",
     "name": "林深",
     "role": "Audio",
     "traits": "实验性BGM作曲",
@@ -2031,10 +2230,11 @@
     "trust": 58,
     "mood": 80,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0518": {
-    "id": "HYG_0518",
+  "NPC_0178": {
+    "id": "NPC_0178",
     "name": "言至",
     "role": "Data",
     "traits": "预研数据分析与复盘",
@@ -2042,10 +2242,11 @@
     "trust": 61,
     "mood": 76,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0519": {
-    "id": "HYG_0519",
+  "NPC_0179": {
+    "id": "NPC_0179",
     "name": "顾晏",
     "role": "Ops",
     "traits": "版本统筹与排期管理",
@@ -2053,10 +2254,11 @@
     "trust": 60,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "HYG_0520": {
-    "id": "HYG_0520",
+  "NPC_0180": {
+    "id": "NPC_0180",
     "name": "唐苏",
     "role": "QA",
     "traits": "自动化测试覆盖严密",
@@ -2064,11 +2266,11 @@
     "trust": 62,
     "mood": 77,
     "level": "P6",
-    "status": "在职"
-  }
-  ,
-  "IAM_0601": {
-    "id": "IAM_0601",
+    "status": "在职",
+    "relations": {}
+  },
+  "NPC_0181": {
+    "id": "NPC_0181",
     "name": "程衡",
     "role": "Lead",
     "traits": "IAM 项目负责人，强调安全与稳定",
@@ -2076,10 +2278,11 @@
     "trust": 58,
     "mood": 78,
     "level": "P8",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0602": {
-    "id": "IAM_0602",
+  "NPC_0182": {
+    "id": "NPC_0182",
     "name": "陆然",
     "role": "Dev",
     "traits": "安全方向研发，权限模型敏感",
@@ -2088,10 +2291,11 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "manager_id": "Aquila"
+    "manager_id": "NPC_0078",
+    "relations": {}
   },
-  "IAM_0603": {
-    "id": "IAM_0603",
+  "NPC_0183": {
+    "id": "NPC_0183",
     "name": "夏葵",
     "role": "Product",
     "traits": "流程图达人，用数据说服研发",
@@ -2100,10 +2304,12 @@
     "mood": 79,
     "level": "P6",
     "status": "在职",
-    "relations": { "IAM_0602": "合作" }
+    "relations": {
+      "NPC_0182": "合作"
+    }
   },
-  "IAM_0604": {
-    "id": "IAM_0604",
+  "NPC_0184": {
+    "id": "NPC_0184",
     "name": "杜衡",
     "role": "Product",
     "traits": "竞品分析能手，文档控",
@@ -2112,10 +2318,11 @@
     "mood": 74,
     "level": "P5",
     "status": "在职",
-    "manager_id": "Aquila"
+    "manager_id": "NPC_0078",
+    "relations": {}
   },
-  "IAM_0605": {
-    "id": "IAM_0605",
+  "NPC_0185": {
+    "id": "NPC_0185",
     "name": "秦雯",
     "role": "Ops",
     "traits": "推广与培训，组织分享会",
@@ -2123,10 +2330,11 @@
     "trust": 63,
     "mood": 80,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0606": {
-    "id": "IAM_0606",
+  "NPC_0186": {
+    "id": "NPC_0186",
     "name": "霍清",
     "role": "Dev",
     "traits": "代码洁癖，评审细节控",
@@ -2134,10 +2342,11 @@
     "trust": 54,
     "mood": 68,
     "level": "P7",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0607": {
-    "id": "IAM_0607",
+  "NPC_0187": {
+    "id": "NPC_0187",
     "name": "黎书",
     "role": "QA",
     "traits": "边界场景用例专家",
@@ -2145,10 +2354,11 @@
     "trust": 59,
     "mood": 77,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0608": {
-    "id": "IAM_0608",
+  "NPC_0188": {
+    "id": "NPC_0188",
     "name": "程意",
     "role": "SRE",
     "traits": "值班常客，告警阈值敏感",
@@ -2156,10 +2366,11 @@
     "trust": 61,
     "mood": 73,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0609": {
-    "id": "IAM_0609",
+  "NPC_0189": {
+    "id": "NPC_0189",
     "name": "姚晗",
     "role": "Architect",
     "traits": "架构演进，稳定优先",
@@ -2167,10 +2378,11 @@
     "trust": 56,
     "mood": 71,
     "level": "P8",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0610": {
-    "id": "IAM_0610",
+  "NPC_0190": {
+    "id": "NPC_0190",
     "name": "柏岚",
     "role": "Data",
     "traits": "指标看板，图表讲故事",
@@ -2178,10 +2390,11 @@
     "trust": 60,
     "mood": 74,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0611": {
-    "id": "IAM_0611",
+  "NPC_0191": {
+    "id": "NPC_0191",
     "name": "简洵",
     "role": "Audio",
     "traits": "系统提示音与BGM方案",
@@ -2189,10 +2402,11 @@
     "trust": 58,
     "mood": 79,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0612": {
-    "id": "IAM_0612",
+  "NPC_0192": {
+    "id": "NPC_0192",
     "name": "宁砚",
     "role": "Animator",
     "traits": "系统交互动效与反馈",
@@ -2200,10 +2414,11 @@
     "trust": 57,
     "mood": 76,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0613": {
-    "id": "IAM_0613",
+  "NPC_0193": {
+    "id": "NPC_0193",
     "name": "池望",
     "role": "Art",
     "traits": "系统视觉设计与规范",
@@ -2211,10 +2426,11 @@
     "trust": 59,
     "mood": 85,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0614": {
-    "id": "IAM_0614",
+  "NPC_0194": {
+    "id": "NPC_0194",
     "name": "顾砚",
     "role": "Designer",
     "traits": "流程设计与权限体验",
@@ -2222,10 +2438,11 @@
     "trust": 56,
     "mood": 75,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0615": {
-    "id": "IAM_0615",
+  "NPC_0195": {
+    "id": "NPC_0195",
     "name": "言初",
     "role": "Product",
     "traits": "策略型，善于跨团队对齐",
@@ -2233,10 +2450,11 @@
     "trust": 58,
     "mood": 78,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0616": {
-    "id": "IAM_0616",
+  "NPC_0196": {
+    "id": "NPC_0196",
     "name": "白砾",
     "role": "Ops",
     "traits": "推广节奏把控能力强",
@@ -2244,10 +2462,11 @@
     "trust": 62,
     "mood": 80,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0617": {
-    "id": "IAM_0617",
+  "NPC_0197": {
+    "id": "NPC_0197",
     "name": "顾歆",
     "role": "Designer",
     "traits": "数值策略与权限模型",
@@ -2255,10 +2474,11 @@
     "trust": 57,
     "mood": 74,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0618": {
-    "id": "IAM_0618",
+  "NPC_0198": {
+    "id": "NPC_0198",
     "name": "周砺",
     "role": "Dev",
     "traits": "接口安全与性能优化",
@@ -2266,10 +2486,11 @@
     "trust": 58,
     "mood": 75,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0619": {
-    "id": "IAM_0619",
+  "NPC_0199": {
+    "id": "NPC_0199",
     "name": "宋槿",
     "role": "Product",
     "traits": "用户体验把控与数据导向",
@@ -2277,10 +2498,11 @@
     "trust": 57,
     "mood": 79,
     "level": "P6",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   },
-  "IAM_0620": {
-    "id": "IAM_0620",
+  "NPC_0200": {
+    "id": "NPC_0200",
     "name": "顾行",
     "role": "Community",
     "traits": "对外沟通与内部文化建设",
@@ -2288,6 +2510,7 @@
     "trust": 60,
     "mood": 83,
     "level": "P5",
-    "status": "在职"
+    "status": "在职",
+    "relations": {}
   }
 }
