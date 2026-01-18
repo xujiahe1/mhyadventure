@@ -50,6 +50,7 @@ function App() {
   const [showRice, setShowRice] = useState(false);
   const [loading, setLoading] = useState(false); // Global loading for onboard/commands
   const [isTyping, setIsTyping] = useState(false); // Chat stream typing indicator
+  const [isQuickReplyLoading, setIsQuickReplyLoading] = useState(false);
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, msg: null });
   
   const chatEndRef = useRef(null);
@@ -157,18 +158,25 @@ function App() {
     const msg = input;
     setInput("");
     setIsTyping(true); // Start typing indicator
+    setIsQuickReplyLoading(true);
     
-    // Optimistic Update (will be replaced/confirmed by stream)
-    const tempState = { ...gameState };
-    // Do not append here if we trust the stream to confirm it immediately?
-    // Actually, stream sends 'msg_append' for player message too.
-    // So we can wait or show a pending state. 
-    // Let's rely on stream for consistency, but maybe show it grayed out?
-    // For now, let's just let the stream handle it to avoid duplication if we don't dedupe.
-    // Wait, previous logic had optimistic update. 
-    // If we remove it, user sees nothing for a split second.
-    // But our backend stream yields player message confirmation first thing.
-    // So latency should be low.
+    // Optimistic append of player message so即使流式失败也能看到自己的发言
+    setGameState(prevState => {
+      if (!prevState) return prevState;
+      const newState = { ...prevState };
+      const history = Array.isArray(newState.chat_history) ? [...newState.chat_history] : [];
+      const target = selectedChat === 'group' ? 'group' : selectedChat;
+      const playerMsg = {
+        sender: 'Me',
+        content: msg,
+        type: 'player',
+        target,
+        timestamp: new Date().toISOString(),
+      };
+      history.push(playerMsg);
+      newState.chat_history = history;
+      return newState;
+    });
     
     try {
       const target = selectedChat === 'group' ? null : selectedChat;
@@ -184,6 +192,10 @@ function App() {
           target_npc: target 
         })
       });
+
+      if (!response.body) {
+        throw new Error('No response body from stream endpoint');
+      }
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
@@ -203,19 +215,28 @@ function App() {
             try {
               const data = JSON.parse(dataStr);
               
+              if (data.type === 'msg_append') {
+                const incoming = data.msg;
+                if (incoming && incoming.type && incoming.type !== 'player') {
+                  setIsTyping(false);
+                }
+              } else if (data.type === 'state_update') {
+                setIsQuickReplyLoading(false);
+                setIsTyping(false);
+              }
+
               setGameState(prevState => {
                 if (!prevState) return prevState;
                 const newState = { ...prevState };
                 
                 if (data.type === 'msg_append') {
-                  // Check if msg already exists (dedupe by timestamp + content + sender)
-                  // Simple check: is last message identical?
-                  const lastMsg = newState.chat_history[newState.chat_history.length - 1];
-                  const isDuplicate = lastMsg && 
-                                      lastMsg.timestamp === data.msg.timestamp && 
-                                      lastMsg.content === data.msg.content;
-                  
-                  if (!isDuplicate) {
+                  // Dedupe by sender + content + type，避免乐观更新和服务端回显重复
+                  const exists = (newState.chat_history || []).some(m => 
+                    m.sender === data.msg.sender &&
+                    m.content === data.msg.content &&
+                    m.type === data.msg.type
+                  );
+                  if (!exists) {
                     newState.chat_history = [...newState.chat_history, data.msg];
                   }
                 } else if (data.type === 'msg_update') {
@@ -242,7 +263,8 @@ function App() {
     } catch (err) {
       console.error(err);
     } finally {
-        setIsTyping(false); // Stop typing indicator
+        setIsTyping(false);
+        setIsQuickReplyLoading(false);
     }
   };
 
@@ -1160,15 +1182,16 @@ function App() {
           
           {/* Typing Indicator */}
           {isTyping && (
-             <div className="flex justify-start">
-                <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 mr-3 animate-pulse">
-                   ...
+             <div className="flex justify-start items-center">
+                <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 mr-3">
+                   <div className="text-xs">?</div>
                 </div>
-                <div className="bg-gray-100 p-3 rounded-xl rounded-tl-none border border-gray-200">
+                <div className="bg-gray-100 px-4 py-3 rounded-xl rounded-tl-none border border-gray-200 flex items-center space-x-2">
+                   <span className="text-xs text-gray-500 font-medium">对方正在输入</span>
                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                    </div>
                 </div>
              </div>
@@ -1181,6 +1204,11 @@ function App() {
         <div className="p-4 bg-white border-t border-gray-200">
           {!gameState.game_over && !gameState.active_global_event && (
             <div className="mb-2 flex flex-wrap gap-2">
+              {isQuickReplyLoading && (!dynamicQuickReplies || dynamicQuickReplies.length === 0) && (
+                <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-500 text-xs border border-blue-100">
+                  摸鱼助手正在帮你思考回复
+                </span>
+              )}
               {dynamicQuickReplies.map((text, idx) => (
                 <button
                   key={`dyn-${idx}`}
@@ -1236,6 +1264,8 @@ function App() {
                   ? "游戏已结束"
                   : gameState.active_global_event
                   ? "全局事件进行中，请先阅读提示"
+                  : isTyping
+                  ? "对方正在思考中..."
                   : `发送给 ${selectedChat === 'group' ? '项目组' : npcList.find(n => n.id === selectedChat)?.name}... (试着说: "帮我修个Bug" 或 "请你喝奶茶")`
               }
               value={input}

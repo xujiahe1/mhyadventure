@@ -5,7 +5,7 @@ import json
 
 API_BASE = "https://ark.cn-beijing.volces.com/api/v3"
 API_KEY = os.getenv("ARK_API_KEY")
-MODEL = os.getenv("ARK_MODEL_ID", "ep-20260118171836-zzqbj")
+MODEL = os.getenv("ARK_MODEL_ID", "ep-20260118232344-2rdf8")
 
 class LLMService:
     def __init__(self):
@@ -130,7 +130,7 @@ class LLMService:
                 "chat_history": chat_history[-5:] if chat_history else []
             }
 
-            response = await self.client.chat.completions.create(
+            stream = await self.client.chat.completions.create(
                 model=MODEL,
                 messages=[
                     {"role": "system", "content": prompt_context},
@@ -138,11 +138,18 @@ class LLMService:
                 ],
                 temperature=0.7,
                 max_tokens=500,
-                stream=False
+                stream=True
             )
-            content = response.choices[0].message.content or ""
-            if content:
-                yield content
+
+            async for chunk in stream:
+                choices = getattr(chunk, "choices", None) or []
+                for choice in choices:
+                    delta = getattr(choice, "delta", None)
+                    if not delta:
+                        continue
+                    content_piece = getattr(delta, "content", None)
+                    if content_piece:
+                        yield content_piece
 
         except Exception as e:
             print(f"LLM Stream Error: {e}")
@@ -227,7 +234,15 @@ class LLMService:
             # LOGGING
             print(f"LLM Response Status: OK")
             # print(f"LLM Raw Content: {response.choices[0].message.content}")
-            return json.loads(response.choices[0].message.content)
+            data = json.loads(response.choices[0].message.content)
+            npc_reply = str(data.get("npc_reply") or "").strip()
+            if not npc_reply:
+                data["npc_reply"] = "收到。"
+            npc_name = str(data.get("npc_name") or "").strip()
+            if not npc_name:
+                npc_name = target_npc.get("name") if target_npc else "System"
+                data["npc_name"] = npc_name
+            return data
         except Exception as e:
             print(f"LLM Process Error Details: {str(e)}")
             self._handle_error(e)
@@ -654,11 +669,10 @@ class LLMService:
         return {"intent": "SOCIAL", "magnitude": 1.0}
 
     def _mock_response(self, context: dict) -> dict:
-        # Not used anymore
         return {
-            "npc_reply": "System Error: Mock logic deprecated.",
+            "npc_reply": "（离线模式）系统简单帮你应付了一句。",
             "npc_name": "System",
-            "system_narrative": "System Error.",
+            "system_narrative": "后台生成服务暂不可用，本轮按规则正常结算。",
             "mood_change": 0,
             "trust_change": 0
         }

@@ -6,6 +6,8 @@ from models import GameState, Player, Project, ProjectType, ProjectStatus, Role,
 from llm import llm_service
 import random
 import math
+from data.random_events import RANDOM_EVENTS_DB
+
 
 # Initial Data
 INITIAL_PROJECTS = {
@@ -17,21 +19,8 @@ INITIAL_PROJECTS = {
     "HYG": Project(name="HYG", type=ProjectType.GAME, status=ProjectStatus.RD, difficulty=3, risk=30),
 }
 
-CORE_NPCS = {
-    "Cai": NPC(id="Cai", name="Cai (蔡总)", role="CTO", traits="技术宅神, 直率严厉", project="Infra", trust=50, level="P8"),
-    "Dawei": NPC(id="Dawei", name="Dawei (大伟哥)", role="总裁", traits="亲民, 关注体验", project="General", trust=60, level="P9"),
-    "Luo": NPC(id="Luo", name="Luo (罗总)", role="联合创始人", traits="低调, 务实", project="General", trust=50, level="P8"),
-    "Shao": NPC(id="Shao", name="Shao (烧鸡)", role="编剧", traits="文青, 刀子手", project="Honkai3", trust=50, level="P7"),
-    "Chep": NPC(id="Chep", name="Chep", role="美术总监", traits="强迫症, 唯美", project="General", trust=50, level="P7"),
-    "Z": NPC(id="Z", name="Z", role="音乐总监", traits="随性, 灵感", project="General", trust=50, level="P7"),
-    "CiCi": NPC(id="CiCi", name="CiCi (HRBP)", role="HR负责人", traits="知性, 关怀", project="HR", trust=50, level="P7"),
-    "Aquila": NPC(id="Aquila", name="Aquila", role="基础设施负责人", traits="稳重, 可靠", project="Infra", trust=50, level="P7"),
-    "Fish": NPC(id="Fish", name="Fish", role="市场负责人", traits="活跃, 整活", project="Marketing", trust=50, level="P7"),
-    "AI-Chan": NPC(id="AI-Chan", name="爱酱", role="系统看板娘", traits="打破第四面墙, 引导", project="System", trust=100, level="P10"),
-}
-
 def load_all_npcs():
-    npcs = CORE_NPCS.copy()
+    npcs = {}
     data_path_candidates = [
         os.path.join(os.path.dirname(__file__), "data/npcs.json"),
         os.path.join(os.path.dirname(__file__), "backend/data/npcs.json"),
@@ -45,287 +34,36 @@ def load_all_npcs():
                 for npc_id, data in generated_data.items():
                     if npc_id not in npcs:
                         npcs[npc_id] = NPC(**data)
-            print(f"Loaded {len(npcs)} NPCs (Core: {len(CORE_NPCS)}, Total: {len(npcs)})")
+            print(f"Loaded {len(npcs)} NPCs")
         except Exception as e:
             print(f"Error loading configured NPCs: {e}")
     else:
-        print("NPC 配置文件未找到，仅使用内置核心 NPC。")
+        print("NPC 配置文件未找到。")
     
     return npcs
 
 INITIAL_NPCS = load_all_npcs()
 
-GLOBAL_EVENTS = [
-    {
-        "id": "health_quarter_hospital",
-        "title": "身体警报：住院观察",
-        "description": "连续长期心情低落与加班爆肝，你终于倒下，被医生勒令住院静养一个季度。",
-        "type": "health",
-        "min_mood": 0,
-        "max_mood": 35,
-        "max_energy": 60,
-        "min_week": 8,
-        "effect": "hospital_quarter"
-    },
-    {
-        "id": "health_mild_cold",
-        "title": "感冒来袭：被迫请假",
-        "description": "空调房熬夜加班，你感冒发烧，只能在家休息几天。",
-        "type": "health",
-        "max_mood": 50,
-        "max_energy": 70,
-        "effect": "short_sick_leave"
-    },
-    {
-        "id": "health_spa_card",
-        "title": "年度体检福利券",
-        "description": "公司发放了体检和SPA福利券，你被强制安排去做健康检查和放松。",
-        "type": "health",
-        "min_week": 4,
-        "effect": "health_check_bonus"
-    },
-    {
-        "id": "company_all_hands",
-        "title": "季度全员大会",
-        "description": "大会议室全员集结，听老板画未来三年大饼，工作全部暂停。",
-        "type": "company",
-        "min_week": 4,
-        "effect": "all_hands_meeting"
-    },
-    {
-        "id": "company_fire_drill",
-        "title": "消防演习占用半天",
-        "description": "整栋楼进行消防演习，你被拉着绕楼跑圈，工作统统往后拖。",
-        "type": "company",
-        "effect": "fire_drill"
-    },
-    {
-        "id": "company_team_building_trip",
-        "title": "团建出游：强制拉练",
-        "description": "项目组集体出游团建，爬山拍照做破冰游戏，项目进度暂停一周。",
-        "type": "company",
-        "min_week": 6,
-        "effect": "team_building"
-    },
-    {
-        "id": "company_audit_week",
-        "title": "审计周：全员填表",
-        "description": "审计组进驻，公司要求所有人填报各种表格，你被拖去对账和写说明。",
-        "type": "company",
-        "min_week": 10,
-        "effect": "audit_week"
-    },
-    {
-        "id": "project_big_review",
-        "title": "大项目评审会",
-        "description": "你的项目被拉去做大战略评审，一整周都在改PPT和对齐结论。",
-        "type": "project",
-        "min_week": 6,
-        "effect": "project_review"
-    },
-    {
-        "id": "project_data_center_outage",
-        "title": "机房故障：紧急停机",
-        "description": "机房突发故障，全公司相关服务临时下线，你被迫停止开发排查影响。",
-        "type": "project",
-        "effect": "outage_pause"
-    },
-    {
-        "id": "project_security_incident",
-        "title": "安全事件应急响应",
-        "description": "安全团队通报高危漏洞，你被拉进应急群参与安全整改周。",
-        "type": "project",
-        "min_week": 12,
-        "effect": "security_response"
-    },
-    {
-        "id": "project_version_freeze",
-        "title": "版本冻结期",
-        "description": "临近大版本上线，所有需求冻结，你被要求只做稳定性巡检。",
-        "type": "project",
-        "min_week": 10,
-        "effect": "version_freeze"
-    },
-    {
-        "id": "life_family_emergency",
-        "title": "家庭紧急情况",
-        "description": "家里临时出了状况，你被迫请事假回老家处理，缺席了一个冲刺。",
-        "type": "life",
-        "effect": "family_leave"
-    },
-    {
-        "id": "life_house_move",
-        "title": "搬家周：社畜搬砖",
-        "description": "你终于换了离公司更近的房子，但整整一周都在打包和收拾。",
-        "type": "life",
-        "effect": "house_move"
-    },
-    {
-        "id": "life_marathon",
-        "title": "被同事拉去跑马拉松",
-        "description": "你报名了城市马拉松，准备和同事一起挑战体力极限。",
-        "type": "life",
-        "effect": "marathon_event"
-    },
-    {
-        "id": "life_exam_study",
-        "title": "考证备考期",
-        "description": "你报了一个专业证书考试，下班后全部时间都在学习刷题。",
-        "type": "life",
-        "min_week": 8,
-        "effect": "exam_study"
-    },
-    {
-        "id": "lucky_stock_up",
-        "title": "理财小阳春",
-        "description": "你之前买的基金突然起飞，一天浮盈顶上你半个月工资。",
-        "type": "lucky",
-        "effect": "stock_up"
-    },
-    {
-        "id": "lucky_bonus_rain",
-        "title": "项目特别激励",
-        "description": "老板突然宣布了一次性项目特别激励，你也薅到了一大笔奖金。",
-        "type": "lucky",
-        "min_week": 12,
-        "effect": "bonus_rain"
-    },
-    {
-        "id": "lucky_game_launch_celebration",
-        "title": "项目庆功宴",
-        "description": "项目里程碑顺利，团队在附近大餐庆功，你被迫参加到很晚。",
-        "type": "lucky",
-        "effect": "celebration_party"
-    },
-    {
-        "id": "unlucky_subway_shutdown",
-        "title": "地铁停运：通勤灾难",
-        "description": "城市地铁临时检修停运，你每天在路上折腾两倍时间。",
-        "type": "unlucky",
-        "effect": "commute_disaster"
-    },
-    {
-        "id": "unlucky_rain_week",
-        "title": "连日暴雨",
-        "description": "一连几周都是阴雨天，你的心情和效率都受到影响。",
-        "type": "unlucky",
-        "effect": "rain_week"
-    },
-    {
-        "id": "unlucky_bug_storm",
-        "title": "Bug 雨来袭",
-        "description": "线上突然出现大量奇怪Bug，你被卷入紧急修复风暴中。",
-        "type": "unlucky",
-        "effect": "bug_storm"
-    },
-    {
-        "id": "meta_org_restructure",
-        "title": "组织架构调整",
-        "description": "公司宣布一轮组织架构调整，你的项目线和汇报关系发生了变化。",
-        "type": "meta",
-        "min_week": 16,
-        "effect": "org_restructure"
-    },
-    {
-        "id": "meta_policy_change",
-        "title": "制度更新通知",
-        "description": "公司更新了加班与调休制度，你需要重新适应新的节奏。",
-        "type": "meta",
-        "min_week": 4,
-        "effect": "policy_change"
-    },
-    {
-        "id": "meta_new_tool_rollout",
-        "title": "新协作工具推行",
-        "description": "公司全员切换到一套全新的协作工具，你得抽时间学习上手。",
-        "type": "meta",
-        "effect": "tool_rollout"
-    },
-    {
-        "id": "career_mentor_assigned",
-        "title": "导师制度启动",
-        "description": "你被分配了一位资深导师，对方愿意定期帮你做职业辅导。",
-        "type": "career",
-        "effect": "mentor_assigned"
-    },
-    {
-        "id": "career_internal_share",
-        "title": "内部分享出圈",
-        "description": "你在内部做了一次技术分享，受到出乎意料的好评与转发。",
-        "type": "career",
-        "effect": "internal_share"
-    },
-    {
-        "id": "career_interview_help",
-        "title": "被拉去面试候选人",
-        "description": "你被邀请参与面试新人，开始对团队用人有更多发言权。",
-        "type": "career",
-        "effect": "interview_panel"
-    },
-    {
-        "id": "career_cross_team_project",
-        "title": "跨部门联合项目",
-        "description": "你被安排参与一个跨部门项目，认识了许多新同事。",
-        "type": "career",
-        "effect": "cross_team_project"
-    },
-    {
-        "id": "career_summit_invite",
-        "title": "行业峰会邀请",
-        "description": "你收到一次行业峰会的参会名额，接触到更多前沿信息与人脉。",
-        "type": "career",
-        "min_week": 20,
-        "effect": "summit_invite"
-    },
-    {
-        "id": "meta_ai_strategy_night",
-        "title": "通宵画 AI 战略大饼",
-        "description": "高层突然拉起通宵研讨会，要把全公司的 AI 战略一次画完，你被点名参加。",
-        "type": "meta",
-        "min_week": 8,
-        "effect": "ai_strategy_night"
-    },
-    {
-        "id": "project_ip_crossover",
-        "title": "离谱联动突袭",
-        "description": "市场部拍板了一个离谱联动方案，项目组被要求一周内搞出 PV 和试玩 Demo。",
-        "type": "project",
-        "min_week": 10,
-        "effect": "ip_crossover_crunch"
-    },
-    {
-        "id": "life_streamer_viral",
-        "title": "被迫出道的游戏主播",
-        "description": "你下班摸鱼直播，被公司官方号转发，一夜之间成了项目组对外形象代表。",
-        "type": "life",
-        "effect": "streamer_viral"
-    },
-    {
-        "id": "lucky_investment_all_in",
-        "title": "All in 二次元赛道",
-        "description": "你把年终奖 All in 在二次元赛道基金上，短期波动让你心态坐过山车。",
-        "type": "lucky",
-        "min_week": 16,
-        "effect": "all_in_invest"
-    },
-    {
-        "id": "unlucky_internet_maintenance",
-        "title": "整层网络维护",
-        "description": "机房与办公区统一网络维护，VPN 与代码托管间歇性抽风，你一整周都在和网络斗智斗勇。",
-        "type": "unlucky",
-        "effect": "internet_maintenance"
-    },
-    {
-        "id": "health_burnout_break",
-        "title": "职业倦怠预警",
-        "description": "连续高压加班让你出现明显倦怠迹象，HR 和直属 leader 联合要求你强制休整一段时间。",
-        "type": "health",
-        "min_week": 16,
-        "max_mood": 40,
-        "max_energy": 50,
-        "effect": "burnout_break"
-    }
-]
+def load_global_events():
+    events = []
+    data_path_candidates = [
+        os.path.join(os.path.dirname(__file__), "data/global_events.json"),
+        os.path.join(os.path.dirname(__file__), "backend/data/global_events.json"),
+    ]
+    data_path = next((p for p in data_path_candidates if os.path.exists(p)), None)
+
+    if data_path and os.path.exists(data_path):
+        try:
+            with open(data_path, "r", encoding="utf-8") as f:
+                events = json.load(f)
+            print(f"Loaded {len(events)} Global Events")
+        except Exception as e:
+            print(f"Error loading Global Events: {e}")
+    else:
+        print("Global Events 配置文件未找到。")
+    return events
+
+GLOBAL_EVENTS = load_global_events()
 
 RICE_ITEMS = [
     {
@@ -1003,7 +741,7 @@ class GameManager:
     def _init_npc_relations(self):
         project_groups = {}
         for npc_id, npc in self.state.npcs.items():
-            if npc_id in CORE_NPCS:
+            if not npc_id.startswith("NPC_"):
                 continue
             existing_relations = getattr(npc, "relations", None) or {}
             if existing_relations:
@@ -1058,6 +796,36 @@ class GameManager:
             return int(str(level).replace("P", ""))
         except Exception:
             return 5
+
+    async def _safe_call(self, coro):
+        try:
+            await coro
+        except Exception:
+            return
+
+    async def _try_generate_welcome(self, req: OnboardRequest, leader):
+        try:
+            welcome_text = await asyncio.wait_for(
+                llm_service.generate_welcome(
+                    player_name=req.name,
+                    player_role=req.role.value,
+                    project_name=req.project_name,
+                    leader_name=leader.name,
+                    leader_role=leader.role,
+                    leader_traits=leader.traits
+                ),
+                timeout=6.0
+            )
+            if welcome_text:
+                self.state.chat_history.append({
+                    "sender": leader.name, 
+                    "content": welcome_text,
+                    "type": "npc",
+                    "target": "group",
+                    "timestamp": self._get_timestamp()
+                })
+        except Exception:
+            return
 
     def _get_timestamp(self) -> str:
         return datetime.now().isoformat()
@@ -1179,150 +947,150 @@ class GameManager:
             player.energy = min(player.max_energy, player.energy + 40)
             player.mood = max(0, min(100, player.mood - 10))
             player.money -= 3000
-            msg = f"[全局事件] {ev['title']}：你住院休养了一个季度，时间悄然流逝，医疗支出增加。"
+            msg = f"{ev['title']}：你住院休养了一个季度，时间悄然流逝，医疗支出增加。"
             self._add_fact("住院休养一个季度")
         elif effect == "short_sick_leave":
             player.energy = max(0, player.energy - 10)
             player.mood = max(0, min(100, player.mood + 10))
-            msg = f"[全局事件] {ev['title']}：你被迫在家休息几天，身体稍微恢复了一些。"
+            msg = f"{ev['title']}：你被迫在家休息几天，身体稍微恢复了一些。"
         elif effect == "health_check_bonus":
             player.mood = max(0, min(100, player.mood + 8))
             player.energy = min(player.max_energy, player.energy + 10)
-            msg = f"[全局事件] {ev['title']}：你做了全面体检并体验SPA，状态有所恢复。"
+            msg = f"{ev['title']}：你做了全面体检并体验SPA，状态有所恢复。"
         elif effect == "all_hands_meeting":
-            msg = f"[全局事件] {ev['title']}：你整天泡在大会里，项目进度被迫暂停。"
+            msg = f"{ev['title']}：你整天泡在大会里，项目进度被迫暂停。"
         elif effect == "fire_drill":
             player.energy = max(0, player.energy - 5)
-            msg = f"[全局事件] {ev['title']}：跑楼梯和集合让你有点累，但也顺便活动了筋骨。"
+            msg = f"{ev['title']}：跑楼梯和集合让你有点累，但也顺便活动了筋骨。"
         elif effect == "team_building":
             player.mood = max(0, min(100, player.mood + 12))
             if project:
                 project.morale = max(0, min(100, project.morale + 8))
-            msg = f"[全局事件] {ev['title']}：团建让团队关系更近了一些，但节奏被打乱。"
+            msg = f"{ev['title']}：团建让团队关系更近了一些，但节奏被打乱。"
         elif effect == "audit_week":
             player.mood = max(0, player.mood - 8)
-            msg = f"[全局事件] {ev['title']}：大量表格和说明文档让你身心俱疲。"
+            msg = f"{ev['title']}：大量表格和说明文档让你身心俱疲。"
         elif effect == "project_review":
             if project:
                 project.risk = max(0, min(100, project.risk - 5))
             player.political_capital = max(0, player.political_capital + 3)
-            msg = f"[全局事件] {ev['title']}：你在评审会上稳定发挥，为项目争取到了一些支持。"
+            msg = f"{ev['title']}：你在评审会上稳定发挥，为项目争取到了一些支持。"
         elif effect == "outage_pause":
             if project:
                 project.risk = max(0, min(100, project.risk + 5))
-            msg = f"[全局事件] {ev['title']}：系统停机期间，大部分计划工作被迫延后。"
+            msg = f"{ev['title']}：系统停机期间，大部分计划工作被迫延后。"
         elif effect == "security_response":
             if project:
                 project.risk = max(0, min(100, project.risk - 3))
                 # project.bug_count = max(0, project.bug_count - 5)
                 pass
             player.hard_skill += 1
-            msg = f"[全局事件] {ev['title']}：你参与了安全加固行动，对系统有了更深理解。"
+            msg = f"{ev['title']}：你参与了安全加固行动，对系统有了更深理解。"
         elif effect == "version_freeze":
-            msg = f"[全局事件] {ev['title']}：开发节奏放缓，你有时间整理文档和技术债。"
+            msg = f"{ev['title']}：开发节奏放缓，你有时间整理文档和技术债。"
         elif effect == "family_leave":
             player.mood = max(0, min(100, player.mood - 5))
-            msg = f"[全局事件] {ev['title']}：你抽身处理家庭事务，工作暂时靠同事兜底。"
+            msg = f"{ev['title']}：你抽身处理家庭事务，工作暂时靠同事兜底。"
         elif effect == "house_move":
             player.energy = max(0, player.energy - 10)
             player.mood = max(0, min(100, player.mood + 5))
-            msg = f"[全局事件] {ev['title']}：搬家很累，但通勤距离缩短让你稍微开心了一些。"
+            msg = f"{ev['title']}：搬家很累，但通勤距离缩短让你稍微开心了一些。"
         elif effect == "marathon_event":
             player.energy = max(0, player.energy - 15)
             player.mood = max(0, min(100, player.mood + 8))
-            msg = f"[全局事件] {ev['title']}：体力被掏空，但完成马拉松让你很有成就感。"
+            msg = f"{ev['title']}：体力被掏空，但完成马拉松让你很有成就感。"
         elif effect == "exam_study":
             player.money -= 800
             player.hard_skill += 1
             player.soft_skill += 1
-            msg = f"[全局事件] {ev['title']}：报班与考试费用让你肉疼，但能力有所提升。"
+            msg = f"{ev['title']}：报班与考试费用让你肉疼，但能力有所提升。"
         elif effect == "stock_up":
             player.money += 3000
-            msg = f"[全局事件] {ev['title']}：理财收益到账，你心情愉悦了一整周。"
+            msg = f"{ev['title']}：理财收益到账，你心情愉悦了一整周。"
         elif effect == "bonus_rain":
             player.money += 8000
             player.political_capital = max(0, player.political_capital + 2)
-            msg = f"[全局事件] {ev['title']}：项目激励入账，你的存在感也随之提升。"
+            msg = f"{ev['title']}：项目激励入账，你的存在感也随之提升。"
         elif effect == "celebration_party":
             player.mood = max(0, min(100, player.mood + 6))
             player.energy = max(0, player.energy - 8)
-            msg = f"[全局事件] {ev['title']}：庆功宴很嗨，但第二天上班有点吃力。"
+            msg = f"{ev['title']}：庆功宴很嗨，但第二天上班有点吃力。"
         elif effect == "commute_disaster":
             player.energy = max(0, player.energy - 10)
             player.mood = max(0, player.mood - 5)
-            msg = f"[全局事件] {ev['title']}：通勤时间翻倍，你每天都在地铁和路上消耗精力。"
+            msg = f"{ev['title']}：通勤时间翻倍，你每天都在地铁和路上消耗精力。"
         elif effect == "rain_week":
             player.mood = max(0, player.mood - 4)
-            msg = f"[全局事件] {ev['title']}：阴雨天气让你的工作状态也有些低气压。"
+            msg = f"{ev['title']}：阴雨天气让你的工作状态也有些低气压。"
         elif effect == "bug_storm":
             if project:
                 # project.bug_count = max(0, project.bug_count + 15)
                 project.risk = max(0, min(100, project.risk + 5))
-            msg = f"[全局事件] {ev['title']}：你被卷入接连不断的Bug风暴，压力陡增。"
+            msg = f"{ev['title']}：你被卷入接连不断的Bug风暴，压力陡增。"
         elif effect == "org_restructure":
             self._add_fact("组织调整")
             player.political_capital = max(0, player.political_capital + 3)
-            msg = f"[全局事件] {ev['title']}：组织调整中，你努力保持中立并维护关键关系。"
+            msg = f"{ev['title']}：组织调整中，你努力保持中立并维护关键关系。"
         elif effect == "policy_change":
-            msg = f"[全局事件] {ev['title']}：新的制度生效，你需要重新找到工作与生活的平衡。"
+            msg = f"{ev['title']}：新的制度生效，你需要重新找到工作与生活的平衡。"
         elif effect == "tool_rollout":
             player.hard_skill += 1
-            msg = f"[全局事件] {ev['title']}：你主动研究新工具，逐渐变成团队里的“工具管理员”。"
+            msg = f"{ev['title']}：你主动研究新工具，逐渐变成团队里的“工具管理员”。"
         elif effect == "mentor_assigned":
             player.soft_skill += 2
-            msg = f"[全局事件] {ev['title']}：在导师的指导下，你开始系统思考自己的职业发展。"
+            msg = f"{ev['title']}：在导师的指导下，你开始系统思考自己的职业发展。"
         elif effect == "internal_share":
             player.soft_skill += 1
             player.political_capital = max(0, player.political_capital + 2)
-            msg = f"[全局事件] {ev['title']}：内部分享让更多人认识了你，你的影响力有所提升。"
+            msg = f"{ev['title']}：内部分享让更多人认识了你，你的影响力有所提升。"
         elif effect == "interview_panel":
             player.soft_skill += 1
-            msg = f"[全局事件] {ev['title']}：面试候选人的过程让你学会从团队视角看问题。"
+            msg = f"{ev['title']}：面试候选人的过程让你学会从团队视角看问题。"
         elif effect == "cross_team_project":
             player.soft_skill += 1
             self._add_fact("跨部门项目经验")
-            msg = f"[全局事件] {ev['title']}：跨团队协作拓宽了你的人脉与视野。"
+            msg = f"{ev['title']}：跨团队协作拓宽了你的人脉与视野。"
         elif effect == "summit_invite":
             player.hard_skill += 1
             player.soft_skill += 1
-            msg = f"[全局事件] {ev['title']}：行业峰会带来大量新知识与人脉，你受益匪浅。"
+            msg = f"{ev['title']}：行业峰会带来大量新知识与人脉，你受益匪浅。"
         elif effect == "ai_strategy_night":
             player.energy = max(0, player.energy - 25)
             player.mood = max(0, player.mood - 5)
             if project:
                 project.risk = max(0, min(100, project.risk - 5))
-            msg = f"[全局事件] {ev['title']}：你通宵跟着讨论 AI 战略，大饼画满白板，项目暂时获得了一些资源承诺。"
+            msg = f"{ev['title']}：你通宵跟着讨论 AI 战略，大饼画满白板，项目暂时获得了一些资源承诺。"
         elif effect == "ip_crossover_crunch":
             if project:
                 project.progress = max(0, min(200, project.progress + 15))
                 project.risk = max(0, min(100, project.risk + 10))
             player.energy = max(0, player.energy - 20)
-            msg = f"[全局事件] {ev['title']}：你连夜赶工联动内容，进度暴涨但技术债也随之堆积。"
+            msg = f"{ev['title']}：你连夜赶工联动内容，进度暴涨但技术债也随之堆积。"
         elif effect == "streamer_viral":
             player.mood = max(0, min(100, player.mood + 12))
             player.political_capital = max(0, player.political_capital + 4)
-            msg = f"[全局事件] {ev['title']}：你的直播出圈，被官方当成宣传案例，你的存在感大幅提升。"
+            msg = f"{ev['title']}：你的直播出圈，被官方当成宣传案例，你的存在感大幅提升。"
         elif effect == "all_in_invest":
             delta = random.randint(-5000, 8000)
             player.money += delta
             mood_delta = 8 if delta > 0 else -8
             player.mood = max(0, min(100, player.mood + mood_delta))
-            msg = f"[全局事件] {ev['title']}：二次元赛道剧烈波动，你的账户{'暴涨' if delta>0 else '回撤'}了 {abs(delta)}，心情随之大起大落。"
+            msg = f"{ev['title']}：二次元赛道剧烈波动，你的账户{'暴涨' if delta>0 else '回撤'}了 {abs(delta)}，心情随之大起大落。"
         elif effect == "internet_maintenance":
             player.energy = max(0, player.energy - 8)
             if project:
                 project.progress = max(0, project.progress - 5)
-            msg = f"[全局事件] {ev['title']}：网络持续抽风，开发与提测节奏被全面打乱。"
+            msg = f"{ev['title']}：网络持续抽风，开发与提测节奏被全面打乱。"
         elif effect == "burnout_break":
             lost_weeks = 4
             self.state.week += lost_weeks
             player.energy = min(player.max_energy, player.energy + 30)
             player.mood = max(0, min(100, player.mood - 5))
             player.money -= 1000
-            msg = f"[全局事件] {ev['title']}：你被安排强制休整了一个月，收入略受影响，但总算没有彻底燃尽。"
+            msg = f"{ev['title']}：你被安排强制休整了一个月，收入略受影响，但总算没有彻底燃尽。"
             self._add_fact("经历职业倦怠预警并被强制休整")
         else:
-            msg = f"[全局事件] {ev['title']}：{ev['description']}"
+            msg = f"{ev['title']}：{ev['description']}"
         self.state.chat_history.append({
             "sender": "System",
             "content": msg,
@@ -1416,7 +1184,7 @@ class GameManager:
             player.major_accidents = max(0, player.major_accidents + 1)
             self.state.chat_history.append({
                 "sender": "System",
-                "content": f"[事故] {project.name} 出现重大风险（Risk {project.risk}/100）。",
+                "content": f"{project.name} 出现重大风险（Risk {project.risk}/100）。",
                 "type": "system",
                 "target": channel,
                 "timestamp": self._get_timestamp()
@@ -1503,7 +1271,7 @@ class GameManager:
                         sid for sid in self.state.player_subordinates if sid != npc_id
                     ]
                     player.mood = max(0, player.mood - 5)
-                msg = f"[人事变动] {npc.name} 提交了离职申请，正式离开公司。"
+                msg = f"{npc.name} 提交了离职申请，正式离开公司。"
             elif event_type == "transfer":
                 if not projects:
                     continue
@@ -1518,13 +1286,13 @@ class GameManager:
                         sid for sid in self.state.player_subordinates if sid != npc_id
                     ]
                     player.mood = max(0, player.mood - 3)
-                msg = f"[人事变动] {npc.name} 申请内部转岗，调往 {new_project} 项目组。"
+                msg = f"{npc.name} 申请内部转岗，调往 {new_project} 项目组。"
             else:
                 if level_num >= 10:
                     continue
                 npc.level = f"P{level_num + 1}"
                 npc.trust = min(100, npc.trust + 5)
-                msg = f"[人事变动] {npc.name} 获得晋升，职级提升为 {npc.level}。"
+                msg = f"{npc.name} 获得晋升，职级提升为 {npc.level}。"
 
             self.state.chat_history.append({
                 "sender": "System",
@@ -1547,13 +1315,13 @@ class GameManager:
             other.mood = max(0, other.mood - 4)
             if player and (npc.project == player.current_project or other.project == player.current_project):
                 player.mood = max(0, player.mood - 2)
-            msg = f"[项目生态] {npc.name} 与 {other.name} 在 {project_name} 项目上再次针锋相对，群里气氛瞬间凝固。"
+            msg = f"{npc.name} 与 {other.name} 在 {project_name} 项目上再次针锋相对，群里气氛瞬间凝固。"
         else:
             npc.mood = min(100, npc.mood + 3)
             other.mood = min(100, other.mood + 3)
             if player and project_name == player.current_project:
                 player.mood = min(100, player.mood + 1)
-            msg = f"[项目生态] {npc.name} 与 {other.name} 在 {project_name} 项目上相互补位，配合得十分默契。"
+            msg = f"{npc.name} 与 {other.name} 在 {project_name} 项目上相互补位，配合得十分默契。"
         self._mark_npc_known(other_id)
         self.state.chat_history.append({
             "sender": "System",
@@ -1573,21 +1341,21 @@ class GameManager:
                 "kpi_multiplier": 0.9,
                 "risk_multiplier": 1.1,
                 "revenue_multiplier": 0.9,
-                "msg": "[季度事件] 版号环境变紧：整体风险上升，产出效率下降。",
+                "msg": "版号环境变紧：整体风险上升，产出效率下降。",
             },
             {
                 "title": "新品类风口",
                 "kpi_multiplier": 1.1,
                 "risk_multiplier": 1.0,
                 "revenue_multiplier": 1.15,
-                "msg": "[季度事件] 新品类风口出现：资源倾斜，营收预期提升。",
+                "msg": "新品类风口出现：资源倾斜，营收预期提升。",
             },
             {
                 "title": "大促季",
                 "kpi_multiplier": 1.0,
                 "risk_multiplier": 1.05,
                 "revenue_multiplier": 1.25,
-                "msg": "[季度事件] 大促季来临：营收增长，但线上稳定性压力变大。",
+                "msg": "大促季来临：营收增长，但线上稳定性压力变大。",
             },
         ]
         ev = random.choice(events)
@@ -1622,7 +1390,7 @@ class GameManager:
 
         self.state.chat_history.append({
             "sender": "System",
-            "content": f"[立项] {name} 立项了：难度 {difficulty}，风险 {risk}。",
+            "content": f"{name} 立项了：难度 {difficulty}，风险 {risk}。",
             "type": "system",
             "target": channel,
             "timestamp": self._get_timestamp()
@@ -1715,33 +1483,12 @@ class GameManager:
             player.leader_id = leader_id
             leader = self.state.npcs[leader_id]
             self._mark_npc_known(leader_id)
-            
-            # Generate random welcome task via LLM
-            try:
-                # Use dedicated generate_welcome method
-                welcome_text = await asyncio.wait_for(
-                    llm_service.generate_welcome(
-                        player_name=req.name,
-                        player_role=req.role.value,
-                        project_name=req.project_name,
-                        leader_name=leader.name,
-                        leader_role=leader.role,
-                        leader_traits=leader.traits
-                    ),
-                    timeout=8.0
-                )
-                task_msg = welcome_text if welcome_text else None
-                if not task_msg: raise Exception("Empty welcome message")
-            except Exception as e:
-                 print(f"Welcome Msg Error: {e}")
-                 # Fallback logic based on role if LLM fails
-                 if req.role == Role.PRODUCT:
-                     task_msg = f"@{req.name} 欢迎加入{req.project_name}。我是{leader.name}。先把PRD文档看一遍，梳理下需求池。"
-                 elif req.role == Role.OPS:
-                     task_msg = f"@{req.name} 欢迎加入{req.project_name}。我是{leader.name}。先去社区看看玩家反馈，整理下舆情周报。"
-                 else:
-                     task_msg = f"@{req.name} 欢迎加入{req.project_name}。我是{leader.name}。先把环境配好，熟悉下代码库。有不懂的随时问。"
-
+            if req.role == Role.PRODUCT:
+                task_msg = f"@{req.name} 欢迎加入{req.project_name}。我是{leader.name}。先把PRD文档看一遍，梳理下需求池。"
+            elif req.role == Role.OPS:
+                task_msg = f"@{req.name} 欢迎加入{req.project_name}。我是{leader.name}。先去社区看看玩家反馈，整理下舆情周报。"
+            else:
+                task_msg = f"@{req.name} 欢迎加入{req.project_name}。我是{leader.name}。先把环境配好，熟悉下代码库。有不懂的随时问。"
             self.state.chat_history.append({
                 "sender": leader.name, 
                 "content": task_msg,
@@ -1749,6 +1496,7 @@ class GameManager:
                 "target": "group",
                 "timestamp": self._get_timestamp()
             })
+            asyncio.create_task(self._try_generate_welcome(req, leader))
         
         # 5. Trigger AI-Chan Welcome with Tutorial
         tutorial_msg = (
@@ -1769,17 +1517,9 @@ class GameManager:
         })
         self._mark_npc_known("AI-Chan")
         
-        # 6. Add Random Onboard Event
         if random.random() < 0.5:
-            try:
-                await asyncio.wait_for(self._trigger_random_event("group"), timeout=5.0)
-            except Exception:
-                pass
-
-        try:
-            await asyncio.wait_for(self._refresh_suggested_replies("group"), timeout=5.0)
-        except Exception:
-            pass
+            asyncio.create_task(self._safe_call(asyncio.wait_for(self._trigger_random_event("group"), timeout=3.0)))
+        asyncio.create_task(self._safe_call(asyncio.wait_for(self._refresh_suggested_replies("group"), timeout=3.0)))
         
         return self.state
 
@@ -1948,14 +1688,6 @@ class GameManager:
                     yield f"data: {json.dumps({'type': 'msg_append', 'msg': msg})}\n\n"
             self._advance_time(channel, days=1)
             self._check_game_over(channel)
-            try:
-                await self._refresh_suggested_replies(channel)
-            except Exception:
-                pass
-            yield f"data: {json.dumps({'type': 'state_update', 'state': self.state.dict()})}\n\n"
-            yield "data: [DONE]\n\n"
-            return
-        
         # 1. Handle Commands (Fast Path)
         if text.startswith("cmd:"):
             self._handle_command(text, channel)
@@ -2025,8 +1757,19 @@ class GameManager:
             self.state.chat_history.append(sys_msg)
             yield f"data: {json.dumps({'type': 'msg_append', 'msg': sys_msg})}\n\n"
 
-        event_mode = False
+        conflict_npcs = []
         if channel == "group":
+            self._context_capture(text)
+            prev_len = len(self.state.chat_history)
+            conflict_npcs = self._context_event_infer(text, channel)
+            if len(self.state.chat_history) > prev_len:
+                msg = self.state.chat_history[-1]
+                yield f"data: {json.dumps({'type': 'msg_append', 'msg': msg})}\n\n"
+
+        event_mode = False
+        if conflict_npcs:
+            event_mode = True
+        elif channel == "group":
             selected_topic_ids = await self._select_topic_npcs(text, channel)
             if len(selected_topic_ids) >= 2:
                 event_mode = True
@@ -2222,7 +1965,8 @@ class GameManager:
 
         if channel == "group" and len(self.state.npcs) > 1:
             prev_len = len(self.state.chat_history)
-            await self._npc_cross_talk(text, [], channel)
+            responders = conflict_npcs if conflict_npcs else []
+            await self._npc_cross_talk(text, responders, channel)
             if len(self.state.chat_history) > prev_len:
                 for msg in self.state.chat_history[prev_len:]:
                     yield f"data: {json.dumps({'type': 'msg_append', 'msg': msg})}\n\n"
@@ -2238,7 +1982,7 @@ class GameManager:
         self._advance_time(channel, days=1)
         self._check_game_over(channel)
         try:
-            await self._refresh_suggested_replies(channel)
+            await asyncio.wait_for(self._refresh_suggested_replies(channel), timeout=5.0)
         except Exception:
             pass
         yield f"data: {json.dumps({'type': 'state_update', 'state': self.state.dict()})}\n\n"
@@ -2272,76 +2016,6 @@ class GameManager:
                 pass
             return self.state
 
-    async def _handle_promotion_answer(self, text: str, channel: str):
-        player = self.state.player
-        if not player:
-            return
-        review = self.state.promotion_review or {}
-        if not review:
-            return
-        status = review.get("status") or ""
-        if status != "pending_answer":
-            return
-        answer = (text or "").strip()
-        if not answer:
-            return
-        review["answer"] = answer
-        review["status"] = "pending_score"
-        self.state.promotion_review = review
-        score_result = await llm_service.score_promotion_answer(
-            {
-                "role": getattr(player, "role", None),
-                "level": getattr(player, "level", None),
-                "current_project": getattr(player, "current_project", None),
-            },
-            {
-                "target_level": f"P{review.get('target_level')}",
-                "question": review.get("question"),
-                "answer": answer,
-            },
-        )
-        score = int(score_result.get("score", 0))
-        comment = str(score_result.get("comment", "")).strip()
-        threshold = int(review.get("score_threshold") or 60)
-        passed = score >= threshold
-        review["score"] = score
-        review["comment"] = comment
-        review["passed"] = passed
-        review["status"] = "finished"
-        self.state.promotion_review = review
-        msg1 = f"[晋升述职] 本次述职得分：{score} 分（通过线 {threshold} 分）。"
-        self.state.chat_history.append({
-            "sender": "System",
-            "content": msg1,
-            "type": "system",
-            "target": channel,
-            "timestamp": self._get_timestamp()
-        })
-        if comment:
-            self.state.chat_history.append({
-                "sender": "System",
-                "content": f"[晋升反馈] {comment}",
-                "type": "system",
-                "target": channel,
-                "timestamp": self._get_timestamp()
-            })
-        if passed:
-            target_level = review.get("target_level")
-            current_num = self._parse_level(player.level)
-            if isinstance(target_level, int) and target_level > current_num:
-                player.level = f"P{target_level}"
-                self._add_fact(f"晋升 {player.level}")
-            msg2 = f"[晋升] 恭喜！通过述职评审，你晋升为 {player.level}。"
-        else:
-            msg2 = "[晋升] 本轮述职未达到通过标准，可以在后续评估周期继续冲刺。"
-        self.state.chat_history.append({
-            "sender": "System",
-            "content": msg2,
-            "type": "system",
-            "target": channel,
-            "timestamp": self._get_timestamp()
-        })
-        
         # 1. Handle Workbench Actions (Commands)
         if text.startswith("cmd:"):
             self._handle_command(text, channel)
@@ -2402,16 +2076,20 @@ class GameManager:
             "target": channel,
             "timestamp": self._get_timestamp()
         })
+        
+        conflict_npcs = []
         if channel == "group":
             self._context_capture(text)
-            self._context_event_infer(text, channel)
+            conflict_npcs = self._context_event_infer(text, channel)
 
         inferred_intent, inferred_magnitude = self._infer_intent_magnitude(text)
         narrative = self._apply_effects(inferred_intent, inferred_magnitude, text, channel=channel)
 
         # 5. Determine Responders (Multi-NPC Logic)
         responders = []
-        if active_npc_id:
+        if conflict_npcs:
+            responders = conflict_npcs
+        elif active_npc_id:
             responders.append(active_npc_id)
         elif channel == "group" and random.random() < 0.7:
             candidates = [
@@ -2494,7 +2172,7 @@ class GameManager:
 
         if random.random() < 0.03:
             await self._trigger_random_event(channel)
-
+        
         self._advance_time(channel, days=1)
         self._check_game_over(channel)
         try:
@@ -2502,6 +2180,76 @@ class GameManager:
         except Exception:
             pass
         return self.state
+    
+    async def _handle_promotion_answer(self, text: str, channel: str):
+        player = self.state.player
+        if not player:
+            return
+        review = self.state.promotion_review or {}
+        if not review:
+            return
+        status = review.get("status") or ""
+        if status != "pending_answer":
+            return
+        answer = (text or "").strip()
+        if not answer:
+            return
+        review["answer"] = answer
+        review["status"] = "pending_score"
+        self.state.promotion_review = review
+        score_result = await llm_service.score_promotion_answer(
+            {
+                "role": getattr(player, "role", None),
+                "level": getattr(player, "level", None),
+                "current_project": getattr(player, "current_project", None),
+            },
+            {
+                "target_level": f"P{review.get('target_level')}",
+                "question": review.get("question"),
+                "answer": answer,
+            },
+        )
+        score = int(score_result.get("score", 0))
+        comment = str(score_result.get("comment", "")).strip()
+        threshold = int(review.get("score_threshold") or 60)
+        passed = score >= threshold
+        review["score"] = score
+        review["comment"] = comment
+        review["passed"] = passed
+        review["status"] = "finished"
+        self.state.promotion_review = review
+        msg1 = f"本次述职得分：{score} 分（通过线 {threshold} 分）。"
+        self.state.chat_history.append({
+            "sender": "System",
+            "content": msg1,
+            "type": "system",
+            "target": channel,
+            "timestamp": self._get_timestamp()
+        })
+        if comment:
+            self.state.chat_history.append({
+                "sender": "System",
+                "content": f"{comment}",
+                "type": "system",
+                "target": channel,
+                "timestamp": self._get_timestamp()
+            })
+        if passed:
+            target_level = review.get("target_level")
+            current_num = self._parse_level(player.level)
+            if isinstance(target_level, int) and target_level > current_num:
+                player.level = f"P{target_level}"
+                self._add_fact(f"晋升 {player.level}")
+            msg2 = f"恭喜！通过述职评审，你晋升为 {player.level}。"
+        else:
+            msg2 = "本轮述职未达到通过标准，可以在后续评估周期继续冲刺。"
+        self.state.chat_history.append({
+            "sender": "System",
+            "content": msg2,
+            "type": "system",
+            "target": channel,
+            "timestamp": self._get_timestamp()
+        })
     
     def _context_capture(self, text: str):
         key = ""
@@ -2539,7 +2287,7 @@ class GameManager:
                 p = self.state.npcs.get(prod_id)
                 d = self.state.npcs.get(dev_id)
                 if p and d:
-                    msg = f"[项目语境] {key} 的产品与研发分别是 {p.name} 与 {d.name}。"
+                    msg = f"{key} 的产品与研发分别是 {p.name} 与 {d.name}。"
                     self.state.chat_history.append({
                         "sender": "System",
                         "content": msg,
@@ -2548,7 +2296,7 @@ class GameManager:
                         "timestamp": self._get_timestamp()
                     })
     
-    def _context_event_infer(self, text: str, channel: str):
+    def _context_event_infer(self, text: str, channel: str) -> list:
         t = text or ""
         topic = ""
         if "邀请制" in t:
@@ -2556,7 +2304,7 @@ class GameManager:
         if not topic:
             topic = self.state.last_topic or ""
         if not topic:
-            return
+            return []
         if ("打起来" in t or "吵起来" in t or "冲突" in t) and ("产品" in t and ("研发" in t or "工程师" in t)):
             slots = self.state.context_slots.get(topic) or {}
             prod_id = slots.get("Product")
@@ -2567,6 +2315,8 @@ class GameManager:
                 if prod and dev:
                     proj_name = prod.project or dev.project or "General"
                     self._emit_relation_conflict(dev, prod, proj_name, channel)
+                    return [dev_id, prod_id]
+        return []
     
     def _emit_relation_conflict(self, npc_a, npc_b, project_name: str, channel: str):
         player = self.state.player
@@ -2576,7 +2326,7 @@ class GameManager:
             player.mood = max(0, player.mood - 2)
         self._mark_npc_known(npc_a.id)
         self._mark_npc_known(npc_b.id)
-        msg = f"[项目生态] {npc_a.name} 与 {npc_b.name} 在 {project_name} 项目上发生冲突，群里气氛瞬间凝固。"
+        msg = f"{npc_a.name} 与 {npc_b.name} 在 {project_name} 项目上发生冲突，群里气氛瞬间凝固。"
         self.state.chat_history.append({
             "sender": "System",
             "content": msg,
@@ -3260,7 +3010,7 @@ class GameManager:
         return selected_ids
 
     async def _npc_cross_talk(self, text: str, responders: list, channel: str):
-        selected_ids = await self._select_topic_npcs(text, channel)
+        selected_ids = responders if responders else await self._select_topic_npcs(text, channel)
         if not selected_ids:
             return
 
@@ -3363,7 +3113,7 @@ class GameManager:
 
             self.state.chat_history.append({
                 "sender": "System",
-                "content": f"[项目变更] {project.name} 被砍了（Risk {project.risk}/100 · Morale {project.morale}/100）。",
+                "content": f"{project.name} 被砍了（Risk {project.risk}/100 · Morale {project.morale}/100）。",
                 "type": "system",
                 "target": channel,
                 "timestamp": self._get_timestamp()
@@ -3382,7 +3132,7 @@ class GameManager:
                     player.current_project = fallback
                     self.state.chat_history.append({
                         "sender": "System",
-                        "content": f"[转组] 你被临时调配到了 {self.state.projects[fallback].name}。",
+                        "content": f"你被临时调配到了 {self.state.projects[fallback].name}。",
                         "type": "system",
                         "target": channel,
                         "timestamp": self._get_timestamp()
@@ -3403,7 +3153,7 @@ class GameManager:
                 player.launched_projects.append(project_id)
             self.state.chat_history.append({
                 "sender": "System",
-                "content": f"[上线] {project.name} 结束研发，正式进入 Live！",
+                "content": f"{project.name} 结束研发，正式进入 Live！",
                 "type": "system",
                 "target": channel,
                 "timestamp": self._get_timestamp()
@@ -3420,7 +3170,7 @@ class GameManager:
         player.money += bonus
         player.political_capital = max(0, player.political_capital + 5)
 
-        msg = f"[里程碑] {project.name} 达成阶段目标：Revenue +{base_rev}，奖金 +{bonus}，政治资本 +5。"
+        msg = f"{project.name} 达成阶段目标：Revenue +{base_rev}，奖金 +{bonus}，政治资本 +5。"
         self.state.chat_history.append({
             "sender": "System",
             "content": msg,
@@ -3434,34 +3184,74 @@ class GameManager:
         if not self.state.player:
             return
 
-        # Call LLM to generate event
-        event_data = await llm_service.generate_random_event(self.state.player.dict())
+        player = self.state.player
+        level_num = self._parse_level(getattr(player, "level", "P5"))
+        current_proj = getattr(player, "current_project", "General")
+
+        candidates = []
+        for ev in RANDOM_EVENTS_DB:
+            # Check Level
+            min_lvl = self._parse_level(ev.get("min_level", "P5"))
+            if level_num < min_lvl:
+                continue
+            # Check Project
+            ev_proj = ev.get("project", "General")
+            if ev_proj != "General" and ev_proj != current_proj:
+                continue
+            candidates.append(ev)
+        
+        if not candidates:
+            return
+
+        event = random.choice(candidates)
         
         # Apply effects
-        player = self.state.player
-        if "mood_change" in event_data:
-            player.mood = max(0, min(100, player.mood + event_data["mood_change"]))
-        if "energy_change" in event_data:
-            player.energy = max(0, min(player.max_energy, player.energy + event_data["energy_change"]))
-        if "money_change" in event_data:
-            player.money += event_data["money_change"]
-
-        project = self.state.projects.get(player.current_project)
-        if project and random.random() < 0.4:
-            delta = random.randint(-3, 5)
-            project.risk = max(0, min(100, project.risk + delta))
+        effects = event.get("effects", {})
+        msg_parts = []
+        
+        if "mood" in effects:
+            val = effects["mood"]
+            player.mood = max(0, min(100, player.mood + val))
+            msg_parts.append(f"Mood {'+' if val>0 else ''}{val}")
             
-        # Construct message
-        msg_content = f"[随机事件] {event_data.get('event_msg', 'Nothing happened.')}"
-        
-        # Append effect summary to message
-        effects = []
-        if event_data.get("mood_change"): effects.append(f"Mood {'+' if event_data['mood_change']>0 else ''}{event_data['mood_change']}")
-        if event_data.get("energy_change"): effects.append(f"Energy {'+' if event_data['energy_change']>0 else ''}{event_data['energy_change']}")
-        if event_data.get("money_change"): effects.append(f"Money {'+' if event_data['money_change']>0 else ''}{event_data['money_change']}")
-        
-        if effects:
-            msg_content += f" ({', '.join(effects)})"
+        if "energy" in effects:
+            val = effects["energy"]
+            player.energy = max(0, min(player.max_energy, player.energy + val))
+            msg_parts.append(f"Energy {'+' if val>0 else ''}{val}")
+            
+        if "money" in effects:
+            val = effects["money"]
+            player.money += val
+            msg_parts.append(f"Money {'+' if val>0 else ''}{val}")
+            
+        if "political_capital" in effects:
+            val = effects["political_capital"]
+            player.political_capital = max(0, player.political_capital + val)
+            msg_parts.append(f"Pol.Cap {'+' if val>0 else ''}{val}")
+            
+        if "trust" in effects:
+            val = effects["trust"]
+            # Trust is usually per-NPC, but here it's global or random leader?
+            # Simplified: add trust to project leader or random colleague
+            pass 
+            
+        if "risk" in effects:
+            val = effects["risk"]
+            proj = self.state.projects.get(current_proj)
+            if proj:
+                proj.risk = max(0, proj.risk + val)
+                msg_parts.append(f"Risk {'+' if val>0 else ''}{val}")
+
+        if "progress" in effects:
+            val = effects["progress"]
+            proj = self.state.projects.get(current_proj)
+            if proj:
+                proj.progress = max(0, proj.progress + val)
+                msg_parts.append(f"Progress {'+' if val>0 else ''}{val}")
+
+        msg_content = f"{event['msg']}"
+        if msg_parts:
+            msg_content += f" ({', '.join(msg_parts)})"
 
         self.state.chat_history.append({
             "sender": "System",
@@ -3586,7 +3376,7 @@ class GameManager:
                 "score": None,
                 "comment": "",
             }
-            msg = f"[晋升述职] 你已满足晋升至 P{target_level} 的基础条件。请围绕题目作答：{question}"
+            msg = f"你已满足晋升至 P{target_level} 的基础条件。请围绕题目作答：{question}"
             self.state.chat_history.append({
                 "sender": "System",
                 "content": msg,
@@ -3646,7 +3436,7 @@ class GameManager:
         if not need:
             return
 
-        msg = f"[晋升评估] 本周期暂未晋升。下一档目标：P{target_lvl}。建议：" + "；".join(need)
+        msg = f"本周期暂未晋升。下一档目标：P{target_lvl}。建议：" + "；".join(need)
         self.state.chat_history.append({
             "sender": "System",
             "content": msg,

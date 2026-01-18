@@ -1,0 +1,271 @@
+[
+    {
+        "id": "health_quarter_hospital",
+        "title": "身体警报：住院观察",
+        "description": "连续长期心情低落与加班爆肝，你终于倒下，被医生勒令住院静养一个季度。",
+        "type": "health",
+        "min_mood": 0,
+        "max_mood": 35,
+        "max_energy": 60,
+        "min_week": 8,
+        "effect": "hospital_quarter"
+    },
+    {
+        "id": "health_mild_cold",
+        "title": "感冒来袭：被迫请假",
+        "description": "空调房熬夜加班，你感冒发烧，只能在家休息几天。",
+        "type": "health",
+        "max_mood": 50,
+        "max_energy": 70,
+        "effect": "short_sick_leave"
+    },
+    {
+        "id": "health_spa_card",
+        "title": "年度体检福利券",
+        "description": "公司发放了体检和SPA福利券，你被强制安排去做健康检查和放松。",
+        "type": "health",
+        "min_week": 4,
+        "effect": "health_check_bonus"
+    },
+    {
+        "id": "company_all_hands",
+        "title": "季度全员大会",
+        "description": "大会议室全员集结，听老板画未来三年大饼，工作全部暂停。",
+        "type": "company",
+        "min_week": 4,
+        "effect": "all_hands_meeting"
+    },
+    {
+        "id": "company_fire_drill",
+        "title": "消防演习占用半天",
+        "description": "整栋楼进行消防演习，你被拉着绕楼跑圈，工作统统往后拖。",
+        "type": "company",
+        "effect": "fire_drill"
+    },
+    {
+        "id": "company_team_building_trip",
+        "title": "团建出游：强制拉练",
+        "description": "项目组集体出游团建，爬山拍照做破冰游戏，项目进度暂停一周。",
+        "type": "company",
+        "min_week": 6,
+        "effect": "team_building"
+    },
+    {
+        "id": "company_audit_week",
+        "title": "审计周：全员填表",
+        "description": "审计组进驻，公司要求所有人填报各种表格，你被拖去对账和写说明。",
+        "type": "company",
+        "min_week": 10,
+        "effect": "audit_week"
+    },
+    {
+        "id": "project_big_review",
+        "title": "大项目评审会",
+        "description": "你的项目被拉去做大战略评审，一整周都在改PPT和对齐结论。",
+        "type": "project",
+        "min_week": 6,
+        "effect": "project_review"
+    },
+    {
+        "id": "project_data_center_outage",
+        "title": "机房故障：紧急停机",
+        "description": "机房突发故障，全公司相关服务临时下线，你被迫停止开发排查影响。",
+        "type": "project",
+        "effect": "outage_pause"
+    },
+    {
+        "id": "project_security_incident",
+        "title": "安全事件应急响应",
+        "description": "安全团队通报高危漏洞，你被拉进应急群参与安全整改周。",
+        "type": "project",
+        "min_week": 12,
+        "effect": "security_response"
+    },
+    {
+        "id": "project_version_freeze",
+        "title": "版本冻结期",
+        "description": "临近大版本上线，所有需求冻结，你被要求只做稳定性巡检。",
+        "type": "project",
+        "min_week": 10,
+        "effect": "version_freeze"
+    },
+    {
+        "id": "life_family_emergency",
+        "title": "家庭紧急情况",
+        "description": "家里临时出了状况，你被迫请事假回老家处理，缺席了一个冲刺。",
+        "type": "life",
+        "effect": "family_leave"
+    },
+    {
+        "id": "life_house_move",
+        "title": "搬家周：社畜搬砖",
+        "description": "你终于换了离公司更近的房子，但整整一周都在打包和收拾。",
+        "type": "life",
+        "effect": "house_move"
+    },
+    {
+        "id": "life_marathon",
+        "title": "被同事拉去跑马拉松",
+        "description": "你报名了城市马拉松，准备和同事一起挑战体力极限。",
+        "type": "life",
+        "effect": "marathon_event"
+    },
+    {
+        "id": "life_exam_study",
+        "title": "考证备考期",
+        "description": "你报了一个专业证书考试，下班后全部时间都在学习刷题。",
+        "type": "life",
+        "min_week": 8,
+        "effect": "exam_study"
+    },
+    {
+        "id": "lucky_stock_up",
+        "title": "理财小阳春",
+        "description": "你之前买的基金突然起飞，一天浮盈顶上你半个月工资。",
+        "type": "lucky",
+        "effect": "stock_up"
+    },
+    {
+        "id": "lucky_bonus_rain",
+        "title": "项目特别激励",
+        "description": "老板突然宣布了一次性项目特别激励，你也薅到了一大笔奖金。",
+        "type": "lucky",
+        "min_week": 12,
+        "effect": "bonus_rain"
+    },
+    {
+        "id": "lucky_game_launch_celebration",
+        "title": "项目庆功宴",
+        "description": "项目里程碑顺利，团队在附近大餐庆功，你被迫参加到很晚。",
+        "type": "lucky",
+        "effect": "celebration_party"
+    },
+    {
+        "id": "unlucky_subway_shutdown",
+        "title": "地铁停运：通勤灾难",
+        "description": "城市地铁临时检修停运，你每天在路上折腾两倍时间。",
+        "type": "unlucky",
+        "effect": "commute_disaster"
+    },
+    {
+        "id": "unlucky_rain_week",
+        "title": "连日暴雨",
+        "description": "一连几周都是阴雨天，你的心情和效率都受到影响。",
+        "type": "unlucky",
+        "effect": "rain_week"
+    },
+    {
+        "id": "unlucky_bug_storm",
+        "title": "Bug 雨来袭",
+        "description": "线上突然出现大量奇怪Bug，你被卷入紧急修复风暴中。",
+        "type": "unlucky",
+        "effect": "bug_storm"
+    },
+    {
+        "id": "meta_org_restructure",
+        "title": "组织架构调整",
+        "description": "公司宣布一轮组织架构调整，你的项目线和汇报关系发生了变化。",
+        "type": "meta",
+        "min_week": 16,
+        "effect": "org_restructure"
+    },
+    {
+        "id": "meta_policy_change",
+        "title": "制度更新通知",
+        "description": "公司更新了加班与调休制度，你需要重新适应新的节奏。",
+        "type": "meta",
+        "min_week": 4,
+        "effect": "policy_change"
+    },
+    {
+        "id": "meta_new_tool_rollout",
+        "title": "新协作工具推行",
+        "description": "公司全员切换到一套全新的协作工具，你得抽时间学习上手。",
+        "type": "meta",
+        "effect": "tool_rollout"
+    },
+    {
+        "id": "career_mentor_assigned",
+        "title": "导师制度启动",
+        "description": "你被分配了一位资深导师，对方愿意定期帮你做职业辅导。",
+        "type": "career",
+        "effect": "mentor_assigned"
+    },
+    {
+        "id": "career_internal_share",
+        "title": "内部分享出圈",
+        "description": "你在内部做了一次技术分享，受到出乎意料的好评与转发。",
+        "type": "career",
+        "effect": "internal_share"
+    },
+    {
+        "id": "career_interview_help",
+        "title": "被拉去面试候选人",
+        "description": "你被邀请参与面试新人，开始对团队用人有更多发言权。",
+        "type": "career",
+        "effect": "interview_panel"
+    },
+    {
+        "id": "career_cross_team_project",
+        "title": "跨部门联合项目",
+        "description": "你被安排参与一个跨部门项目，认识了许多新同事。",
+        "type": "career",
+        "effect": "cross_team_project"
+    },
+    {
+        "id": "career_summit_invite",
+        "title": "行业峰会邀请",
+        "description": "你收到一次行业峰会的参会名额，接触到更多前沿信息与人脉。",
+        "type": "career",
+        "min_week": 20,
+        "effect": "summit_invite"
+    },
+    {
+        "id": "meta_ai_strategy_night",
+        "title": "通宵画 AI 战略大饼",
+        "description": "高层突然拉起通宵研讨会，要把全公司的 AI 战略一次画完，你被点名参加。",
+        "type": "meta",
+        "min_week": 8,
+        "effect": "ai_strategy_night"
+    },
+    {
+        "id": "project_ip_crossover",
+        "title": "离谱联动突袭",
+        "description": "市场部拍板了一个离谱联动方案，项目组被要求一周内搞出 PV 和试玩 Demo。",
+        "type": "project",
+        "min_week": 10,
+        "effect": "ip_crossover_crunch"
+    },
+    {
+        "id": "life_streamer_viral",
+        "title": "被迫出道的游戏主播",
+        "description": "你下班摸鱼直播，被公司官方号转发，一夜之间成了项目组对外形象代表。",
+        "type": "life",
+        "effect": "streamer_viral"
+    },
+    {
+        "id": "lucky_investment_all_in",
+        "title": "All in 二次元赛道",
+        "description": "你把年终奖 All in 在二次元赛道基金上，短期波动让你心态坐过山车。",
+        "type": "lucky",
+        "min_week": 16,
+        "effect": "all_in_invest"
+    },
+    {
+        "id": "unlucky_internet_maintenance",
+        "title": "整层网络维护",
+        "description": "机房与办公区统一网络维护，VPN 与代码托管间歇性抽风，你一整周都在和网络斗智斗勇。",
+        "type": "unlucky",
+        "effect": "internet_maintenance"
+    },
+    {
+        "id": "health_burnout_break",
+        "title": "职业倦怠预警",
+        "description": "连续高压加班让你出现明显倦怠迹象，HR 和直属 leader 联合要求你强制休整一段时间。",
+        "type": "health",
+        "min_week": 16,
+        "max_mood": 40,
+        "max_energy": 50,
+        "effect": "burnout_break"
+    }
+]

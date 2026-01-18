@@ -1,0 +1,32 @@
+# macOS
+.DS_Store
+
+# Node / Vite
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Env / Keys (do not commit secrets)
+.env
+.env.*
+
+# IDE
+.idea/
+.vscode/
+
+# Misc
+.coverage
+.pytest_cache/
+

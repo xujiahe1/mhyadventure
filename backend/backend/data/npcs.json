@@ -1,4 +1,114 @@
 {
+  "Cai": {
+    "id": "Cai",
+    "name": "Cai (蔡总)",
+    "role": "CTO",
+    "traits": "技术宅神, 直率严厉",
+    "project": "Infra",
+    "trust": 50,
+    "level": "P8",
+    "status": "在职",
+    "mood": 80
+  },
+  "Dawei": {
+    "id": "Dawei",
+    "name": "Dawei (大伟哥)",
+    "role": "总裁",
+    "traits": "亲民, 关注体验",
+    "project": "General",
+    "trust": 60,
+    "level": "P9",
+    "status": "在职",
+    "mood": 80
+  },
+  "Luo": {
+    "id": "Luo",
+    "name": "Luo (罗总)",
+    "role": "联合创始人",
+    "traits": "低调, 务实",
+    "project": "General",
+    "trust": 50,
+    "level": "P8",
+    "status": "在职",
+    "mood": 80
+  },
+  "Shao": {
+    "id": "Shao",
+    "name": "Shao (烧鸡)",
+    "role": "编剧",
+    "traits": "文青, 刀子手",
+    "project": "Honkai3",
+    "trust": 50,
+    "level": "P7",
+    "status": "在职",
+    "mood": 80
+  },
+  "Chep": {
+    "id": "Chep",
+    "name": "Chep",
+    "role": "美术总监",
+    "traits": "强迫症, 唯美",
+    "project": "General",
+    "trust": 50,
+    "level": "P7",
+    "status": "在职",
+    "mood": 80
+  },
+  "Z": {
+    "id": "Z",
+    "name": "Z",
+    "role": "音乐总监",
+    "traits": "随性, 灵感",
+    "project": "General",
+    "trust": 50,
+    "level": "P7",
+    "status": "在职",
+    "mood": 80
+  },
+  "CiCi": {
+    "id": "CiCi",
+    "name": "CiCi (HRBP)",
+    "role": "HR负责人",
+    "traits": "知性, 关怀",
+    "project": "HR",
+    "trust": 50,
+    "level": "P7",
+    "status": "在职",
+    "mood": 80
+  },
+  "Aquila": {
+    "id": "Aquila",
+    "name": "Aquila",
+    "role": "基础设施负责人",
+    "traits": "稳重, 可靠",
+    "project": "Infra",
+    "trust": 50,
+    "level": "P7",
+    "status": "在职",
+    "mood": 80
+  },
+  "Fish": {
+    "id": "Fish",
+    "name": "Fish",
+    "role": "市场负责人",
+    "traits": "活跃, 整活",
+    "project": "Marketing",
+    "trust": 50,
+    "level": "P7",
+    "status": "在职",
+    "mood": 80
+  },
+  "AI-Chan": {
+    "id": "AI-Chan",
+    "name": "爱酱",
+    "role": "系统看板娘",
+    "traits": "打破第四面墙, 引导",
+    "project": "System",
+    "trust": 100,
+    "level": "P10",
+    "status": "在职",
+    "mood": 80
+  },
   "NPC_0001": {
     "id": "NPC_0001",
     "name": "林晨（研发）",
