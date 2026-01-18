@@ -1,6 +1,6 @@
 {
-  "Cai": {
-    "id": "Cai",
+  "NPC_0201": {
+    "id": "NPC_0201",
     "name": "蔡",
     "role": "CTO",
     "traits": "技术宅神, 直率严厉",
@@ -11,8 +11,8 @@
     "mood": 80,
     "relations": {}
   },
-  "Dawei": {
-    "id": "Dawei",
+  "NPC_0202": {
+    "id": "NPC_0202",
     "name": "大伟",
     "role": "总裁",
     "traits": "亲民, 关注体验",
@@ -23,8 +23,8 @@
     "mood": 80,
     "relations": {}
   },
-  "Luo": {
-    "id": "Luo",
+  "NPC_0203": {
+    "id": "NPC_0203",
     "name": "罗衡",
     "role": "联合创始人",
     "traits": "低调, 务实",
@@ -1029,7 +1029,7 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "manager_id": "Cai",
+    "manager_id": "NPC_0201",
     "relations": {
       "NPC_0081": "上级"
     }
@@ -1044,7 +1044,7 @@
     "mood": 79,
     "level": "P6",
     "status": "在职",
-    "manager_id": "Cai",
+    "manager_id": "NPC_0201",
     "relations": {
       "NPC_0082": "合作",
       "NPC_0081": "上级"
@@ -1060,7 +1060,7 @@
     "mood": 85,
     "level": "P6",
     "status": "在职",
-    "manager_id": "Cai",
+    "manager_id": "NPC_0201",
     "relations": {
       "NPC_0085": "合作",
       "NPC_0081": "上级"
@@ -1076,7 +1076,7 @@
     "mood": 77,
     "level": "P6",
     "status": "在职",
-    "manager_id": "Cai",
+    "manager_id": "NPC_0201",
     "relations": {
       "NPC_0084": "合作",
       "NPC_0081": "上级"
@@ -1092,7 +1092,7 @@
     "mood": 79,
     "level": "P6",
     "status": "在职",
-    "manager_id": "Cai",
+    "manager_id": "NPC_0201",
     "relations": {
       "NPC_0084": "合作",
       "NPC_0081": "上级"
@@ -1108,7 +1108,7 @@
     "mood": 74,
     "level": "P7",
     "status": "在职",
-    "manager_id": "Cai",
+    "manager_id": "NPC_0201",
     "relations": {
       "NPC_0083": "合作",
       "NPC_0081": "上级"
@@ -1124,7 +1124,7 @@
     "mood": 72,
     "level": "P5",
     "status": "在职",
-    "manager_id": "Cai",
+    "manager_id": "NPC_0201",
     "relations": {
       "NPC_0082": "合作",
       "NPC_0090": "对立",
@@ -1147,7 +1147,7 @@
   },
   "NPC_0090": {
     "id": "NPC_0090",
-    "name": "顾衡",
+    "name": "顾景",
     "role": "QA",
     "traits": "边界用例专家，追踪缺陷到根因",
     "project": "Genshin",
@@ -1305,7 +1305,7 @@
     "mood": 76,
     "level": "P6",
     "status": "在职",
-    "manager_id": "Dawei",
+    "manager_id": "NPC_0202",
     "relations": {
       "NPC_0101": "上级"
     }
@@ -1320,7 +1320,7 @@
     "mood": 74,
     "level": "P6",
     "status": "在职",
-    "manager_id": "Dawei",
+    "manager_id": "NPC_0202",
     "relations": {
       "NPC_0102": "合作"
     }
@@ -1464,7 +1464,7 @@
   },
   "NPC_0115": {
     "id": "NPC_0115",
-    "name": "顾砚",
+    "name": "顾槐",
     "role": "Designer",
     "traits": "玩法设计，偏挑战模式",
     "project": "Honkai3",
@@ -1476,7 +1476,7 @@
   },
   "NPC_0116": {
     "id": "NPC_0116",
-    "name": "白舟",
+    "name": "白渝",
     "role": "Art",
     "traits": "角色主美，注重风格统一",
     "project": "Honkai3",
@@ -1488,7 +1488,7 @@
   },
   "NPC_0117": {
     "id": "NPC_0117",
-    "name": "林深",
+    "name": "林景",
     "role": "Audio",
     "traits": "BGM 编曲，强调战斗节奏",
     "project": "Honkai3",
@@ -1500,7 +1500,7 @@
   },
   "NPC_0118": {
     "id": "NPC_0118",
-    "name": "言至",
+    "name": "言澈",
     "role": "Data",
     "traits": "长期数据观察与分析",
     "project": "Honkai3",
@@ -1512,7 +1512,7 @@
   },
   "NPC_0119": {
     "id": "NPC_0119",
-    "name": "顾晏",
+    "name": "顾恺",
     "role": "Ops",
     "traits": "版本统筹，擅长排期管理",
     "project": "Honkai3",
@@ -1524,7 +1524,7 @@
   },
   "NPC_0120": {
     "id": "NPC_0120",
-    "name": "唐苏",
+    "name": "唐翊",
     "role": "QA",
     "traits": "自动化测试，覆盖严密",
     "project": "Honkai3",
@@ -1556,7 +1556,7 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "manager_id": "Dawei",
+    "manager_id": "NPC_0202",
     "relations": {}
   },
   "NPC_0123": {
@@ -1575,7 +1575,7 @@
   },
   "NPC_0124": {
     "id": "NPC_0124",
-    "name": "白屿",
+    "name": "白槐",
     "role": "Art",
     "traits": "场景视觉，偏蒸汽未来风",
     "project": "HSR",
@@ -1611,7 +1611,7 @@
   },
   "NPC_0127": {
     "id": "NPC_0127",
-    "name": "唐衡",
+    "name": "唐澈",
     "role": "Data",
     "traits": "看长线趋势，逻辑严谨",
     "project": "HSR",
@@ -1649,7 +1649,7 @@
   },
   "NPC_0130": {
     "id": "NPC_0130",
-    "name": "顾衡",
+    "name": "顾祎",
     "role": "QA",
     "traits": "压力测试与边界用例",
     "project": "HSR",
@@ -1661,7 +1661,7 @@
   },
   "NPC_0131": {
     "id": "NPC_0131",
-    "name": "白行",
+    "name": "白琪",
     "role": "Community",
     "traits": "玩家社群维护，风向把控",
     "project": "HSR",
@@ -1673,7 +1673,7 @@
   },
   "NPC_0132": {
     "id": "NPC_0132",
-    "name": "沈砥",
+    "name": "沈苏",
     "role": "Product",
     "traits": "活动与数值体验均衡",
     "project": "HSR",
@@ -1709,7 +1709,7 @@
   },
   "NPC_0135": {
     "id": "NPC_0135",
-    "name": "顾砚",
+    "name": "顾泽",
     "role": "Designer",
     "traits": "玩法设计，偏挑战模式",
     "project": "HSR",
@@ -1721,7 +1721,7 @@
   },
   "NPC_0136": {
     "id": "NPC_0136",
-    "name": "白舟",
+    "name": "白澈",
     "role": "Art",
     "traits": "角色主美，注重风格统一",
     "project": "HSR",
@@ -1733,7 +1733,7 @@
   },
   "NPC_0137": {
     "id": "NPC_0137",
-    "name": "林深",
+    "name": "林恺",
     "role": "Audio",
     "traits": "BGM 编曲，强调节奏",
     "project": "HSR",
@@ -1745,7 +1745,7 @@
   },
   "NPC_0138": {
     "id": "NPC_0138",
-    "name": "言至",
+    "name": "言澄",
     "role": "Data",
     "traits": "长期数据观察与分析",
     "project": "HSR",
@@ -1757,7 +1757,7 @@
   },
   "NPC_0139": {
     "id": "NPC_0139",
-    "name": "顾晏",
+    "name": "顾屿",
     "role": "Ops",
     "traits": "版本统筹，擅长排期管理",
     "project": "HSR",
@@ -1769,7 +1769,7 @@
   },
   "NPC_0140": {
     "id": "NPC_0140",
-    "name": "唐苏",
+    "name": "唐琪",
     "role": "QA",
     "traits": "自动化测试，覆盖严密",
     "project": "HSR",
@@ -1801,7 +1801,7 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "manager_id": "Dawei",
+    "manager_id": "NPC_0202",
     "relations": {}
   },
   "NPC_0143": {
@@ -1894,7 +1894,7 @@
   },
   "NPC_0150": {
     "id": "NPC_0150",
-    "name": "唐衡",
+    "name": "唐渊",
     "role": "QA",
     "traits": "自动化测试与边界覆盖",
     "project": "ZZZ",
@@ -1906,7 +1906,7 @@
   },
   "NPC_0151": {
     "id": "NPC_0151",
-    "name": "陆苒",
+    "name": "陆槐",
     "role": "Community",
     "traits": "潮流元素敏感，社群运营",
     "project": "ZZZ",
@@ -1918,7 +1918,7 @@
   },
   "NPC_0152": {
     "id": "NPC_0152",
-    "name": "闻笛",
+    "name": "闻渝",
     "role": "Product",
     "traits": "数值体验兼顾，节奏把控",
     "project": "ZZZ",
@@ -1930,7 +1930,7 @@
   },
   "NPC_0153": {
     "id": "NPC_0153",
-    "name": "辛予",
+    "name": "辛景",
     "role": "Ops",
     "traits": "宣发与整活，脑洞多",
     "project": "ZZZ",
@@ -1942,7 +1942,7 @@
   },
   "NPC_0154": {
     "id": "NPC_0154",
-    "name": "顾砚",
+    "name": "顾澈",
     "role": "Designer",
     "traits": "玩法设计，偏挑战模式",
     "project": "ZZZ",
@@ -1954,7 +1954,7 @@
   },
   "NPC_0155": {
     "id": "NPC_0155",
-    "name": "尹舟",
+    "name": "尹恺",
     "role": "Art",
     "traits": "城市主美，风格统一",
     "project": "ZZZ",
@@ -1966,7 +1966,7 @@
   },
   "NPC_0156": {
     "id": "NPC_0156",
-    "name": "南珩",
+    "name": "南澄",
     "role": "Animator",
     "traits": "动作节奏营造出色",
     "project": "ZZZ",
@@ -1978,7 +1978,7 @@
   },
   "NPC_0157": {
     "id": "NPC_0157",
-    "name": "时砚",
+    "name": "时渊",
     "role": "Audio",
     "traits": "音效与BGM混音",
     "project": "ZZZ",
@@ -1990,7 +1990,7 @@
   },
   "NPC_0158": {
     "id": "NPC_0158",
-    "name": "顾潇",
+    "name": "顾湛",
     "role": "Data",
     "traits": "预研指标观察与分析",
     "project": "ZZZ",
@@ -2002,7 +2002,7 @@
   },
   "NPC_0159": {
     "id": "NPC_0159",
-    "name": "顾晏",
+    "name": "顾沁",
     "role": "Ops",
     "traits": "版本统筹与排期管理",
     "project": "ZZZ",
@@ -2014,7 +2014,7 @@
   },
   "NPC_0160": {
     "id": "NPC_0160",
-    "name": "唐苏",
+    "name": "唐槐",
     "role": "QA",
     "traits": "自动化测试覆盖严密",
     "project": "ZZZ",
@@ -2046,7 +2046,7 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "manager_id": "Luo",
+    "manager_id": "NPC_0203",
     "relations": {}
   },
   "NPC_0163": {
@@ -2065,7 +2065,7 @@
   },
   "NPC_0164": {
     "id": "NPC_0164",
-    "name": "白屿",
+    "name": "白恺",
     "role": "Art",
     "traits": "探索新IP视觉方向",
     "project": "HYG",
@@ -2077,7 +2077,7 @@
   },
   "NPC_0165": {
     "id": "NPC_0165",
-    "name": "程砚",
+    "name": "程澄",
     "role": "Animator",
     "traits": "动作节奏探索者",
     "project": "HYG",
@@ -2089,7 +2089,7 @@
   },
   "NPC_0166": {
     "id": "NPC_0166",
-    "name": "沈音",
+    "name": "沈渊",
     "role": "Audio",
     "traits": "实验性BGM与环境音",
     "project": "HYG",
@@ -2101,7 +2101,7 @@
   },
   "NPC_0167": {
     "id": "NPC_0167",
-    "name": "唐衡",
+    "name": "唐湛",
     "role": "Data",
     "traits": "记录每次测试结果，严谨复盘",
     "project": "HYG",
@@ -2113,7 +2113,7 @@
   },
   "NPC_0168": {
     "id": "NPC_0168",
-    "name": "洛行",
+    "name": "洛沁",
     "role": "Dev",
     "traits": "工具链与自动化建设",
     "project": "HYG",
@@ -2127,7 +2127,7 @@
   },
   "NPC_0169": {
     "id": "NPC_0169",
-    "name": "言澜",
+    "name": "言曜",
     "role": "Ops",
     "traits": "统筹排期，跨部门协调",
     "project": "HYG",
@@ -2139,7 +2139,7 @@
   },
   "NPC_0170": {
     "id": "NPC_0170",
-    "name": "顾衡",
+    "name": "顾渝",
     "role": "QA",
     "traits": "压力测试与边界场景",
     "project": "HYG",
@@ -2151,7 +2151,7 @@
   },
   "NPC_0171": {
     "id": "NPC_0171",
-    "name": "白行",
+    "name": "白景",
     "role": "Community",
     "traits": "维护核心玩家与测试招募",
     "project": "HYG",
@@ -2163,7 +2163,7 @@
   },
   "NPC_0172": {
     "id": "NPC_0172",
-    "name": "沈砥",
+    "name": "沈澈",
     "role": "Product",
     "traits": "体验与数值均衡",
     "project": "HYG",
@@ -2175,7 +2175,7 @@
   },
   "NPC_0173": {
     "id": "NPC_0173",
-    "name": "唐槿",
+    "name": "唐恺",
     "role": "Dev",
     "traits": "服务端验证模块，代码严谨",
     "project": "HYG",
@@ -2187,7 +2187,7 @@
   },
   "NPC_0174": {
     "id": "NPC_0174",
-    "name": "言栎",
+    "name": "言砚",
     "role": "Dev",
     "traits": "客户端原型优化",
     "project": "HYG",
@@ -2199,7 +2199,7 @@
   },
   "NPC_0175": {
     "id": "NPC_0175",
-    "name": "顾砚",
+    "name": "顾渊",
     "role": "Designer",
     "traits": "新玩法设计与迭代",
     "project": "HYG",
@@ -2211,7 +2211,7 @@
   },
   "NPC_0176": {
     "id": "NPC_0176",
-    "name": "白舟",
+    "name": "白湛",
     "role": "Art",
     "traits": "新IP角色主美",
     "project": "HYG",
@@ -2223,7 +2223,7 @@
   },
   "NPC_0177": {
     "id": "NPC_0177",
-    "name": "林深",
+    "name": "林沁",
     "role": "Audio",
     "traits": "实验性BGM作曲",
     "project": "HYG",
@@ -2235,7 +2235,7 @@
   },
   "NPC_0178": {
     "id": "NPC_0178",
-    "name": "言至",
+    "name": "言泽",
     "role": "Data",
     "traits": "预研数据分析与复盘",
     "project": "HYG",
@@ -2247,7 +2247,7 @@
   },
   "NPC_0179": {
     "id": "NPC_0179",
-    "name": "顾晏",
+    "name": "顾珺",
     "role": "Ops",
     "traits": "版本统筹与排期管理",
     "project": "HYG",
@@ -2259,7 +2259,7 @@
   },
   "NPC_0180": {
     "id": "NPC_0180",
-    "name": "唐苏",
+    "name": "唐景",
     "role": "QA",
     "traits": "自动化测试覆盖严密",
     "project": "HYG",
@@ -2283,7 +2283,7 @@
   },
   "NPC_0182": {
     "id": "NPC_0182",
-    "name": "陆然",
+    "name": "陆恺",
     "role": "Dev",
     "traits": "安全方向研发，权限模型敏感",
     "project": "IAM",
@@ -2296,7 +2296,7 @@
   },
   "NPC_0183": {
     "id": "NPC_0183",
-    "name": "夏葵",
+    "name": "夏澄",
     "role": "Product",
     "traits": "流程图达人，用数据说服研发",
     "project": "IAM",
@@ -2310,7 +2310,7 @@
   },
   "NPC_0184": {
     "id": "NPC_0184",
-    "name": "杜衡",
+    "name": "杜渊",
     "role": "Product",
     "traits": "竞品分析能手，文档控",
     "project": "IAM",
@@ -2323,7 +2323,7 @@
   },
   "NPC_0185": {
     "id": "NPC_0185",
-    "name": "秦雯",
+    "name": "秦湛",
     "role": "Ops",
     "traits": "推广与培训，组织分享会",
     "project": "IAM",
@@ -2335,7 +2335,7 @@
   },
   "NPC_0186": {
     "id": "NPC_0186",
-    "name": "霍清",
+    "name": "霍沁",
     "role": "Dev",
     "traits": "代码洁癖，评审细节控",
     "project": "IAM",
@@ -2347,7 +2347,7 @@
   },
   "NPC_0187": {
     "id": "NPC_0187",
-    "name": "黎书",
+    "name": "黎泽",
     "role": "QA",
     "traits": "边界场景用例专家",
     "project": "IAM",
@@ -2359,7 +2359,7 @@
   },
   "NPC_0188": {
     "id": "NPC_0188",
-    "name": "程意",
+    "name": "程言",
     "role": "SRE",
     "traits": "值班常客，告警阈值敏感",
     "project": "IAM",
@@ -2371,7 +2371,7 @@
   },
   "NPC_0189": {
     "id": "NPC_0189",
-    "name": "姚晗",
+    "name": "姚衡",
     "role": "Architect",
     "traits": "架构演进，稳定优先",
     "project": "IAM",
@@ -2383,7 +2383,7 @@
   },
   "NPC_0190": {
     "id": "NPC_0190",
-    "name": "柏岚",
+    "name": "柏澈",
     "role": "Data",
     "traits": "指标看板，图表讲故事",
     "project": "IAM",
@@ -2395,7 +2395,7 @@
   },
   "NPC_0191": {
     "id": "NPC_0191",
-    "name": "简洵",
+    "name": "简恺",
     "role": "Audio",
     "traits": "系统提示音与BGM方案",
     "project": "IAM",
@@ -2407,7 +2407,7 @@
   },
   "NPC_0192": {
     "id": "NPC_0192",
-    "name": "宁砚",
+    "name": "宁澄",
     "role": "Animator",
     "traits": "系统交互动效与反馈",
     "project": "IAM",
@@ -2419,7 +2419,7 @@
   },
   "NPC_0193": {
     "id": "NPC_0193",
-    "name": "池望",
+    "name": "池渊",
     "role": "Art",
     "traits": "系统视觉设计与规范",
     "project": "IAM",
@@ -2431,7 +2431,7 @@
   },
   "NPC_0194": {
     "id": "NPC_0194",
-    "name": "顾砚",
+    "name": "顾澜",
     "role": "Designer",
     "traits": "流程设计与权限体验",
     "project": "IAM",
@@ -2443,7 +2443,7 @@
   },
   "NPC_0195": {
     "id": "NPC_0195",
-    "name": "言初",
+    "name": "言沁",
     "role": "Product",
     "traits": "策略型，善于跨团队对齐",
     "project": "IAM",
@@ -2455,7 +2455,7 @@
   },
   "NPC_0196": {
     "id": "NPC_0196",
-    "name": "白砾",
+    "name": "白泽",
     "role": "Ops",
     "traits": "推广节奏把控能力强",
     "project": "IAM",
@@ -2467,7 +2467,7 @@
   },
   "NPC_0197": {
     "id": "NPC_0197",
-    "name": "顾歆",
+    "name": "顾言",
     "role": "Designer",
     "traits": "数值策略与权限模型",
     "project": "IAM",
@@ -2479,7 +2479,7 @@
   },
   "NPC_0198": {
     "id": "NPC_0198",
-    "name": "周砺",
+    "name": "周衡",
     "role": "Dev",
     "traits": "接口安全与性能优化",
     "project": "IAM",
@@ -2491,7 +2491,7 @@
   },
   "NPC_0199": {
     "id": "NPC_0199",
-    "name": "宋槿",
+    "name": "宋砚",
     "role": "Product",
     "traits": "用户体验把控与数据导向",
     "project": "IAM",

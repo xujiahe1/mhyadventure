@@ -797,6 +797,29 @@ class GameManager:
         except Exception:
             return 5
 
+    def _is_executive(self, npc) -> bool:
+        level_num = self._parse_level(getattr(npc, "level", "P5"))
+        role_text = str(getattr(npc, "role", "") or "")
+        name_text = str(getattr(npc, "name", "") or "")
+        traits_text = str(getattr(npc, "traits", "") or "")
+        keywords = ["总裁", "CTO", "创始人", "负责人", "Head"]
+        has_keyword = any(k in role_text or k in name_text or k in traits_text for k in keywords)
+        return level_num >= 9 or has_keyword
+
+    def _get_top_executives_ids(self) -> list:
+        exec_ids = [
+            nid for nid, npc in self.state.npcs.items()
+            if getattr(npc, "status", "在职") == "在职" and self._is_executive(npc)
+        ]
+        exec_ids.sort(
+            key=lambda nid: (
+                self._parse_level(self.state.npcs[nid].level),
+                getattr(self.state.npcs[nid], "trust", 0)
+            ),
+            reverse=True
+        )
+        return exec_ids[:5]
+
     async def _safe_call(self, coro):
         try:
             await coro
@@ -1540,15 +1563,7 @@ class GameManager:
         if candidates:
             candidates.sort(reverse=True)
             return candidates[0][1]
-        project_to_leader = {
-            "IAM": "Aquila",
-            "Honkai3": "Shao",
-            "Genshin": "Cai",
-            "HSR": "Dawei",
-            "ZZZ": "Dawei",
-            "HYG": "Luo",
-        }
-        return project_to_leader.get(project, "Dawei")
+        return None
 
     def _determine_direct_manager(self, project: str) -> str:
         player = self.state.player
@@ -1886,7 +1901,7 @@ class GameManager:
                             val = int(line.split(":")[1].strip())
                             npc = self.state.npcs[active_npc_id]
                             npc.trust = max(0, min(100, npc.trust + val))
-                            if npc.id in ["Cai", "Dawei", "Luo"]:
+                            if self._is_executive(npc):
                                 player.political_capital = max(0, player.political_capital + max(0, int(val / 2)))
                     return json.dumps({"type": "state_update", "state": self.state.dict()})
                 return None
@@ -2435,7 +2450,7 @@ class GameManager:
                 if channel and channel != "group" and channel == target.id:
                     trust_gain = min(18, int(trust_gain * 1.2))
                 target.trust = max(0, min(100, target.trust + trust_gain))
-                if target.id in ["Cai", "Dawei", "Luo"]:
+                if self._is_executive(target):
                     player.political_capital = max(0, player.political_capital + max(1, int(math.ceil(trust_gain / 3))))
                 purchases[key] = purchases.get(key, 0) + 1
                 return f"你在米购买了限量手办送给 {target.name}。Money -{cost}, Trust +{trust_gain}"
@@ -2584,7 +2599,7 @@ class GameManager:
         elif cmd == "report":
             narrative = self._apply_effects("WORK", 1.0, "", channel=channel)
         elif cmd == "msg_boss":
-            narrative = self._apply_effects("SOCIAL", 1.0, "", channel=channel)
+            narrative = self._apply_manage_up(channel)
         elif cmd == "buy_gift":
             narrative = self._apply_shop_item("gift", channel)
         elif cmd == "buy_gpu":
@@ -2735,6 +2750,32 @@ class GameManager:
                 })
         return self.state
 
+    def _apply_manage_up(self, channel: str) -> str:
+        player = self.state.player
+        if not player:
+            return ""
+        # 消耗精力
+        player.energy = max(0, player.energy - 8)
+        exec_ids = self._get_top_executives_ids()
+        target_id = None
+        # Prefer current project's leader if they are executive
+        leader_id = self._determine_project_leader(player.current_project) if player.current_project else None
+        leader = self.state.npcs.get(leader_id) if leader_id else None
+        if leader and self._is_executive(leader):
+            target_id = leader_id
+        elif exec_ids:
+            target_id = exec_ids[0]
+        if not target_id:
+            return "你尝试向上管理，但当前没有明确的大佬可以沟通。"
+        boss = self.state.npcs.get(target_id)
+        if not boss or getattr(boss, "status", "在职") != "在职":
+            return "你尝试向上管理，但大佬当前不在线。"
+        trust_gain = max(3, min(10, int(3 + player.soft_skill / 25)))
+        pc_gain = max(1, int(math.ceil(trust_gain / 3)))
+        boss.trust = max(0, min(100, boss.trust + trust_gain))
+        player.political_capital = max(0, player.political_capital + pc_gain)
+        return f"你进行了向上管理，与 {boss.name} 沟通顺畅。{boss.name} 的信任 +{trust_gain}，你的政治资本 +{pc_gain}。精力 -8。"
+
     def _apply_effects(self, intent: str, magnitude: float, text: str = "", channel: str = "group") -> str:
         player = self.state.player
         narrative = ""
@@ -2852,8 +2893,9 @@ class GameManager:
             narrative = "你点了份外卖。Money -50, Energy +30。"
             
         elif intent == "REFUSE":
-            player.energy = min(player.max_energy, player.energy + 10)
-            narrative = "你选择了摸鱼。Energy +10。"
+            energy_cost = 5
+            player.energy = max(0, player.energy - energy_cost)
+            narrative = f"你选择了摸鱼，刷手机消耗了一些精力。Energy -{energy_cost}。"
             
         elif intent == "LEARN":
             cost = 80
@@ -3122,7 +3164,7 @@ class GameManager:
 
             if player and player.current_project == pid:
                 player.mood = max(0, player.mood - 15)
-                for boss_id in ["Cai", "Dawei", "Luo"]:
+                for boss_id in self._get_top_executives_ids():
                     boss = self.state.npcs.get(boss_id)
                     if boss:
                         boss.trust = max(0, boss.trust - 10)
@@ -3474,7 +3516,7 @@ class GameManager:
         # 3. 社交作死 (Social Suicide)
         # Check Trust of Bosses
         if not self.state.game_over:
-            bosses = [self.state.npcs[nid] for nid in ["Cai", "Dawei", "Luo"] if nid in self.state.npcs]
+            bosses = [self.state.npcs[nid] for nid in self._get_top_executives_ids() if nid in self.state.npcs]
             for boss in bosses:
                 if boss.trust <= 0:
                     reason = "Fired" # Offended big boss

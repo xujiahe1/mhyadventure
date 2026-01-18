@@ -673,11 +673,11 @@ function App() {
   };
 
   const dynamicQuickReplies = gameState?.suggested_replies ? gameState.suggested_replies.slice(0, 2) : [];
-  const fixedQuickReplies = ["爆肝干活", "摸鱼一会", "给大佬发消息", "汇报下进度"];
+  const fixedQuickReplies = ["爆肝干活", "摸鱼一会", "向上管理", "汇报下进度"];
   const fixedQuickReplyCommandMap = {
     "爆肝干活": "work_hard",
     "摸鱼一会": "rest",
-    "给大佬发消息": "msg_boss",
+    "向上管理": "msg_boss",
     "汇报下进度": "report",
   };
   const inputDisabled = gameState.game_over || !!gameState.active_global_event || isTyping;
