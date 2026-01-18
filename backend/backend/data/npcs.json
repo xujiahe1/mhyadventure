@@ -1,7 +1,7 @@
 {
   "Cai": {
     "id": "Cai",
-    "name": "Cai (蔡总)",
+    "name": "蔡",
     "role": "CTO",
     "traits": "技术宅神, 直率严厉",
     "project": "Infra",
@@ -12,7 +12,7 @@
   },
   "Dawei": {
     "id": "Dawei",
-    "name": "Dawei (大伟哥)",
+    "name": "大伟",
     "role": "总裁",
     "traits": "亲民, 关注体验",
     "project": "General",
@@ -23,7 +23,7 @@
   },
   "Luo": {
     "id": "Luo",
-    "name": "Luo (罗总)",
+    "name": "罗衡",
     "role": "联合创始人",
     "traits": "低调, 务实",
     "project": "General",
@@ -253,7 +253,7 @@
   },
   "NPC_0013": {
     "id": "NPC_0013",
-    "name": "顾衡 (负责人)",
+    "name": "顾衡",
     "role": "Lead",
     "traits": "IAM 项目负责人，喜欢PUA和打压下属，个人能力一般，略偏向研发侧，是程屿和唐蔷的直接上级",
     "project": "IAM",
@@ -261,6 +261,7 @@
     "mood": 70,
     "level": "P8",
     "status": "在职",
+    "manager_id": "Aquila",
     "relations": {
       "NPC_0011": "下属",
       "NPC_0012": "下属"
@@ -948,7 +949,7 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "manager_id": "GSN_0101",
+    "manager_id": "Cai",
     "relations": { "GSN_0101": "上级" }
   },
   "GSN_0103": {
@@ -961,7 +962,7 @@
     "mood": 79,
     "level": "P6",
     "status": "在职",
-    "manager_id": "GSN_0101",
+    "manager_id": "Cai",
     "relations": { "GSN_0102": "合作", "GSN_0101": "上级" }
   },
   "GSN_0104": {
@@ -974,7 +975,7 @@
     "mood": 85,
     "level": "P6",
     "status": "在职",
-    "manager_id": "GSN_0101",
+    "manager_id": "Cai",
     "relations": { "GSN_0105": "合作", "GSN_0101": "上级" }
   },
   "GSN_0105": {
@@ -987,7 +988,7 @@
     "mood": 77,
     "level": "P6",
     "status": "在职",
-    "manager_id": "GSN_0101",
+    "manager_id": "Cai",
     "relations": { "GSN_0104": "合作", "GSN_0101": "上级" }
   },
   "GSN_0106": {
@@ -1000,7 +1001,7 @@
     "mood": 79,
     "level": "P6",
     "status": "在职",
-    "manager_id": "GSN_0101",
+    "manager_id": "Cai",
     "relations": { "GSN_0104": "合作", "GSN_0101": "上级" }
   },
   "GSN_0107": {
@@ -1013,7 +1014,7 @@
     "mood": 74,
     "level": "P7",
     "status": "在职",
-    "manager_id": "GSN_0101",
+    "manager_id": "Cai",
     "relations": { "GSN_0103": "合作", "GSN_0101": "上级" }
   },
   "GSN_0108": {
@@ -1026,7 +1027,7 @@
     "mood": 72,
     "level": "P5",
     "status": "在职",
-    "manager_id": "GSN_0101",
+    "manager_id": "Cai",
     "relations": { "GSN_0102": "合作", "GSN_0110": "对立", "GSN_0101": "上级" }
   },
   "GSN_0109": {
@@ -1187,7 +1188,7 @@
     "mood": 76,
     "level": "P6",
     "status": "在职",
-    "manager_id": "HK3_0201",
+    "manager_id": "Dawei",
     "relations": { "HK3_0201": "上级" }
   },
   "HK3_0203": {
@@ -1200,7 +1201,7 @@
     "mood": 74,
     "level": "P6",
     "status": "在职",
-    "manager_id": "HK3_0201",
+    "manager_id": "Dawei",
     "relations": { "HK3_0202": "合作" }
   },
   "HK3_0204": {
@@ -1415,7 +1416,7 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "manager_id": "HSR_0301"
+    "manager_id": "Dawei"
   },
   "HSR_0303": {
     "id": "HSR_0303",
@@ -1639,7 +1640,7 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "manager_id": "ZZZ_0401"
+    "manager_id": "Dawei"
   },
   "ZZZ_0403": {
     "id": "ZZZ_0403",
@@ -1863,7 +1864,7 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "manager_id": "HYG_0501"
+    "manager_id": "Luo"
   },
   "HYG_0503": {
     "id": "HYG_0503",
@@ -2087,7 +2088,7 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "manager_id": "IAM_0601"
+    "manager_id": "Aquila"
   },
   "IAM_0603": {
     "id": "IAM_0603",
@@ -2111,7 +2112,7 @@
     "mood": 74,
     "level": "P5",
     "status": "在职",
-    "manager_id": "IAM_0601"
+    "manager_id": "Aquila"
   },
   "IAM_0605": {
     "id": "IAM_0605",
