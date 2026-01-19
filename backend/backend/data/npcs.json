@@ -85,15 +85,16 @@
   },
   "NPC_0078": {
     "id": "NPC_0078",
-    "name": "Aquila",
-    "role": "基础设施负责人",
-    "traits": "稳重, 可靠",
-    "project": "Infra",
-    "trust": 50,
+    "name": "王减向",
+    "role": "IAM 项目负责人",
+    "traits": "IAM 项目负责人，喜欢PUA和打压下属，个人能力一般，略偏向研发侧，是程屿和唐蔷的直接上级",
+    "project": "IAM",
+    "trust": 55,
     "level": "P7",
     "status": "在职",
     "mood": 80,
-    "relations": {}
+    "relations": {      "NPC_0011": "下属",
+      "NPC_0012": "下属"}
   },
   "NPC_0079": {
     "id": "NPC_0079",
@@ -153,7 +154,12 @@
     "mood": 70,
     "level": "P5",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0013": "合作",
+      "NPC_0018": "合作",
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0004": {
     "id": "NPC_0004",
@@ -249,10 +255,13 @@
     "mood": 72,
     "level": "P7",
     "status": "在职",
-    "manager_id": "NPC_0013",
+    "manager_id": "NPC_0078",
     "relations": {
       "NPC_0012": "对立",
-      "NPC_0013": "上级"
+      "NPC_0078": "上级",
+      "NPC_0012": "对立",
+      "NPC_0018": "对立",
+      "NPC_0020": "对立"
     }
   },
   "NPC_0012": {
@@ -265,147 +274,210 @@
     "mood": 74,
     "level": "P6",
     "status": "在职",
-    "manager_id": "NPC_0013",
+    "manager_id": "NPC_0078",
     "relations": {
       "NPC_0011": "对立",
-      "NPC_0013": "上级"
+      "NPC_0078": "上级",
+      "NPC_0021": "对立",
+      "NPC_0018": "对立",
+      "NPC_0020": "对立"
     }
   },
   "NPC_0013": {
     "id": "NPC_0013",
     "name": "顾衡",
-    "role": "Lead",
-    "traits": "IAM 项目负责人，喜欢PUA和打压下属，个人能力一般，略偏向研发侧，是程屿和唐蔷的直接上级",
+    "role": "Dev",
+    "traits": "老黄牛任劳任怨，即将被裁员",
     "project": "IAM",
     "trust": 50,
     "mood": 70,
-    "level": "P8",
+    "level": "P7",
     "status": "在职",
     "manager_id": "NPC_0078",
     "relations": {
-      "NPC_0011": "下属",
-      "NPC_0012": "下属"
+      "NPC_0003": "合作",
+      "NPC_0023": "合作",
+      "NPC_0078": "上级"
     }
   },
   "NPC_0014": {
     "id": "NPC_0014",
-    "name": "沈瑜",
+    "name": "游显大鹏",
     "role": "Dev",
-    "traits": "基础设施老兵，擅长排查疑难故障",
+    "traits": "基础设施老兵，擅长排查疑难故障，两分钟搞定一切事情",
     "project": "IAM",
     "trust": 62,
     "mood": 76,
-    "level": "P6",
+    "level": "P7",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0021": "合作",
+      "NPC_0020": "合作",
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0015": {
     "id": "NPC_0015",
-    "name": "陆然",
+    "name": "王林",
     "role": "Dev",
-    "traits": "偏安全方向，对权限模型非常敏感",
+    "traits": "善于阴阳怪气和水群，和胖虎有说不清的关系",
     "project": "IAM",
     "trust": 58,
     "mood": 72,
     "level": "P5",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0017": "合作",
+      "NPC_0019": "合作",
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0016": {
     "id": "NPC_0016",
-    "name": "夏葵",
+    "name": "Tina",
     "role": "Product",
-    "traits": "爱画流程图，习惯用数据说服研发",
+    "traits": "比较顺从他人，口头禅你说得对，我按这个想想",
     "project": "IAM",
     "trust": 57,
     "mood": 78,
     "level": "P6",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0022": "合作",
+      "NPC_0018": "合作",
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0017": {
     "id": "NPC_0017",
-    "name": "杜衡",
+    "name": "减骏",
     "role": "Product",
-    "traits": "喜欢做竞品分析，擅长写长文档",
+    "traits": "校招生，头脑不是很清楚",
     "project": "IAM",
     "trust": 55,
     "mood": 69,
     "level": "P5",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0015": "合作",
+      "NPC_0019": "合作",
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0018": {
     "id": "NPC_0018",
-    "name": "秦雯",
+    "name": "嘉西",
     "role": "Ops",
-    "traits": "负责内部推广和培训，经常组织分享会",
+    "traits": "负责邀请制和可见性的运营，夹在产品和开发中间",
     "project": "IAM",
     "trust": 63,
     "mood": 80,
-    "level": "P6",
+    "level": "P7",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0003": "合作",
+      "NPC_0016": "合作",
+      "NPC_0023": "合作",
+      "NPC_0011": "对立",
+      "NPC_0012": "对立",
+      "NPC_0020": "对立",
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0019": {
     "id": "NPC_0019",
-    "name": "霍清",
+    "name": "宝晨",
     "role": "Dev",
-    "traits": "代码洁癖严重，对评审细节抓得很紧",
+    "traits": "负责前端，经常迟到，经常面露难色",
     "project": "IAM",
     "trust": 54,
     "mood": 68,
     "level": "P7",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0011": "合作",
+      "NPC_0015": "合作",
+      "NPC_0017": "合作",
+      "NPC_0022": "合作",
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0020": {
     "id": "NPC_0020",
-    "name": "黎书",
+    "name": "鹏鹏",
     "role": "QA",
-    "traits": "擅长设计边界场景用例，对线上问题敏感",
+    "traits": "邀请制和可见性的qa测试，经常怼产品和研发",
     "project": "IAM",
     "trust": 59,
     "mood": 77,
-    "level": "P6",
+    "level": "P7",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0011": "对立",
+      "NPC_0012": "对立",
+      "NPC_0013": "对立",
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0021": {
     "id": "NPC_0021",
-    "name": "程意",
-    "role": "SRE",
-    "traits": "值班常客，对告警阈值非常在意",
+    "name": "小节",
+    "role": "QA",
+    "traits": "资深二次元，喜欢完米哈游的游戏",
     "project": "IAM",
     "trust": 61,
     "mood": 73,
     "level": "P6",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0016": "合作",
+      "NPC_0019": "合作",
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0022": {
     "id": "NPC_0022",
-    "name": "姚晗",
-    "role": "Architect",
-    "traits": "负责IAM整体架构演进，偏好稳定优先",
+    "name": "悟总",
+    "role": "Dev",
+    "traits": "负责IAM整体重构，任劳任怨",
     "project": "IAM",
     "trust": 56,
     "mood": 71,
-    "level": "P8",
+    "level": "P7",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0016": "合作",
+      "NPC_0019": "合作",
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0023": {
     "id": "NPC_0023",
-    "name": "柏岚",
-    "role": "Data",
-    "traits": "负责系统指标看板，喜欢用图表讲故事",
+    "name": "全老",
+    "role": "Dev",
+    "traits": "IAM小组长，老好人，养了好几只猫",
     "project": "IAM",
     "trust": 60,
     "mood": 74,
-    "level": "P6",
+    "level": "P7",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0013": "合作",
+      "NPC_0018": "合作",
+      "NPC_0020": "合作",
+      "NPC_0021": "合作",
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0024": {
     "id": "NPC_0024",
@@ -2279,7 +2351,10 @@
     "mood": 78,
     "level": "P8",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0182": {
     "id": "NPC_0182",
@@ -2292,7 +2367,9 @@
     "level": "P6",
     "status": "在职",
     "manager_id": "NPC_0078",
-    "relations": {}
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0183": {
     "id": "NPC_0183",
@@ -2304,8 +2381,10 @@
     "mood": 79,
     "level": "P6",
     "status": "在职",
+    "manager_id": "NPC_0078",
     "relations": {
-      "NPC_0182": "合作"
+      "NPC_0182": "合作",
+      "NPC_0078": "上级"
     }
   },
   "NPC_0184": {
@@ -2319,7 +2398,9 @@
     "level": "P5",
     "status": "在职",
     "manager_id": "NPC_0078",
-    "relations": {}
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0185": {
     "id": "NPC_0185",
@@ -2331,7 +2412,10 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0186": {
     "id": "NPC_0186",
@@ -2343,7 +2427,10 @@
     "mood": 68,
     "level": "P7",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0187": {
     "id": "NPC_0187",
@@ -2355,7 +2442,10 @@
     "mood": 77,
     "level": "P6",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0188": {
     "id": "NPC_0188",
@@ -2367,7 +2457,10 @@
     "mood": 73,
     "level": "P6",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0189": {
     "id": "NPC_0189",
@@ -2379,7 +2472,10 @@
     "mood": 71,
     "level": "P8",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0190": {
     "id": "NPC_0190",
@@ -2391,7 +2487,10 @@
     "mood": 74,
     "level": "P6",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0191": {
     "id": "NPC_0191",
@@ -2403,7 +2502,10 @@
     "mood": 79,
     "level": "P6",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0192": {
     "id": "NPC_0192",
@@ -2415,7 +2517,10 @@
     "mood": 76,
     "level": "P5",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0193": {
     "id": "NPC_0193",
@@ -2427,7 +2532,10 @@
     "mood": 85,
     "level": "P6",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0194": {
     "id": "NPC_0194",
@@ -2439,7 +2547,10 @@
     "mood": 75,
     "level": "P6",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0195": {
     "id": "NPC_0195",
@@ -2451,7 +2562,10 @@
     "mood": 78,
     "level": "P6",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0196": {
     "id": "NPC_0196",
@@ -2463,7 +2577,10 @@
     "mood": 80,
     "level": "P6",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0197": {
     "id": "NPC_0197",
@@ -2475,7 +2592,10 @@
     "mood": 74,
     "level": "P6",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0198": {
     "id": "NPC_0198",
@@ -2487,7 +2607,10 @@
     "mood": 75,
     "level": "P6",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0199": {
     "id": "NPC_0199",
@@ -2499,7 +2622,10 @@
     "mood": 79,
     "level": "P6",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   },
   "NPC_0200": {
     "id": "NPC_0200",
@@ -2511,6 +2637,9 @@
     "mood": 83,
     "level": "P5",
     "status": "在职",
-    "relations": {}
+    "manager_id": "NPC_0078",
+    "relations": {
+      "NPC_0078": "上级"
+    }
   }
 }

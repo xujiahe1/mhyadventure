@@ -12,6 +12,17 @@ const mapRoleToCN = (role) => {
   if (r === "Ops") return "运营";
   if (r === "CTO") return "技术负责人";
   if (r === "CEO") return "总裁";
+  if (r === "Art") return "美术";
+  if (r === "HR") return "人力";
+  if (r === "Brand") return "品牌";
+  if (r === "Community") return "社群运营";
+  if (r === "Data") return "数据";
+  if (r === "Designer") return "策划";
+  if (r === "QA") return "测试";
+  if (r === "Animator") return "动画";
+  if (r === "Audio") return "音频";
+  if (r === "Lead") return "负责人";
+  if (r === "OpsLead") return "运营负责人";
   return r;
 };
 
@@ -324,6 +335,7 @@ function App() {
     if (!npcList || npcList.length === 0) return [];
     const history = gameState?.chat_history || [];
     const lowerQuery = (searchQuery || "").toLowerCase();
+    const playerProjectId = gameState?.player?.current_project;
 
     const withLast = npcList.map(npc => {
       const last = [...history].reverse().find(msg => {
@@ -336,17 +348,26 @@ function App() {
       });
       return {
         ...npc,
+        project: gameState?.npcs?.[npc.id]?.project,
         lastTimestamp: last ? last.timestamp : null,
       };
     });
 
     if (!lowerQuery) {
-      return withLast
-        .filter(n => n.lastTimestamp)
-        .sort((a, b) => {
-          if (!a.lastTimestamp || !b.lastTimestamp) return 0;
-          return new Date(b.lastTimestamp) - new Date(a.lastTimestamp);
-        });
+      const projectNpcIds = new Set(
+        withLast
+          .filter(n => n.project && playerProjectId && n.project === playerProjectId)
+          .map(n => n.id)
+      );
+      const base = withLast.filter(n => n.lastTimestamp || projectNpcIds.has(n.id));
+      const allNoHistory = base.length > 0 && base.every(n => !n.lastTimestamp);
+      if (allNoHistory) {
+        return base.sort((a, b) => a.id.localeCompare(b.id));
+      }
+      return base.sort((a, b) => {
+        if (!a.lastTimestamp || !b.lastTimestamp) return 0;
+        return new Date(b.lastTimestamp) - new Date(a.lastTimestamp);
+      });
     }
 
     return withLast
@@ -673,12 +694,14 @@ function App() {
   };
 
   const dynamicQuickReplies = gameState?.suggested_replies ? gameState.suggested_replies.slice(0, 2) : [];
-  const fixedQuickReplies = ["爆肝干活", "摸鱼一会", "向上管理", "汇报下进度"];
+  const fixedQuickReplies = ["老实干活", "技术突破", "包装PPT", "拉群对齐", "向上管理", "带薪摸鱼"];
   const fixedQuickReplyCommandMap = {
-    "爆肝干活": "work_hard",
-    "摸鱼一会": "rest",
+    "老实干活": "work_normal",
+    "技术突破": "tech_breakthrough",
+    "包装PPT": "make_ppt",
+    "拉群对齐": "align_meeting",
     "向上管理": "msg_boss",
-    "汇报下进度": "report",
+    "带薪摸鱼": "paid_slack",
   };
   const inputDisabled = gameState.game_over || !!gameState.active_global_event || isTyping;
 

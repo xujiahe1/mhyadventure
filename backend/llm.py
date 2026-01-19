@@ -484,13 +484,15 @@ class LLMService:
             
             Task:
             Welcome a new employee named {player_name}（岗位：{player_role_cn}）to your team.
+            The welcome should naturally guide the player to type their first message in the chat.
             
             Requirements:
             1. Language: Chinese (Simplified) ONLY.
             2. Tone: Matches your traits (e.g. strict, friendly, otaku, etc.).
-            3. Content: Mention something specific about {project_name} or their role. Assign a simple first task.
-            4. Length: Keep it under 60 words.
-            5. Format: Start with @{player_name}.
+            3. Content: Mention something specific about {project_name} or their role, and briefly set expectations.
+            4. At the end, add a clear call-to-action, explicitly inviting the player to在下方直接打字回复，例如给出1-2个可以说的话的示例（例如“可以先自我介绍一下”或“说说你对项目的第一印象”）。
+            5. Length: Keep it concise, roughly within 60 Chinese characters if possible.
+            6. Format: Start with @{player_name}, no bullet points or lists.
             
             Return ONLY the welcome message content string.
             """

@@ -1174,7 +1174,8 @@ class GameManager:
         if project:
             # bug_growth = max(0, int(project.difficulty / 2))
             # project.bug_count = max(0, project.bug_count + bug_growth)
-            project.risk = max(0, min(100, project.risk + int(project.difficulty)))
+            risk_growth = max(0, int(math.ceil(project.difficulty * 0.5)))
+            project.risk = max(0, min(100, project.risk + risk_growth))
             project.morale = max(0, min(100, project.morale - 1))
             if project.status == ProjectStatus.LIVE:
                 base_week_rev = int(800 * project.difficulty * self.state.global_modifiers.get("revenue_multiplier", 1.0))
@@ -1186,6 +1187,8 @@ class GameManager:
                     gain = min(potential_gain, remaining)
                     project.revenue = project.revenue + gain
                 if project.stakeholder_trust >= 70 and project.morale >= 60:
+                    project.risk = max(0, project.risk - 2)
+                elif project.stakeholder_trust >= 50 and project.morale >= 50:
                     project.risk = max(0, project.risk - 1)
                 elif project.stakeholder_trust <= 30:
                     project.risk = min(100, project.risk + 1)
@@ -1520,25 +1523,6 @@ class GameManager:
                 "timestamp": self._get_timestamp()
             })
             asyncio.create_task(self._try_generate_welcome(req, leader))
-        
-        # 5. Trigger AI-Chan Welcome with Tutorial
-        tutorial_msg = (
-            f"舰长好！我是爱酱，你的专属入职向导。听说你刚加入了 {req.project_name} 项目组？\n"
-            "这里有一份【生存指南】请查收：\n"
-            "1. 🗣️ **交流**：在群里聊天或 @大佬 搞好关系，Trust（信任度）很重要！\n"
-            "2. 💼 **工作**：输入“我要工作”、“加班”来推进项目，提升 KPI。\n"
-            "3. 🥗 **生活**：累了就说“摸鱼”回血，或者用 `cmd:rice:standard` 去食堂干饭！\n"
-            "4. ⚠️ **注意**：Energy（体力）耗尽会晕倒，大佬信任归零会被优化...\n"
-            "先试着和大家打个招呼吧！(>ω<)"
-        )
-        self.state.chat_history.append({
-            "sender": "爱酱",
-            "content": tutorial_msg,
-            "type": "npc",
-            "target": "AI-Chan",
-            "timestamp": self._get_timestamp()
-        })
-        self._mark_npc_known("AI-Chan")
         
         if random.random() < 0.5:
             asyncio.create_task(self._safe_call(asyncio.wait_for(self._trigger_random_event("group"), timeout=3.0)))
@@ -2594,6 +2578,120 @@ class GameManager:
             narrative = self._apply_rice_item(arg)
         elif cmd == "work_hard":
             narrative = self._apply_effects("WORK", 1.5, "", channel=channel)
+        elif cmd == "work_normal":
+            base = self._apply_effects("WORK", 1.0, "老实干活推进项目", channel=channel)
+            project = self.state.projects.get(player.current_project)
+            extra = ""
+            if project:
+                bonus_max = max(0, int(player.hard_skill / 40))
+                prog_bonus = random.randint(0, bonus_max) if bonus_max > 0 else 0
+                risk_shift = 0
+                if player.mood >= 70:
+                    risk_shift = -random.randint(0, 2)
+                elif player.mood <= 40:
+                    risk_shift = random.randint(0, 2)
+                if prog_bonus:
+                    project.progress = max(0, min(100, project.progress + prog_bonus))
+                    extra += f" 项目额外进度 +{prog_bonus}"
+                if risk_shift:
+                    project.risk = max(0, min(100, project.risk + risk_shift))
+                    if risk_shift < 0:
+                        extra += f"，项目风险 {risk_shift}"
+                    else:
+                        extra += f"，项目风险 +{risk_shift}"
+            narrative = base + extra if base else extra
+        elif cmd == "tech_breakthrough":
+            base = self._apply_effects("WORK", 1.5, "技术突破，加班钻研技术方案", channel=channel)
+            project = self.state.projects.get(player.current_project)
+            extra_parts = []
+            hard_gain_max = 1 + (1 if player.hard_skill >= 60 else 0)
+            hard_gain = random.randint(1, hard_gain_max)
+            player.hard_skill += hard_gain
+            extra_parts.append(f"硬技能 +{hard_gain}")
+            if project:
+                base_prog = random.randint(2, 5)
+                prog_factor = max(0.7, min(1.6, player.hard_skill / 60.0))
+                prog_boost = max(1, int(base_prog * prog_factor))
+                base_risk = random.randint(1, 3)
+                risk_factor = max(0.7, min(1.5, player.hard_skill / 70.0))
+                risk_drop = max(1, int(base_risk * risk_factor))
+                project.progress = max(0, min(100, project.progress + prog_boost))
+                project.risk = max(0, min(100, project.risk - risk_drop))
+                extra_parts.append(f"项目进度 +{prog_boost}")
+                extra_parts.append(f"项目风险 -{risk_drop}")
+            narrative = base or ""
+            if extra_parts:
+                narrative = f"{narrative} " if narrative else ""
+                narrative += "，".join(extra_parts)
+        elif cmd == "make_ppt":
+            project = self.state.projects.get(player.current_project)
+            energy_cost = random.randint(6, 10)
+            mood_drop = random.randint(1, 4)
+            player.energy = max(0, player.energy - energy_cost)
+            player.mood = max(0, min(100, player.mood - mood_drop))
+            soft_max = 1 + (1 if player.soft_skill >= 60 else 0)
+            soft_gain = random.randint(1, soft_max)
+            player.soft_skill += soft_gain
+            proj_desc = ""
+            if project:
+                prog_base = random.randint(0, 2)
+                trust_base = random.randint(2, 4)
+                morale_base = random.randint(0, 2)
+                if player.soft_skill >= 70:
+                    trust_base += 1
+                prog_gain = prog_base
+                trust_gain = trust_base
+                morale_gain = morale_base
+                project.progress = max(0, min(100, project.progress + prog_gain))
+                project.stakeholder_trust = min(100, project.stakeholder_trust + trust_gain)
+                project.morale = max(0, min(100, project.morale + morale_gain))
+                proj_desc = f"，项目信任 +{trust_gain}，项目进度 +{prog_gain}"
+            narrative = f"你花时间包装PPT，为项目讲故事。精力 -{energy_cost}，心情 -{mood_drop}，软技能 +{soft_gain}{proj_desc}。"
+        elif cmd == "align_meeting":
+            text = "拉群对齐项目节奏"
+            base = self._apply_effects("SOCIAL", 1.1, text, channel=channel)
+            project = self.state.projects.get(player.current_project)
+            extra = ""
+            if project:
+                prog_base = random.randint(0, 2)
+                risk_base = random.randint(0, 2)
+                if player.soft_skill >= 60:
+                    prog_base += 1
+                if player.soft_skill >= 70:
+                    risk_base += 1
+                prog_gain = max(1, prog_base)
+                risk_drop = max(0, risk_base)
+                if prog_gain:
+                    project.progress = max(0, min(100, project.progress + prog_gain))
+                if risk_drop:
+                    project.risk = max(0, min(100, project.risk - risk_drop))
+                if prog_gain or risk_drop:
+                    extra = f" 项目进度 +{prog_gain}，项目风险 -{risk_drop}。"
+            narrative = base + extra if base else (extra or "你拉了一场对齐会。")
+        elif cmd == "paid_slack":
+            project = self.state.projects.get(player.current_project)
+            mood_min, mood_max = 2, 6
+            if player.mood <= 40:
+                mood_max += 2
+            mood_gain = random.randint(mood_min, mood_max)
+            energy_min, energy_max = 2, 5
+            if player.energy <= int(player.max_energy * 0.5):
+                energy_max += 1
+            energy_gain = random.randint(energy_min, energy_max)
+            player.mood = max(0, min(100, player.mood + mood_gain))
+            player.energy = min(player.max_energy, player.energy + energy_gain)
+            if project:
+                prog_loss = random.randint(1, 3)
+                if player.hard_skill >= 70 or player.soft_skill >= 70:
+                    prog_loss = max(1, prog_loss - 1)
+                trust_loss = random.randint(1, 2)
+                if player.political_capital >= 10:
+                    trust_loss = max(1, trust_loss - 1)
+                project.progress = max(0, min(100, project.progress - prog_loss))
+                project.stakeholder_trust = max(0, project.stakeholder_trust - trust_loss)
+                narrative = f"你选择在工位带薪摸鱼，心情 +{mood_gain}，精力 +{energy_gain}，项目进度 -{prog_loss}，项目信任 -{trust_loss}。"
+            else:
+                narrative = f"你选择在工位带薪摸鱼，心情 +{mood_gain}，精力 +{energy_gain}。"
         elif cmd == "rest":
             narrative = self._apply_effects("REFUSE", 1.0, "", channel=channel)
         elif cmd == "report":
@@ -2770,8 +2868,13 @@ class GameManager:
         boss = self.state.npcs.get(target_id)
         if not boss or getattr(boss, "status", "在职") != "在职":
             return "你尝试向上管理，但大佬当前不在线。"
-        trust_gain = max(3, min(10, int(3 + player.soft_skill / 25)))
-        pc_gain = max(1, int(math.ceil(trust_gain / 3)))
+        base_trust = int(3 + player.soft_skill / 25)
+        trust_min = max(2, base_trust - 2)
+        trust_max = min(12, base_trust + 2)
+        trust_gain = random.randint(trust_min, trust_max)
+        pc_base = max(1, int(math.ceil(trust_gain / 3)))
+        pc_max = pc_base + 1 if player.soft_skill >= 70 else pc_base
+        pc_gain = random.randint(1, pc_max)
         boss.trust = max(0, min(100, boss.trust + trust_gain))
         player.political_capital = max(0, player.political_capital + pc_gain)
         return f"你进行了向上管理，与 {boss.name} 沟通顺畅。{boss.name} 的信任 +{trust_gain}，你的政治资本 +{pc_gain}。精力 -8。"
@@ -2821,25 +2924,23 @@ class GameManager:
 
             if project:
                 role = player.role
-                difficulty = max(1, project.difficulty)
-                base_progress = max(1, int((kpi_gain / 10) * magnitude))
+                base_progress = max(2, int((kpi_gain / 8) * magnitude))
                 
-                # Standardize base gains for all roles (slightly tuned by role)
-                # 1. Progress: Dev > Product > Ops
+                # Progress: Dev > Product > Ops, with simpler scaling
                 if role == Role.DEV:
-                    prog_gain = max(1, int(base_progress / difficulty))
+                    prog_gain = base_progress + 1
                 elif role == Role.PRODUCT:
-                    prog_gain = max(1, int(base_progress / (difficulty + 0.5)))
-                else: # Ops
-                    prog_gain = max(1, int(base_progress / (difficulty + 1.0)))
+                    prog_gain = base_progress
+                else:  # Ops
+                    prog_gain = max(1, base_progress - 1)
 
                 # 2. Risk Reduction: Ops > Product > Dev (but all can reduce)
                 if role == Role.OPS:
-                    risk_reduction = int(player.soft_skill / 25)
+                    risk_reduction = max(1, int(player.soft_skill / 20))
                 elif role == Role.PRODUCT:
-                    risk_reduction = int(player.soft_skill / 30)
+                    risk_reduction = max(1, int(player.soft_skill / 24))
                 else: # Dev
-                    risk_reduction = int(player.hard_skill / 60)
+                    risk_reduction = max(1, int(player.hard_skill / 45))
                 
                 # High magnitude (overwork) always adds risk, mitigating reduction
                 if magnitude >= 1.3:
@@ -2886,35 +2987,104 @@ class GameManager:
                     self._complete_milestone(player.current_project, channel)
             
         elif intent == "SHOP":
-            cost = 50
-            # Allow debt (triggers Game Over)
+            base_cost = 40
+            mag = max(0.5, magnitude)
+            cost = int(base_cost * mag)
             player.money -= cost
-            player.energy = min(player.max_energy, player.energy + 30)
-            narrative = "你点了份外卖。Money -50, Energy +30。"
+
+            energy_gain = int(20 * mag)
+            mood_gain = max(1, int(3 + player.mood / 50))
+            player.energy = min(player.max_energy, player.energy + energy_gain)
+            player.mood = max(0, min(100, player.mood + mood_gain))
+
+            narrative = f"你犒劳自己点了好东西。Money -{cost}, Energy +{energy_gain}, Mood +{mood_gain}。"
+
+            if project:
+                morale_gain = max(0, int(mood_gain / 2))
+                project.morale = max(0, min(100, project.morale + morale_gain))
+
+                risk_delta = 0
+                if player.soft_skill >= 70:
+                    risk_delta = -1
+                elif player.soft_skill <= 40:
+                    risk_delta = 1
+                if risk_delta != 0:
+                    project.risk = max(0, min(100, project.risk + risk_delta))
             
         elif intent == "REFUSE":
-            energy_cost = 5
-            player.energy = max(0, player.energy - energy_cost)
-            narrative = f"你选择了摸鱼，刷手机消耗了一些精力。Energy -{energy_cost}。"
+            mag = max(0.5, magnitude)
+            base_energy_gain = 4
+            energy_gain = int(base_energy_gain * mag)
+            mood_gain = max(1, int(2 * mag))
+            player.energy = min(player.max_energy, player.energy + energy_gain)
+            player.mood = max(0, min(100, player.mood + mood_gain))
+
+            narrative = f"你选择了摸鱼，暂时远离了工作。Energy +{energy_gain}, Mood +{mood_gain}。"
+
+            if project:
+                importance = 1.0 + player.hard_skill / 80.0
+                prog_loss = max(0, int(2 * mag * importance))
+                project.progress = max(0, project.progress - prog_loss)
+
+                risk_add = max(1, int(1.5 * mag * (1.0 + (100 - player.soft_skill) / 100.0)))
+                project.risk = min(100, project.risk + risk_add)
+
+                morale_delta = -max(0, int(1 * mag))
+                project.morale = max(0, min(100, project.morale + morale_delta))
             
         elif intent == "LEARN":
-            cost = 80
-            energy_cost = 20
-            # Allow negative resources (triggers Game Over)
+            mag = max(0.5, magnitude)
+            base_cost = 80
+            base_energy_cost = 20
+            cost = int(base_cost * mag)
+            energy_cost = int(base_energy_cost * mag)
             player.money -= cost
             player.energy -= energy_cost
+
+            skill_gain = 1
             if player.role == Role.PRODUCT:
-                player.soft_skill += 1
-                narrative = "你抽空学习了一会儿。软技能 +1，精力 -20，金钱 -80。"
+                player.soft_skill += skill_gain
+                skill_type = "软技能"
             else:
-                player.hard_skill += 1
-                narrative = "你抽空学习了一会儿。硬技能 +1，精力 -20，金钱 -80。"
+                player.hard_skill += skill_gain
+                skill_type = "硬技能"
+
+            if project:
+                if player.role == Role.PRODUCT:
+                    risk_reduction = max(1, int((player.soft_skill / 32.0) * mag))
+                    trust_gain = max(0, int((player.soft_skill / 50.0) * mag))
+                else:
+                    risk_reduction = max(1, int((player.hard_skill / 50.0) * mag))
+                    trust_gain = max(0, int((player.soft_skill / 60.0) * mag))
+                prog_gain = max(1, int(skill_gain * mag))
+
+                project.progress = min(100, project.progress + prog_gain)
+                project.risk = max(0, project.risk - risk_reduction)
+                project.stakeholder_trust = min(100, project.stakeholder_trust + trust_gain)
+
+            narrative = f"你抽空学习了一会儿。{skill_type} +{skill_gain}，精力 -{energy_cost}，金钱 -{cost}。"
 
         elif intent == "ATTACK":
-            narrative = "你发起了挑衅..."
+            mag = max(0.5, magnitude)
+            soft_mod = 1.0
+            if player.soft_skill <= 40:
+                soft_mod = 1.3
+            elif player.soft_skill >= 70:
+                soft_mod = 0.8
+
+            trust_drop = max(1, int(3 * mag * soft_mod))
+            mood_cost = max(1, int(2 * mag))
+            pc_loss = max(0, int(trust_drop / 3))
+            player.mood = max(0, player.mood - mood_cost)
+            player.political_capital = max(0, player.political_capital - pc_loss)
+
+            narrative = f"你发起了挑衅，气氛一度紧张。Mood -{mood_cost}。"
+
             if project:
-                trust_drop = max(1, int(3 * magnitude))
                 project.stakeholder_trust = max(0, project.stakeholder_trust - trust_drop)
+                risk_add = max(1, int(2 * mag))
+                project.risk = min(100, project.risk + risk_add)
+                project.morale = max(0, project.morale - max(1, int(mag)))
 
         elif intent in ("SOCIAL", "SMALL_TALK"):
             base_mood = 1
