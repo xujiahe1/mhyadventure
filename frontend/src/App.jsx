@@ -17,6 +17,20 @@ const getSessionId = () => {
   }
 };
 
+const TUTORIAL_DONE_KEY = "mh_tutorial_v1_done";
+const getTutorialDone = () => {
+  try {
+    return localStorage.getItem(TUTORIAL_DONE_KEY) === "1";
+  } catch (e) {
+    return false;
+  }
+};
+const setTutorialDone = () => {
+  try {
+    localStorage.setItem(TUTORIAL_DONE_KEY, "1");
+  } catch (e) {}
+};
+
 const mapRoleToCN = (role) => {
   if (!role) return "";
   const r = String(role);
@@ -76,10 +90,24 @@ function App() {
   const [isTyping, setIsTyping] = useState(false); // Chat stream typing indicator
   const [isQuickReplyLoading, setIsQuickReplyLoading] = useState(false);
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, msg: null });
+  const [tutorialVisible, setTutorialVisible] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState(0);
+  const [tutorialProgress, setTutorialProgress] = useState({
+    firstMessage: false,
+    firstCommand: false,
+    firstRice: false,
+  });
+  const [tutorialFocusRect, setTutorialFocusRect] = useState(null);
+  const [tutorialClaiming, setTutorialClaiming] = useState(false);
   
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
   const searchInputRef = useRef(null);
+  const tutorialInitRef = useRef(false);
+  const quickCommandRef = useRef(null);
+  const workbenchButtonRef = useRef(null);
+  const riceCardRef = useRef(null);
+  const riceModalRef = useRef(null);
 
   const formatTime = (isoString) => {
     if (!isoString) return "";
@@ -111,6 +139,131 @@ function App() {
   useEffect(() => {
     scrollToBottom();
   }, [gameState?.chat_history, selectedChat, currentView]);
+
+  useEffect(() => {
+    if (isOnboarding) {
+      tutorialInitRef.current = false;
+      return;
+    }
+    if (!gameState) return;
+    if (tutorialInitRef.current) return;
+    tutorialInitRef.current = true;
+    if (getTutorialDone()) return;
+    setTutorialVisible(true);
+    setTutorialStep(0);
+    setTutorialProgress({
+      firstMessage: false,
+      firstCommand: false,
+      firstRice: false,
+    });
+  }, [isOnboarding, gameState]);
+
+  useEffect(() => {
+    if (!tutorialVisible) return;
+    if (tutorialStep === 1 && tutorialProgress.firstMessage) {
+      setTutorialStep(2);
+      return;
+    }
+    if (tutorialStep === 2 && tutorialProgress.firstCommand) {
+      setTutorialStep(3);
+      return;
+    }
+    if (tutorialStep === 3 && tutorialProgress.firstRice) {
+      setTutorialStep(4);
+      return;
+    }
+  }, [tutorialVisible, tutorialStep, tutorialProgress]);
+
+  useEffect(() => {
+    if (!tutorialVisible) return;
+    if (tutorialStep !== 4) return;
+    setShowRice(false);
+    setShowShop(false);
+    setShowAcademy(false);
+    setShowProfile(false);
+    setSelectedChat("group");
+    setCurrentView("chat");
+  }, [tutorialVisible, tutorialStep]);
+
+  useEffect(() => {
+    if (!tutorialVisible) return;
+    if (tutorialStep === 1 || tutorialStep === 2) {
+      if (currentView !== "chat") setCurrentView("chat");
+    }
+  }, [tutorialVisible, tutorialStep, currentView]);
+
+  useEffect(() => {
+    if (!tutorialVisible) {
+      setTutorialFocusRect(null);
+      return;
+    }
+    if (tutorialStep === 0 || tutorialStep === 4) {
+      setTutorialFocusRect(null);
+      return;
+    }
+
+    const pickEl = () => {
+      if (tutorialStep === 1) return inputRef.current;
+      if (tutorialStep === 2) return quickCommandRef.current;
+      if (tutorialStep === 3) {
+        if (currentView !== "workbench") return workbenchButtonRef.current;
+        if (!showRice) return riceCardRef.current;
+        return riceModalRef.current;
+      }
+      return null;
+    };
+
+    const update = () => {
+      const el = pickEl();
+      if (!el || typeof el.getBoundingClientRect !== "function") {
+        setTutorialFocusRect(null);
+        return;
+      }
+      if (typeof el.scrollIntoView === "function" && tutorialStep === 3 && currentView === "workbench" && !showRice) {
+        el.scrollIntoView({ block: "center" });
+      }
+      const r = el.getBoundingClientRect();
+      const pad = tutorialStep === 3 && showRice ? 12 : 10;
+      const rect = {
+        top: Math.max(8, r.top - pad),
+        left: Math.max(8, r.left - pad),
+        width: Math.max(0, r.width + pad * 2),
+        height: Math.max(0, r.height + pad * 2),
+      };
+      setTutorialFocusRect(rect);
+    };
+
+    let raf1 = 0;
+    let raf2 = 0;
+    let t1 = 0;
+    let t2 = 0;
+    const schedule = () => {
+      if (raf1) cancelAnimationFrame(raf1);
+      if (raf2) cancelAnimationFrame(raf2);
+      raf1 = requestAnimationFrame(() => {
+        update();
+        raf2 = requestAnimationFrame(update);
+      });
+      clearTimeout(t1);
+      clearTimeout(t2);
+      t1 = window.setTimeout(update, 50);
+      t2 = window.setTimeout(update, 250);
+    };
+
+    schedule();
+    const onResize = () => schedule();
+    const onScroll = () => schedule();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onScroll, true);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScroll, true);
+      if (raf1) cancelAnimationFrame(raf1);
+      if (raf2) cancelAnimationFrame(raf2);
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [tutorialVisible, tutorialStep, currentView, showRice]);
 
   // Sync NPC data from backend when game state updates
   useEffect(() => {
@@ -153,6 +306,9 @@ function App() {
 
   const sendCommand = async (cmd) => {
     if (gameState?.game_over) return;
+    if (tutorialVisible) {
+      setTutorialProgress(prev => (prev.firstCommand ? prev : { ...prev, firstCommand: true }));
+    }
     try {
       const res = await axios.post(`${API_URL}/action`, { 
         action_type: "chat", 
@@ -169,6 +325,9 @@ function App() {
   
   const sendWorkbenchCommand = async (cmd) => {
     if (gameState?.game_over) return;
+    if (tutorialVisible && String(cmd || "").startsWith("rice:")) {
+      setTutorialProgress(prev => (prev.firstRice ? prev : { ...prev, firstRice: true }));
+    }
     try {
       const res = await axios.post(`${API_URL}/action`, {
         action_type: "workbench",
@@ -186,6 +345,10 @@ function App() {
   const sendMessage = async () => {
     if (!input.trim() || gameState?.game_over) return;
     const msg = input;
+    const trimmed = String(msg || "").trim();
+    if (tutorialVisible && trimmed && !trimmed.startsWith("cmd:")) {
+      setTutorialProgress(prev => (prev.firstMessage ? prev : { ...prev, firstMessage: true }));
+    }
     setInput("");
     setIsTyping(true); // Start typing indicator
     setIsQuickReplyLoading(true);
@@ -230,66 +393,81 @@ function App() {
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
+      let buffer = "";
+      let streamDone = false;
       
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n\n');
-        
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const dataStr = line.replace('data: ', '').trim();
-            if (dataStr === '[DONE]') break;
-            
-            try {
-              const data = JSON.parse(dataStr);
-              
-              if (data.type === 'msg_append') {
-                const incoming = data.msg;
-                if (incoming && incoming.type && incoming.type !== 'player') {
-                  setIsTyping(false);
-                }
-              } else if (data.type === 'state_update') {
-                setIsQuickReplyLoading(false);
+        buffer += decoder.decode(value, { stream: true });
+
+        while (true) {
+          const boundaryIdx = buffer.indexOf("\n\n");
+          if (boundaryIdx === -1) break;
+
+          const rawEvent = buffer.slice(0, boundaryIdx);
+          buffer = buffer.slice(boundaryIdx + 2);
+
+          const dataLines = rawEvent
+            .split("\n")
+            .filter(l => l.startsWith("data:"))
+            .map(l => l.slice(5).trimStart());
+
+          if (dataLines.length === 0) continue;
+          const dataStr = dataLines.join("\n").trim();
+          if (!dataStr) continue;
+          if (dataStr === "[DONE]") {
+            streamDone = true;
+            break;
+          }
+
+          try {
+            const data = JSON.parse(dataStr);
+
+            if (data.type === 'msg_append') {
+              const incoming = data.msg;
+              if (incoming && incoming.type && incoming.type !== 'player') {
                 setIsTyping(false);
               }
-
-              setGameState(prevState => {
-                if (!prevState) return prevState;
-                const newState = { ...prevState };
-                
-                if (data.type === 'msg_append') {
-                  // Dedupe by sender + content + type，避免乐观更新和服务端回显重复
-                  const exists = (newState.chat_history || []).some(m => 
-                    m.sender === data.msg.sender &&
-                    m.content === data.msg.content &&
-                    m.type === data.msg.type
-                  );
-                  if (!exists) {
-                    newState.chat_history = [...newState.chat_history, data.msg];
-                  }
-                } else if (data.type === 'msg_update') {
-                    // Update the last message (e.g. sender name resolution)
-                    const lastIdx = newState.chat_history.length - 1;
-                    if (lastIdx >= 0) {
-                        newState.chat_history[lastIdx] = data.msg;
-                        newState.chat_history = [...newState.chat_history]; // Trigger re-render
-                    }
-                } else if (data.type === 'state_update') {
-                  return data.state; // Full state update
-                } else if (data.type === 'error') {
-                  alert(data.content);
-                }
-                
-                return newState;
-              });
-            } catch (e) {
-              console.error("Parse error", e);
+            } else if (data.type === 'state_update') {
+              setIsQuickReplyLoading(false);
+              setIsTyping(false);
             }
+
+            setGameState(prevState => {
+              if (!prevState) return prevState;
+              const newState = { ...prevState };
+
+              if (data.type === 'msg_append') {
+                const exists = (newState.chat_history || []).some(m =>
+                  m.sender === data.msg.sender &&
+                  m.content === data.msg.content &&
+                  m.type === data.msg.type
+                );
+                if (!exists) {
+                  newState.chat_history = [...newState.chat_history, data.msg];
+                }
+              } else if (data.type === 'msg_update') {
+                const lastIdx = newState.chat_history.length - 1;
+                if (lastIdx >= 0) {
+                  newState.chat_history[lastIdx] = data.msg;
+                  newState.chat_history = [...newState.chat_history];
+                }
+              } else if (data.type === 'state_update') {
+                return data.state;
+              } else if (data.type === 'error') {
+                alert(data.content);
+              }
+
+              return newState;
+            });
+          } catch (e) {
+            console.error("Parse error", e, dataStr);
           }
         }
+
+        if (streamDone) break;
       }
     } catch (err) {
       console.error(err);
@@ -605,9 +783,14 @@ function App() {
                 <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto md:mx-0 shadow-lg transform rotate-3">
                   <span className="text-white font-bold text-2xl">M</span>
                 </div>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-gray-100 text-gray-600 border border-gray-200">
-                  V0.1.0
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-gray-100 text-gray-600 border border-gray-200">
+                    V0.1.1
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200">
+                    内测
+                  </span>
+                </div>
               </div>
               <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Tech Otakus Save The World</h1>
               <p className="text-gray-500 text-sm">欢迎加入米哈游！请完善你的入职信息，开始你的冒险。</p>
@@ -734,6 +917,327 @@ function App() {
 
   return (
     <div className="flex h-screen bg-white overflow-hidden font-sans relative">
+      {tutorialVisible && !gameState.game_over && !gameState.active_global_event && (
+        <div className="fixed inset-0 z-[120] pointer-events-none">
+          {tutorialStep === 0 || tutorialStep === 4 ? (
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-[1px] pointer-events-auto" />
+          ) : tutorialFocusRect ? (
+            <>
+              <div
+                className="absolute left-0 top-0 w-full bg-black/70 backdrop-blur-[1px] pointer-events-auto"
+                style={{ height: `${tutorialFocusRect.top}px` }}
+              />
+              <div
+                className="absolute left-0 bg-black/70 backdrop-blur-[1px] pointer-events-auto"
+                style={{
+                  top: `${tutorialFocusRect.top + tutorialFocusRect.height}px`,
+                  height: `calc(100vh - ${tutorialFocusRect.top + tutorialFocusRect.height}px)`,
+                  width: "100%",
+                }}
+              />
+              <div
+                className="absolute bg-black/70 backdrop-blur-[1px] pointer-events-auto"
+                style={{
+                  top: `${tutorialFocusRect.top}px`,
+                  left: "0px",
+                  width: `${tutorialFocusRect.left}px`,
+                  height: `${tutorialFocusRect.height}px`,
+                }}
+              />
+              <div
+                className="absolute bg-black/70 backdrop-blur-[1px] pointer-events-auto"
+                style={{
+                  top: `${tutorialFocusRect.top}px`,
+                  left: `${tutorialFocusRect.left + tutorialFocusRect.width}px`,
+                  width: `calc(100vw - ${tutorialFocusRect.left + tutorialFocusRect.width}px)`,
+                  height: `${tutorialFocusRect.height}px`,
+                }}
+              />
+              <div
+                className="absolute rounded-2xl ring-4 ring-white/90 pointer-events-none"
+                style={{
+                  top: `${tutorialFocusRect.top}px`,
+                  left: `${tutorialFocusRect.left}px`,
+                  width: `${tutorialFocusRect.width}px`,
+                  height: `${tutorialFocusRect.height}px`,
+                }}
+              />
+            </>
+          ) : (
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-[1px] pointer-events-auto" />
+          )}
+
+          {tutorialStep === 0 ? (
+            <div className="absolute inset-0 flex items-center justify-center px-6 pointer-events-auto">
+              <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-8 text-white">
+                  <div className="text-2xl font-extrabold">欢迎加入米哈游</div>
+                  <div className="mt-2 text-sm text-white/90">
+                    用聊天与指令推动项目进度，在有限精力内做出最优选择。
+                  </div>
+                </div>
+                <div className="p-8">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="rounded-2xl border border-gray-200 p-5 bg-gradient-to-br from-gray-50 to-white">
+                      <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-3">
+                        <MessageSquare className="w-5 h-5" />
+                      </div>
+                      <div className="font-bold text-gray-900">消息模式</div>
+                      <div className="text-sm text-gray-600 mt-1">
+                        在项目群聊/私聊里沟通、推进与博弈。
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-gray-200 p-5 bg-gradient-to-br from-gray-50 to-white">
+                      <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center mb-3">
+                        <Briefcase className="w-5 h-5" />
+                      </div>
+                      <div className="font-bold text-gray-900">工作台</div>
+                      <div className="text-sm text-gray-600 mt-1">
+                        米购/学院/米饭补给，强化能力与续航。
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-gray-200 p-5 bg-gradient-to-br from-gray-50 to-white">
+                      <div className="w-10 h-10 rounded-xl bg-orange-100 text-orange-700 flex items-center justify-center mb-3">
+                        <Coffee className="w-5 h-5" />
+                      </div>
+                      <div className="font-bold text-gray-900">资源管理</div>
+                      <div className="text-sm text-gray-600 mt-1">
+                        精力/心情/余额与项目指标会共同决定结局。
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex items-center justify-between">
+                    <div className="text-xs text-gray-500">
+                      1/4 · 大约 30 秒完成
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          setTutorialDone();
+                          setTutorialVisible(false);
+                        }}
+                        className="px-4 py-2 rounded-xl text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      >
+                        跳过
+                      </button>
+                      <button
+                        onClick={() => setTutorialStep(1)}
+                        className="px-4 py-2 rounded-xl text-sm font-bold bg-blue-600 text-white hover:bg-blue-700"
+                      >
+                        开始引导
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : tutorialStep === 4 ? (
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[min(720px,calc(100vw-32px))] pointer-events-auto">
+              <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200 mx-auto">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-7 text-white">
+                  <div className="text-2xl font-extrabold">恭喜你完成新手任务</div>
+                  <div className="mt-2 text-sm text-white/90">
+                    你已经掌握了聊天、命令与补给的基本操作。
+                  </div>
+                </div>
+                <div className="p-8">
+                  <div className="rounded-2xl border border-blue-200 bg-blue-50 p-5">
+                    <div className="text-sm font-bold text-blue-900">新手奖励</div>
+                    <div className="mt-2 text-sm text-blue-800">
+                      金钱 +200 · 精力 +10 · 心情 +5
+                    </div>
+                    <div className="mt-1 text-xs text-blue-700/80">
+                      精力与心情会自动按上限处理。
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex items-center justify-between gap-3">
+                    <button
+                      onClick={() => {
+                        setTutorialDone();
+                        setTutorialVisible(false);
+                      }}
+                      className="px-4 py-2 rounded-xl text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    >
+                      稍后再说
+                    </button>
+                    <button
+                      onClick={async () => {
+                        if (tutorialClaiming) return;
+                        setTutorialClaiming(true);
+                        try {
+                          const res = await axios.post(
+                            `${API_URL}/action`,
+                            {
+                              action_type: "chat",
+                              content: "cmd:tutorial_reward",
+                              target_npc: "group",
+                            },
+                            { headers: { "X-Session-Id": getSessionId() } }
+                          );
+                          setGameState(res.data);
+                          setTutorialDone();
+                          setTutorialVisible(false);
+                        } catch (e) {
+                        } finally {
+                          setTutorialClaiming(false);
+                        }
+                      }}
+                      className={`px-4 py-2 rounded-xl text-sm font-bold ${
+                        tutorialClaiming
+                          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                          : "bg-blue-600 text-white hover:bg-blue-700"
+                      }`}
+                    >
+                      领取奖励并回到聊天
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div
+              className={`absolute ${
+                tutorialStep === 3 ? "bottom-6" : "top-6"
+              } left-1/2 -translate-x-1/2 w-[min(720px,calc(100vw-32px))] pointer-events-auto`}
+            >
+              <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
+                <div className="px-8 py-7 flex items-start justify-between gap-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                  <div>
+                    <div className="text-sm font-bold">
+                      {tutorialStep === 1
+                        ? "发出第一句话"
+                        : tutorialStep === 2
+                        ? "触发第一次默认命令"
+                        : "购买第一份米饭"}
+                    </div>
+                    <div className="text-xs text-white/80 mt-1">
+                      {tutorialStep + 1}/4
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setTutorialDone();
+                      setTutorialVisible(false);
+                    }}
+                    className="text-xs text-white/90 hover:text-white"
+                  >
+                    跳过
+                  </button>
+                </div>
+
+                <div className="p-8">
+                  {tutorialStep === 1 && (
+                    <div className="text-sm text-gray-700 leading-relaxed">
+                      在底部输入框随便说一句，然后点「发送」或按回车。
+                    </div>
+                  )}
+                  {tutorialStep === 2 && (
+                    <div className="text-sm text-gray-700 leading-relaxed">
+                      点一下快捷指令「老实干活」即可（会直接执行一条命令）。
+                    </div>
+                  )}
+                  {tutorialStep === 3 && (
+                    <div className="text-sm text-gray-700 leading-relaxed">
+                      进入工作台 → 打开「米饭 · 干饭时间」→ 点任意一份完成首次购买。
+                    </div>
+                  )}
+
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
+                    <div className={`rounded-xl border px-3 py-2 flex items-center justify-between ${tutorialProgress.firstMessage ? "border-blue-200 bg-blue-50 text-blue-700" : "border-gray-200 bg-gray-50 text-gray-600"}`}>
+                      <span>第一句话</span>
+                      <span>{tutorialProgress.firstMessage ? "已完成" : "未完成"}</span>
+                    </div>
+                    <div className={`rounded-xl border px-3 py-2 flex items-center justify-between ${tutorialProgress.firstCommand ? "border-blue-200 bg-blue-50 text-blue-700" : "border-gray-200 bg-gray-50 text-gray-600"}`}>
+                      <span>第一次命令</span>
+                      <span>{tutorialProgress.firstCommand ? "已完成" : "未完成"}</span>
+                    </div>
+                    <div className={`rounded-xl border px-3 py-2 flex items-center justify-between ${tutorialProgress.firstRice ? "border-blue-200 bg-blue-50 text-blue-700" : "border-gray-200 bg-gray-50 text-gray-600"}`}>
+                      <span>第一次米饭</span>
+                      <span>{tutorialProgress.firstRice ? "已完成" : "未完成"}</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      {tutorialStep === 1 && (
+                        <button
+                          onClick={() => inputRef.current?.focus?.()}
+                          className="px-3 py-2 rounded-xl text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        >
+                          聚焦输入框
+                        </button>
+                      )}
+                      {tutorialStep === 3 && (
+                        <button
+                          onClick={() => {
+                            setCurrentView("workbench");
+                            setShowRice(true);
+                          }}
+                          className="px-3 py-2 rounded-xl text-xs font-medium bg-purple-100 text-purple-700 hover:bg-purple-200"
+                        >
+                          带我去米饭
+                        </button>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setTutorialStep(0)}
+                        className="px-3 py-2 rounded-xl text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      >
+                        回看玩法
+                      </button>
+                      {tutorialStep === 1 && (
+                        <button
+                          onClick={() => setTutorialStep(2)}
+                          disabled={!tutorialProgress.firstMessage}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold ${
+                            tutorialProgress.firstMessage
+                              ? "bg-blue-600 text-white hover:bg-blue-700"
+                              : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                          }`}
+                        >
+                          下一步
+                        </button>
+                      )}
+                      {tutorialStep === 2 && (
+                        <button
+                          onClick={() => setTutorialStep(3)}
+                          disabled={!tutorialProgress.firstCommand}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold ${
+                            tutorialProgress.firstCommand
+                              ? "bg-blue-600 text-white hover:bg-blue-700"
+                              : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                          }`}
+                        >
+                          下一步
+                        </button>
+                      )}
+                      {tutorialStep === 3 && (
+                        <button
+                          onClick={() => {
+                            setTutorialDone();
+                            setTutorialVisible(false);
+                          }}
+                          disabled={!tutorialProgress.firstRice}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold ${
+                            tutorialProgress.firstRice
+                              ? "bg-blue-600 text-white hover:bg-blue-700"
+                              : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                          }`}
+                        >
+                          完成引导
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     
       {/* Game Over Modal */}
       {gameState.game_over && (
@@ -807,6 +1311,7 @@ function App() {
           </button>
           <button 
              onClick={() => setCurrentView('workbench')}
+             ref={workbenchButtonRef}
              className={`p-2 rounded-lg transition ${currentView === 'workbench' ? 'text-blue-600 bg-blue-100' : 'text-gray-500 hover:bg-gray-200'}`}
           >
              <Briefcase className="w-6 h-6"/>
@@ -924,6 +1429,22 @@ function App() {
           
           {/* Top Right: Personal Center Trigger */}
           <div className="flex items-center space-x-4">
+             <div className="hidden sm:flex items-center gap-2">
+               <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200">
+                 <span className="w-2 h-2 rounded-full bg-blue-500" />
+                 <span className="text-[10px] font-medium text-gray-500">精力</span>
+                 <span className="text-xs font-mono font-bold text-gray-800">
+                   {player.energy}/{player.max_energy}
+                 </span>
+               </div>
+               <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200">
+                 <span className={`w-2 h-2 rounded-full ${player.mood > 60 ? "bg-purple-500" : "bg-red-500"}`} />
+                 <span className="text-[10px] font-medium text-gray-500">心情</span>
+                 <span className="text-xs font-mono font-bold text-gray-800">
+                   {player.mood}/100
+                 </span>
+               </div>
+             </div>
              <div 
                 className="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded-lg transition"
                 onClick={() => setShowProfile(!showProfile)}
@@ -972,24 +1493,6 @@ function App() {
                 {/* 2. 能力 */}
                 <h4 className="text-xs text-gray-400 font-bold uppercase tracking-wider border-t border-gray-100 pt-4">能力</h4>
                 <div className="space-y-3">
-                   <div>
-                      <div className="flex justify-between text-xs mb-1 font-medium text-gray-600">
-                         <span>精力</span>
-                         <span>{player.energy}/{player.max_energy}</span>
-                      </div>
-                      <div className="w-full bg-gray-100 rounded-full h-2">
-                         <div className="bg-green-500 h-2 rounded-full transition-all duration-500" style={{width: `${(player.energy/player.max_energy)*100}%`}}></div>
-                      </div>
-                   </div>
-                   <div>
-                      <div className="flex justify-between text-xs mb-1 font-medium text-gray-600">
-                         <span>心情</span>
-                         <span>{player.mood}/100</span>
-                      </div>
-                      <div className="w-full bg-gray-100 rounded-full h-2">
-                         <div className={`h-2 rounded-full transition-all duration-500 ${player.mood > 60 ? 'bg-yellow-400' : 'bg-red-500'}`} style={{width: `${player.mood}%`}}></div>
-                      </div>
-                   </div>
                    <div className="grid grid-cols-2 gap-2 mt-2">
                       <div className="flex justify-between text-sm bg-gray-50 p-2 rounded">
                          <span className="text-gray-600">硬技能</span>
@@ -1026,6 +1529,7 @@ function App() {
                  <div
                   className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition cursor-pointer"
                   onClick={() => setShowRice(true)}
+                  ref={riceCardRef}
                 >
                     <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 mb-4">
                        <Coffee className="w-6 h-6"/>
@@ -1148,7 +1652,7 @@ function App() {
 
               {showRice && (
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-40">
-                  <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 relative">
+                  <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 relative" ref={riceModalRef}>
                     <button onClick={() => setShowRice(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl">×</button>
                     <h3 className="text-lg font-bold text-gray-900 mb-2">米饭 · 干饭时间</h3>
                     <div className="space-y-2 text-sm text-gray-500 mb-4">
@@ -1290,6 +1794,7 @@ function App() {
                   <button
                     key={`fix-${idx}`}
                     onClick={handleClick}
+                    ref={text === "老实干活" ? quickCommandRef : undefined}
                     disabled={gameState.game_over || !!gameState.active_global_event || isTyping}
                     className={`px-3 py-1 rounded-full border text-xs ${
                       gameState.game_over || !!gameState.active_global_event || isTyping

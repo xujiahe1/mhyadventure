@@ -113,6 +113,7 @@ class GameState(BaseModel):
     known_npcs: List[str] = []
     player_subordinates: List[str] = []
     promotion_review: Optional[Dict[str, Any]] = None
+    tutorial_reward_claimed: bool = False
 
 class ActionRequest(BaseModel):
     action_type: str # "chat", "workbench"

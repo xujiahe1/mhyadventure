@@ -1663,8 +1663,12 @@ class GameManager:
         if self.state.active_global_event:
             yield f"data: {json.dumps({'type': 'error', 'content': '当前有全局事件进行中，请先处理事件提示。'})}\n\n"
             return
-        if not self.state.player or self.state.game_over:
-            yield f"data: {json.dumps({'type': 'error', 'content': 'Game Over'})}\n\n"
+        if not self.state.player:
+            yield f"data: {json.dumps({'type': 'error', 'content': 'Game not initialized'})}\n\n"
+            return
+        if self.state.game_over:
+            yield f"data: {json.dumps({'type': 'state_update', 'state': self.state.dict()})}\n\n"
+            yield "data: [DONE]\n\n"
             return
             
         player = self.state.player
@@ -2692,6 +2696,18 @@ class GameManager:
                 narrative = f"你选择在工位带薪摸鱼，心情 +{mood_gain}，精力 +{energy_gain}，项目进度 -{prog_loss}，项目信任 -{trust_loss}。"
             else:
                 narrative = f"你选择在工位带薪摸鱼，心情 +{mood_gain}，精力 +{energy_gain}。"
+        elif cmd == "tutorial_reward":
+            if getattr(self.state, "tutorial_reward_claimed", False):
+                narrative = "新手任务奖励已领取过了。"
+            else:
+                money_gain = 200
+                energy_gain = 10
+                mood_gain = 5
+                player.money = max(0, player.money + money_gain)
+                player.energy = min(player.max_energy, player.energy + energy_gain)
+                player.mood = max(0, min(100, player.mood + mood_gain))
+                self.state.tutorial_reward_claimed = True
+                narrative = f"新手任务完成！奖励已发放：金钱 +{money_gain}，精力 +{energy_gain}，心情 +{mood_gain}。"
         elif cmd == "rest":
             narrative = self._apply_effects("REFUSE", 1.0, "", channel=channel)
         elif cmd == "report":
