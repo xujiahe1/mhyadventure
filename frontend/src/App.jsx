@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import axios from 'axios';
 import { Send, MessageSquare, Briefcase, ShoppingBag, Coffee, Search, Users } from 'lucide-react';
 
@@ -108,6 +108,66 @@ function App() {
   const workbenchButtonRef = useRef(null);
   const riceCardRef = useRef(null);
   const riceModalRef = useRef(null);
+
+  const [mentionState, setMentionState] = useState({
+    active: false,
+    query: "",
+    selectedIndex: 0,
+    triggerIndex: -1
+  });
+
+  const mentionFilteredNPCs = useMemo(() => {
+    if (!mentionState.active) return [];
+    const q = mentionState.query.toLowerCase();
+    return npcList.filter(npc => 
+      npc.name.toLowerCase().includes(q) || 
+      (npc.id && npc.id.toLowerCase().includes(q))
+    );
+  }, [npcList, mentionState.active, mentionState.query]);
+
+  const insertMention = (npc) => {
+    if (!npc) return;
+    const nameToInsert = npc.name + " ";
+    const preMention = input.slice(0, mentionState.triggerIndex);
+    const postCursor = input.slice(inputRef.current?.selectionStart || input.length);
+    
+    const newValue = `${preMention}@${nameToInsert}${postCursor}`;
+    setInput(newValue);
+    setMentionState(prev => ({ ...prev, active: false }));
+    
+    setTimeout(() => {
+        if(inputRef.current) {
+            inputRef.current.focus();
+            const newCursorPos = preMention.length + 1 + nameToInsert.length;
+            inputRef.current.setSelectionRange(newCursorPos, newCursorPos);
+        }
+    }, 0);
+  };
+
+  const handleInputChange = (e) => {
+    const newVal = e.target.value;
+    setInput(newVal);
+    
+    const cursorPos = e.target.selectionStart;
+    const textBeforeCursor = newVal.slice(0, cursorPos);
+    const atIndex = textBeforeCursor.lastIndexOf('@');
+    
+    if (atIndex !== -1 && (atIndex === 0 || /[\s\n]/.test(textBeforeCursor[atIndex - 1]))) {
+       const query = textBeforeCursor.slice(atIndex + 1);
+       if (query.length < 20 && !query.includes('\n')) {
+         setMentionState({
+           active: true,
+           query,
+           selectedIndex: 0,
+           triggerIndex: atIndex
+         });
+         return;
+       }
+    }
+    if (mentionState.active) {
+        setMentionState(prev => ({ ...prev, active: false }));
+    }
+  };
 
   const formatTime = (isoString) => {
     if (!isoString) return "";
@@ -516,6 +576,9 @@ function App() {
       if (!prev || !prev.trim()) return `${mention} `;
       return `${prev.trim()} ${mention} `;
     });
+    if (tutorialVisible) {
+      setTutorialProgress(prev => (prev.firstMessage ? prev : { ...prev, firstMessage: true }));
+    }
     handleContextMenuClose();
     if (inputRef.current) {
       inputRef.current.focus();
@@ -1136,7 +1199,7 @@ function App() {
                 <div className="p-8">
                   {tutorialStep === 1 && (
                     <div className="text-sm text-gray-700 leading-relaxed">
-                      在底部输入框随便说一句，然后点「发送」或按回车。
+                      在聊天区打一句话，开始你的工作吧！你也可以在消息区右键某位同事的消息，选择「艾特ta」，指定与他进行沟通。
                     </div>
                   )}
                   {tutorialStep === 2 && (
@@ -1814,7 +1877,32 @@ function App() {
               })}
             </div>
           )}
-          <div className="flex space-x-3">
+          <div className="flex space-x-3 relative">
+            {/* Mention Popup */}
+            {mentionState.active && mentionFilteredNPCs.length > 0 && (
+              <div className="absolute bottom-full mb-2 left-0 w-64 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-50">
+                 <div className="bg-gray-50 px-3 py-2 border-b border-gray-100 text-xs font-bold text-gray-500">
+                   选择要艾特的人
+                 </div>
+                 <div className="max-h-48 overflow-y-auto">
+                   {mentionFilteredNPCs.map((npc, idx) => (
+                     <div
+                       key={npc.id}
+                       onClick={() => insertMention(npc)}
+                       className={`px-3 py-2 flex items-center cursor-pointer ${
+                         idx === mentionState.selectedIndex ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-50 text-gray-700'
+                       }`}
+                     >
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] mr-2 ${npc.bg}`}>
+                          {npc.avatar}
+                        </div>
+                        <div className="text-sm font-medium">{npc.name}</div>
+                     </div>
+                   ))}
+                 </div>
+              </div>
+            )}
+
             <textarea
               disabled={inputDisabled}
               ref={inputRef}
@@ -1830,8 +1918,37 @@ function App() {
                   : `发送给 ${selectedChat === 'group' ? '项目组' : npcList.find(n => n.id === selectedChat)?.name}... (试着说: "帮我修个Bug" 或 "请你喝奶茶")`
               }
               value={input}
-              onChange={e => setInput(e.target.value)}
+              onChange={handleInputChange}
               onKeyDown={e => {
+                if (mentionState.active && mentionFilteredNPCs.length > 0) {
+                  if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    setMentionState(prev => ({
+                        ...prev,
+                        selectedIndex: (prev.selectedIndex - 1 + mentionFilteredNPCs.length) % mentionFilteredNPCs.length
+                    }));
+                    return;
+                  }
+                  if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    setMentionState(prev => ({
+                        ...prev,
+                        selectedIndex: (prev.selectedIndex + 1) % mentionFilteredNPCs.length
+                    }));
+                    return;
+                  }
+                  if (e.key === 'Enter' || e.key === 'Tab') {
+                    e.preventDefault();
+                    insertMention(mentionFilteredNPCs[mentionState.selectedIndex]);
+                    return;
+                  }
+                  if (e.key === 'Escape') {
+                    e.preventDefault();
+                    setMentionState(prev => ({ ...prev, active: false }));
+                    return;
+                  }
+                }
+
                 if (e.nativeEvent.isComposing) {
                   return;
                 }
