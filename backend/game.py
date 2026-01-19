@@ -853,6 +853,11 @@ class GameManager:
     def _get_timestamp(self) -> str:
         return datetime.now().isoformat()
 
+    def _get_recent_history(self, channel: str, limit: int = 5) -> list[dict]:
+        msgs = [m for m in self.state.chat_history if m.get("target") == channel]
+        trimmed = msgs[-limit:]
+        return [{"sender": m.get("sender"), "content": m.get("content")} for m in trimmed]
+
     def _add_fact(self, fact: str):
         fact = (fact or "").strip()
         if not fact:
@@ -1707,10 +1712,7 @@ class GameManager:
                 npc_id = random.choice(candidates)
                 npc_data = self.state.npcs.get(npc_id)
                 if npc_data:
-                    recent_history = [
-                        {"sender": msg["sender"], "content": msg["content"]}
-                        for msg in self.state.chat_history[-5:]
-                    ]
+                    recent_history = self._get_recent_history(channel, limit=5)
                     gen_result = await llm_service.process_action(
                         text,
                         player.dict(),
@@ -1795,10 +1797,7 @@ class GameManager:
                 active_npc_id = await self._infer_relevant_npc_by_text(text)
 
             target_npc_data = self.state.npcs.get(active_npc_id, {}) if active_npc_id else {}
-            recent_history = [
-                {"sender": msg["sender"], "content": msg["content"]}
-                for msg in self.state.chat_history[-5:]
-            ]
+            recent_history = self._get_recent_history(channel, limit=5)
 
             stream_gen = llm_service.process_action_stream(
                 text,
@@ -2036,10 +2035,7 @@ class GameManager:
                     npc_id = random.choice(candidates)
                     npc_data = self.state.npcs.get(npc_id)
                     if npc_data:
-                        recent_history = [
-                            {"sender": msg["sender"], "content": msg["content"]}
-                            for msg in self.state.chat_history[-5:]
-                        ]
+                        recent_history = self._get_recent_history(channel, limit=5)
                         gen_result = await llm_service.process_action(
                             text,
                             player.dict(),
@@ -2106,10 +2102,7 @@ class GameManager:
         if responders:
             async def run_for_npc(npc_id: str):
                 active_npc_data = self.state.npcs.get(npc_id, {})
-                recent_history = [
-                    {"sender": msg["sender"], "content": msg["content"]}
-                    for msg in self.state.chat_history[-5:]
-                ]
+                recent_history = self._get_recent_history(channel, limit=5)
                 gen_result = await llm_service.process_action(
                     text,
                     player.dict(),
@@ -3492,9 +3485,12 @@ class GameManager:
     async def _refresh_suggested_replies(self, channel: str):
         if not self.state.player:
             return
+        # Use channel-specific recent chat messages to keep suggestions aligned with current context
+        recent_msgs = [m for m in self.state.chat_history if m.get("target") == channel]
+        recent_trimmed = recent_msgs[-8:]
         recent = [
-            {"sender": msg.get("sender"), "content": msg.get("content"), "type": msg.get("type")}
-            for msg in self.state.chat_history[-8:]
+            {"sender": m.get("sender"), "content": m.get("content"), "type": m.get("type")}
+            for m in recent_trimmed
         ]
         suggestions = await llm_service.generate_suggested_replies(self.state.player.dict(), recent)
         self.state.suggested_replies = suggestions[:2] if suggestions else []

@@ -310,6 +310,7 @@ function App() {
       setTutorialProgress(prev => (prev.firstCommand ? prev : { ...prev, firstCommand: true }));
     }
     try {
+      setIsTyping(true);
       const res = await axios.post(`${API_URL}/action`, { 
         action_type: "chat", 
         content: `cmd:${cmd}`,
@@ -320,6 +321,8 @@ function App() {
       setGameState(res.data);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsTyping(false);
     }
   };
   
@@ -329,6 +332,7 @@ function App() {
       setTutorialProgress(prev => (prev.firstRice ? prev : { ...prev, firstRice: true }));
     }
     try {
+      setIsTyping(true);
       const res = await axios.post(`${API_URL}/action`, {
         action_type: "workbench",
         content: `cmd:${cmd}`,
@@ -339,6 +343,8 @@ function App() {
       setGameState(res.data);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsTyping(false);
     }
   };
 
@@ -1780,7 +1786,7 @@ function App() {
                   {text}
                 </button>
               ))}
-              {fixedQuickReplies.map((text, idx) => {
+              {selectedChat === 'group' && fixedQuickReplies.map((text, idx) => {
                 const cmd = fixedQuickReplyCommandMap[text];
                 const handleClick = () => {
                   if (gameState?.game_over || gameState?.active_global_event || isTyping) return;
@@ -1845,6 +1851,13 @@ function App() {
           </div>
         </div>
         </>
+        )}
+        {isTyping && currentView !== 'chat' && (
+          <div className="fixed bottom-4 right-4 z-[200]">
+            <div className="px-3 py-2 rounded-lg bg-gray-900 text-white text-xs shadow-lg">
+              正在生成回复...
+            </div>
+          </div>
         )}
         {contextMenu.visible && (
           <div className="fixed inset-0 z-50" onClick={handleContextMenuClose}>
