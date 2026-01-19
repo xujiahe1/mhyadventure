@@ -1155,7 +1155,7 @@ function App() {
                 
                 {msg.type === 'system' ? (
                   <div className="w-full flex justify-center my-2">
-                    <span className="bg-gray-200 text-gray-500 text-xs px-4 py-1 rounded-full shadow-sm">
+                    <span className="bg-gray-200 text-gray-600 text-xs px-4 py-1 rounded-full shadow-sm">
                       {msg.content}
                     </span>
                   </div>

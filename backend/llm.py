@@ -2,6 +2,7 @@ from openai import AsyncOpenAI
 import os
 import random
 import json
+import time
 
 API_BASE = "https://ark.cn-beijing.volces.com/api/v3"
 API_KEY = os.getenv("ARK_API_KEY")
@@ -130,6 +131,9 @@ class LLMService:
                 "chat_history": chat_history[-5:] if chat_history else []
             }
 
+            t_start = time.perf_counter()
+            first_token_time = None
+            last_time = None
             stream = await self.client.chat.completions.create(
                 model=MODEL,
                 messages=[
@@ -138,7 +142,8 @@ class LLMService:
                 ],
                 temperature=0.7,
                 max_tokens=500,
-                stream=True
+                stream=True,
+                extra_body={"thinking": {"type": "disabled"}},
             )
 
             async for chunk in stream:
@@ -149,7 +154,16 @@ class LLMService:
                         continue
                     content_piece = getattr(delta, "content", None)
                     if content_piece:
+                        now = time.perf_counter()
+                        if first_token_time is None:
+                            first_token_time = now
+                        last_time = now
                         yield content_piece
+
+            if first_token_time is not None:
+                total = (last_time or time.perf_counter()) - t_start
+                first_cost = first_token_time - t_start
+                print(f"LLM_STREAM first={first_cost:.3f}s total={total:.3f}s")
 
         except Exception as e:
             print(f"LLM Stream Error: {e}")
@@ -221,6 +235,7 @@ class LLMService:
                 "chat_history": chat_history[-5:] if chat_history else []
             }
 
+            t0 = time.perf_counter()
             response = await self.client.chat.completions.create(
                 model=MODEL,
                 messages=[
@@ -229,9 +244,11 @@ class LLMService:
                 ],
                 temperature=0.7,
                 max_tokens=300, 
-                response_format={"type": "json_object"}
+                response_format={"type": "json_object"},
+                extra_body={"thinking": {"type": "disabled"}},
             )
-            # LOGGING
+            t1 = time.perf_counter()
+            print(f"LLM_PROCESS cost={t1 - t0:.3f}s")
             print(f"LLM Response Status: OK")
             # print(f"LLM Raw Content: {response.choices[0].message.content}")
             data = json.loads(response.choices[0].message.content)
@@ -301,7 +318,8 @@ class LLMService:
                 ],
                 temperature=0.8,
                 max_tokens=200,
-                response_format={"type": "json_object"}
+                response_format={"type": "json_object"},
+                extra_body={"thinking": {"type": "disabled"}},
             )
             return json.loads(response.choices[0].message.content)
         except Exception as e:
@@ -387,7 +405,8 @@ class LLMService:
                 ],
                 temperature=0.8,
                 max_tokens=300,
-                response_format={"type": "json_object"}
+                response_format={"type": "json_object"},
+                extra_body={"thinking": {"type": "disabled"}},
             )
             return json.loads(response.choices[0].message.content)
         except Exception as e:
@@ -441,7 +460,8 @@ class LLMService:
                 ],
                 temperature=0.3,
                 max_tokens=200,
-                response_format={"type": "json_object"}
+                response_format={"type": "json_object"},
+                extra_body={"thinking": {"type": "disabled"}},
             )
             return json.loads(response.choices[0].message.content)
         except Exception as e:
@@ -482,7 +502,7 @@ class LLMService:
                     {"role": "user", "content": "Generate welcome message."}
                 ],
                 temperature=0.7,
-                max_tokens=150
+                max_tokens=150,
             )
             return response.choices[0].message.content.strip()
         except Exception as e:
@@ -544,7 +564,8 @@ class LLMService:
                 ],
                 temperature=0.7,
                 max_tokens=80,
-                response_format={"type": "json_object"}
+                response_format={"type": "json_object"},
+                extra_body={"thinking": {"type": "disabled"}},
             )
             data = json.loads(response.choices[0].message.content)
             suggestions = data.get("suggestions") or []
