@@ -4,6 +4,19 @@ import { Send, MessageSquare, Briefcase, ShoppingBag, Coffee, Search, Users } fr
 
 const API_URL = (import.meta.env.VITE_API_BASE_URL || "/api");
 
+const SESSION_ID_KEY = "mh_session_id";
+const getSessionId = () => {
+  try {
+    const existing = sessionStorage.getItem(SESSION_ID_KEY);
+    if (existing) return existing;
+    const sid = (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`);
+    sessionStorage.setItem(SESSION_ID_KEY, sid);
+    return sid;
+  } catch (e) {
+    return "";
+  }
+};
+
 const mapRoleToCN = (role) => {
   if (!role) return "";
   const r = String(role);
@@ -125,7 +138,9 @@ function App() {
   const handleOnboard = async () => {
     setLoading(true);
     try {
-      const res = await axios.post(`${API_URL}/init`, onboardData);
+      const res = await axios.post(`${API_URL}/init`, onboardData, {
+        headers: { "X-Session-Id": getSessionId() },
+      });
       setGameState(res.data);
       setIsOnboarding(false);
     } catch (err) {
@@ -143,6 +158,8 @@ function App() {
         action_type: "chat", 
         content: `cmd:${cmd}`,
         target_npc: "group"
+      }, {
+        headers: { "X-Session-Id": getSessionId() },
       });
       setGameState(res.data);
     } catch (err) {
@@ -157,6 +174,8 @@ function App() {
         action_type: "workbench",
         content: `cmd:${cmd}`,
         target_npc: "workbench"
+      }, {
+        headers: { "X-Session-Id": getSessionId() },
       });
       setGameState(res.data);
     } catch (err) {
@@ -196,6 +215,7 @@ function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Session-Id': getSessionId(),
         },
         body: JSON.stringify({ 
           action_type: "chat", 
@@ -581,11 +601,16 @@ function App() {
           {/* Left Side: Intro */}
           <div className="md:w-1/3 flex flex-col justify-center border-r border-gray-100 pr-6">
             <div className="mb-6 text-center md:text-left">
-               <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-4 mx-auto md:mx-0 shadow-lg transform rotate-3">
+              <div className="flex items-center justify-center md:justify-start mb-4 space-x-3">
+                <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto md:mx-0 shadow-lg transform rotate-3">
                   <span className="text-white font-bold text-2xl">M</span>
-               </div>
-               <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Tech Otakus Save The World</h1>
-               <p className="text-gray-500 text-sm">欢迎加入米哈游！请完善你的入职信息，开始你的冒险。</p>
+                </div>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-gray-100 text-gray-600 border border-gray-200">
+                  V0.1.0
+                </span>
+              </div>
+              <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Tech Otakus Save The World</h1>
+              <p className="text-gray-500 text-sm">欢迎加入米哈游！请完善你的入职信息，开始你的冒险。</p>
             </div>
             
             <div className="space-y-4">
@@ -752,7 +777,9 @@ function App() {
                <button
                   onClick={async () => {
                     try {
-                      const res = await axios.post(`${API_URL}/event/ack`);
+                      const res = await axios.post(`${API_URL}/event/ack`, null, {
+                        headers: { "X-Session-Id": getSessionId() },
+                      });
                       setGameState(res.data);
                     } catch (err) {
                       console.error(err);

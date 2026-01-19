@@ -22,8 +22,8 @@ INITIAL_PROJECTS = {
 def load_all_npcs():
     npcs = {}
     data_path_candidates = [
-        os.path.join(os.path.dirname(__file__), "data/npcs.json"),
         os.path.join(os.path.dirname(__file__), "backend/data/npcs.json"),
+        os.path.join(os.path.dirname(__file__), "data/npcs.json"),
     ]
     data_path = next((p for p in data_path_candidates if os.path.exists(p)), None)
     
@@ -47,8 +47,8 @@ INITIAL_NPCS = load_all_npcs()
 def load_global_events():
     events = []
     data_path_candidates = [
-        os.path.join(os.path.dirname(__file__), "data/global_events.json"),
         os.path.join(os.path.dirname(__file__), "backend/data/global_events.json"),
+        os.path.join(os.path.dirname(__file__), "data/global_events.json"),
     ]
     data_path = next((p for p in data_path_candidates if os.path.exists(p)), None)
 
@@ -3660,6 +3660,8 @@ class GameManager:
     def _check_game_over(self, channel: str):
         player = self.state.player
         if not player:
+            return
+        if self.state.active_global_event and not self.state.game_over:
             return
             
         reason = ""
