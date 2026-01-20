@@ -728,10 +728,68 @@ ACADEMY_COURSES = [
     },
 ]
 
+MIHA_HOUSES = [
+    {
+        "id": "starter_rent",
+        "name": "滴水湖小单间",
+        "cost": 0,
+        "min_level": "P5",
+        "fatigue_tick": 1,
+        "desc": "你在滴水湖边拥有一间小单间，海风清爽，周末沿湖散步回血。"
+    },
+    {
+        "id": "rent_studio",
+        "name": "桂林路小单间",
+        "cost": 3000,
+        "min_level": "P5",
+        "fatigue_tick": 2,
+        "desc": "桂林路地铁口旁的小单间，步行通勤，两站到公司，夜宵选择丰富。"
+    },
+    {
+        "id": "old_apartment",
+        "name": "田林路一居",
+        "cost": 6000,
+        "min_level": "P5",
+        "fatigue_tick": 3,
+        "desc": "田林路老小区一居，烟火气十足，楼下是早餐摊与修车铺，生活踏实。"
+    },
+    {
+        "id": "new_apartment",
+        "name": "徐家汇两居",
+        "cost": 12000,
+        "min_level": "P6",
+        "fatigue_tick": 4,
+        "desc": "徐家汇两居，地铁与商圈在旁，通勤效率与生活品质同步升级。"
+    },
+    {
+        "id": "city_center_loft",
+        "name": "黄浦区LOFT",
+        "cost": 20000,
+        "min_level": "P6",
+        "fatigue_tick": 5,
+        "desc": "黄浦区LOFT，窗外是城市灯光与海风，下班即可Citywalk。"
+    },
+    {
+        "id": "river_view_house",
+        "name": "外滩大平层",
+        "cost": 35000,
+        "min_level": "P7",
+        "fatigue_tick": 6,
+        "desc": "外滩大平层，浦江江景环绕，日落与霓虹相伴，回家即度假。"
+    },
+    {
+        "id": "villa",
+        "name": "佘山大别墅",
+        "cost": 50000,
+        "min_level": "P8",
+        "fatigue_tick": 7,
+        "desc": "佘山大别墅，周末躺平在山林间，远离城市的喧嚣，彻底充电。"
+    },
+]
+
 class GameManager:
     def __init__(self):
         self.state = GameState()
-        # Deep copy initial data to avoid reference issues on reset
         self.state.projects = {k: v.model_copy(deep=True) for k, v in INITIAL_PROJECTS.items()}
         self.state.npcs = {k: v.model_copy(deep=True) for k, v in INITIAL_NPCS.items()}
         self.state.known_npcs = []
@@ -867,6 +925,61 @@ class GameManager:
         self.state.memory_facts.append(fact)
         if len(self.state.memory_facts) > 20:
             self.state.memory_facts = self.state.memory_facts[-20:]
+
+    def _update_fatigue(self, delta: int):
+        player = self.state.player
+        if not player:
+            return
+        value = getattr(player, "fatigue", 0) + int(delta)
+        if value < 0:
+            value = 0
+        if value > 100:
+            value = 100
+        player.fatigue = value
+
+    def _fatigue_factor(self) -> float:
+        player = self.state.player
+        if not player:
+            return 1.0
+        fatigue = max(0, getattr(player, "fatigue", 0))
+        if fatigue <= 0:
+            return 1.0
+        if fatigue >= 100:
+            return 0.5
+        return 1.0 - 0.5 * (fatigue / 100.0)
+
+    def _major_accident_probability(self, risk: int) -> float:
+        if risk < 60:
+            return 0.0
+        if risk >= 90:
+            return 0.30
+        return 0.05 + (0.25 * (risk - 60) / 30.0)
+
+    def _apply_house_purchase(self, house_id: str) -> str:
+        player = self.state.player
+        if not player:
+            return ""
+        cfg_map = {h["id"]: h for h in MIHA_HOUSES}
+        house = cfg_map.get(house_id)
+        if not house:
+            return ""
+        owned = getattr(player, "houses_owned", None)
+        if owned is None:
+            owned = []
+            player.houses_owned = owned
+        if house_id in owned:
+            return f"{house['name']} 已经在你的名下，无法重复购买。"
+        level_num = self._parse_level(getattr(player, "level", "P5"))
+        min_level = self._parse_level(house.get("min_level", "P5"))
+        if level_num < min_level:
+            return f"当前职级不足，{house['name']} 需要达到 {house.get('min_level', 'P5')} 后解锁。"
+        cost = house.get("cost", 0)
+        if player.money < cost:
+            return f"余额不足，暂时还买不起 {house['name']}。"
+        player.money -= cost
+        owned.append(house_id)
+        desc = house.get("desc") or f"你在米哈房购入了 {house['name']}。"
+        return f"{desc} 金钱 -{cost}。从下周开始，每周都会稍微减轻你的疲劳。"
 
     def _advance_time(self, channel: str, weeks: int = 1, days: int = 0, global_event_prob: float = None):
         if not self.state.player:
@@ -1176,6 +1289,20 @@ class GameManager:
                 # Can go into debt slightly before Game Over check catches it
                 pass
 
+            owned = getattr(player, "houses_owned", None) or []
+            if owned:
+                cfg_map = {h["id"]: h for h in MIHA_HOUSES}
+                total_relief = 0
+                for hid in owned:
+                    house = cfg_map.get(hid)
+                    if not house:
+                        continue
+                    delta = int(house.get("fatigue_tick", 0) or 0)
+                    if delta > 0:
+                        total_relief += delta
+                if total_relief > 0:
+                    self._update_fatigue(-total_relief)
+
         if project:
             # bug_growth = max(0, int(project.difficulty / 2))
             # project.bug_count = max(0, project.bug_count + bug_growth)
@@ -1211,16 +1338,18 @@ class GameManager:
             if player.current_project not in player.participated_live_projects:
                 player.participated_live_projects.append(player.current_project)
 
-        if player and project and project.risk >= 90:
-            player.major_accidents = max(0, player.major_accidents + 1)
-            self.state.chat_history.append({
-                "sender": "System",
-                "content": f"{project.name} 出现重大风险（Risk {project.risk}/100）。",
-                "type": "system",
-                "target": channel,
-                "timestamp": self._get_timestamp()
-            })
-            self._add_fact(f"重大事故 {project.name} 第{self.state.week}周")
+        if player and project and project.risk >= 60:
+            prob = self._major_accident_probability(project.risk)
+            if random.random() < prob:
+                player.major_accidents = max(0, player.major_accidents + 1)
+                self.state.chat_history.append({
+                    "sender": "System",
+                    "content": f"{project.name} 发生重大事故（Risk {project.risk}/100）。",
+                    "type": "system",
+                    "target": channel,
+                    "timestamp": self._get_timestamp()
+                })
+                self._add_fact(f"重大事故 {project.name} 第{self.state.week}周")
 
         self._npc_ecology_tick(channel)
         self._project_evolution_tick(channel)
@@ -1452,6 +1581,7 @@ class GameManager:
             learning_rate=learning_rate,
             max_energy=max_energy,
             energy=max_energy,
+            fatigue=0,
             current_project=req.project_name
         )
         
@@ -2363,7 +2493,13 @@ class GameManager:
         if energy_gain:
             player.energy = min(player.max_energy, player.energy + energy_gain)
         if mood_gain:
-            player.mood = max(0, min(100, player.mood + mood_gain))
+            fatigue_mod = self._fatigue_factor() if mood_gain > 0 else 1.0
+            mood_delta = mood_gain if mood_gain < 0 else max(1, int(mood_gain * fatigue_mod))
+            player.mood = max(0, min(100, player.mood + mood_delta))
+        if cost <= 30:
+            self._update_fatigue(6)
+        elif cost >= 100:
+            self._update_fatigue(-8)
         learning_rate_delta = float(item.get("learning_rate_delta", 0.0) or 0.0)
         learning_rate_chance = float(item.get("learning_rate_chance", 0.0) or 0.0)
         lr_up = False
@@ -2436,9 +2572,12 @@ class GameManager:
                 purchases[key] = purchases.get(key, 0) + 1
                 return f"你在米购买了限量手办送给 {target.name}。Money -{cost}, Trust +{trust_gain}"
             purchases[key] = purchases.get(key, 0) + 1
+            self._update_fatigue(-8)
             return f"你在米购购买了限量手办。Money -{cost}"
         if cost:
             player.money -= cost
+        if item["id"] in ["gpu", "monitor", "chair"]:
+            purchases[key] = purchases.get(key, 0) + 1
         if item["id"] == "gpu":
             player.gear_gpu_level += 1
             player.hard_skill += 3
@@ -2460,7 +2599,9 @@ class GameManager:
         if energy_gain:
             player.energy = min(player.max_energy, player.energy + energy_gain)
         if mood_gain:
-            player.mood = max(0, min(100, player.mood + mood_gain))
+            fatigue_mod = self._fatigue_factor() if mood_gain > 0 else 1.0
+            mood_delta = mood_gain if mood_gain < 0 else max(1, int(mood_gain * fatigue_mod))
+            player.mood = max(0, min(100, player.mood + mood_delta))
         if hard_gain:
             player.hard_skill += hard_gain
         if soft_gain:
@@ -2717,6 +2858,8 @@ class GameManager:
             narrative = self._apply_shop_item("chair", channel)
         elif cmd == "shop":
             narrative = self._apply_shop_item(arg, channel)
+        elif cmd == "house":
+            narrative = self._apply_house_purchase(arg)
         elif cmd == "learn_skill":
             narrative = self._apply_academy_course("base", channel)
         elif cmd == "train_hard":
@@ -2842,6 +2985,8 @@ class GameManager:
                     source = "shop"
                 elif cmd in ["academy", "learn_skill", "train_hard", "train_soft", "train_leadership"]:
                     source = "academy"
+                elif cmd in ["house"]:
+                    source = "house"
                 self.state.workbench_feedback.append({
                     "source": source,
                     "content": narrative,
@@ -2914,9 +3059,12 @@ class GameManager:
                 base_mood_cost = 1
             player.mood = max(0, player.mood - base_mood_cost)
 
+            self._update_fatigue(8 * magnitude)
+
             mood_mod = player.mood / 100.0 if player.mood > 0 else 0.1
             gear_bonus = 1.0 + 0.05 * getattr(player, "gear_gpu_level", 0) + 0.03 * getattr(player, "gear_monitor_level", 0) + 0.02 * getattr(player, "gear_chair_level", 0)
-            
+            fatigue_mod = self._fatigue_factor()
+
             kpi_gain = math.floor(
                 10
                 * (player.hard_skill / 50.0)
@@ -2924,6 +3072,7 @@ class GameManager:
                 * mood_mod
                 * magnitude
                 * gear_bonus
+                * fatigue_mod
                 * self.state.global_modifiers.get("kpi_multiplier", 1.0)
             )
             player.kpi += kpi_gain
@@ -3003,8 +3152,12 @@ class GameManager:
 
             energy_gain = int(20 * mag)
             mood_gain = max(1, int(3 + player.mood / 50))
+            fatigue_mod = self._fatigue_factor()
+            mood_gain = max(1, int(mood_gain * fatigue_mod))
             player.energy = min(player.max_energy, player.energy + energy_gain)
             player.mood = max(0, min(100, player.mood + mood_gain))
+
+            self._update_fatigue(-6 * mag)
 
             narrative = f"你犒劳自己点了好东西。Money -{cost}, Energy +{energy_gain}, Mood +{mood_gain}。"
 
@@ -3025,8 +3178,12 @@ class GameManager:
             base_energy_gain = 4
             energy_gain = int(base_energy_gain * mag)
             mood_gain = max(1, int(2 * mag))
+            fatigue_mod = self._fatigue_factor()
+            mood_gain = max(1, int(mood_gain * fatigue_mod))
             player.energy = min(player.max_energy, player.energy + energy_gain)
             player.mood = max(0, min(100, player.mood + mood_gain))
+
+            self._update_fatigue(-6 * mag)
 
             narrative = f"你选择了摸鱼，暂时远离了工作。Energy +{energy_gain}, Mood +{mood_gain}。"
 
@@ -3049,6 +3206,8 @@ class GameManager:
             energy_cost = int(base_energy_cost * mag)
             player.money -= cost
             player.energy -= energy_cost
+
+            self._update_fatigue(6 * mag)
 
             skill_gain = 1
             if player.role == Role.PRODUCT:
@@ -3673,7 +3832,9 @@ class GameManager:
         player = self.state.player
         if not player:
             return
-        if self.state.active_global_event and not self.state.game_over:
+        if self.state.game_over:
+            return
+        if self.state.active_global_event:
             return
             
         reason = ""
@@ -3728,21 +3889,26 @@ class GameManager:
                     self.state.game_over = True
 
         # 5. 正常通关 (Victory/Survival)
-        if not self.state.game_over and self.state.week >= 52:
-            revenue_total = sum(p.revenue for p in self.state.projects.values()) if self.state.projects else 0
-            if player.kpi >= 5000 and player.political_capital >= 30:
-                reason = "Executive"
-                self.state.game_over = True
-            elif player.money >= 60000:
-                reason = "Rich"
-                self.state.game_over = True
-            elif revenue_total >= 100000 and player.kpi >= 3500:
-                reason = "Producer"
-                self.state.game_over = True
-            else:
+        if not self.state.game_over:
+            level_num = self._parse_level(player.level)
+            
+            # 520周 = 10年
+            if self.state.week >= 520:
                 reason = "Stable"
                 self.state.game_over = True
-                
+            elif level_num >= 10:
+                reason = "Executive"
+                self.state.game_over = True
+            elif player.money >= 10000000:
+                reason = "Rich"
+                self.state.game_over = True
+            elif self.state.week >= 52:
+                # 满一年时的结算检查
+                project = self.state.projects.get(player.current_project)
+                if project and level_num >= 8 and project.revenue >= 100000:
+                    reason = "Producer"
+                    self.state.game_over = True
+
         if self.state.game_over:
             self.state.ending = reason
             msg_map = {
@@ -3757,7 +3923,7 @@ class GameManager:
                 "Executive": "你在组织里站稳了脚跟，成为了高管。下一站：改变世界。",
                 "Rich": "你靠奖金与投资实现了财富自由，提前退休去环游世界。",
                 "Producer": "你带队做出爆款，成了金牌制作人，所有人都来找你借人。",
-                "Stable": "你平稳度过了一年，成为了靠谱的中坚力量。",
+                "Stable": "刚刚到达35周岁你就被开除了。",
             }
             msg = msg_map.get(reason, f"游戏结束 ({reason})。")
             self.state.chat_history.append({

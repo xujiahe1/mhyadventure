@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Send, MessageSquare, Briefcase, ShoppingBag, Coffee, Search, Users } from 'lucide-react';
+import { Send, MessageSquare, Briefcase, ShoppingBag, Coffee, Search, Users, Home } from 'lucide-react';
 
 const API_URL = (import.meta.env.VITE_API_BASE_URL || "/api");
 
@@ -73,6 +73,110 @@ const NPC_LIST_FALLBACK = [
   { id: 'Dawei', name: 'Dawei (大伟哥)', role: 'CEO', avatar: 'D', bg: 'bg-yellow-500' },
 ];
 
+const ENDING_CONFIG = {
+  Fired: {
+    title: "你被开除了！",
+    description: "由于信任度过低，你收到了HR的辞退通知。保安正在护送你离开园区...",
+    condition: "高管信任 ≤ 0",
+    type: "negative",
+    icon: "🔴"
+  },
+  Exhausted: {
+    title: "你累倒了！",
+    description: "请注意休息，身体是革命的本钱。",
+    condition: "精力 ≤ 0",
+    type: "negative",
+    icon: "💤"
+  },
+  Bankrupt: {
+    title: "你破产了！",
+    description: "存款归零，无法支付房租与基本开支，本局以破产结局收尾。",
+    condition: "金钱 < 0",
+    type: "negative",
+    icon: "💸"
+  },
+  Depressed: {
+    title: "你抑郁了！",
+    description: "长期心情低落，医生建议你暂停工作进行治疗与休养。",
+    condition: "心情 ≤ 0",
+    type: "negative",
+    icon: "😞"
+  },
+  Breakdown: {
+    title: "你崩溃了！",
+    description: "心情与精力长期低位，你在工位崩溃痛哭，选择离开。",
+    condition: "心情 & 精力 长期低迷",
+    type: "negative",
+    icon: "💥"
+  },
+  Pip: {
+    title: "你被 PIP 劝退！",
+    description: "PIP 考核未通过，经理要求你离开团队并办理手续。",
+    condition: "绩效考核不合格",
+    type: "negative",
+    icon: "📄"
+  },
+  ProjectCollapse: {
+    title: "项目崩盘！",
+    description: "项目彻底崩盘，你作为核心成员被迫背锅离场。",
+    condition: "项目风险 ≥ 100",
+    type: "negative",
+    icon: "🧨"
+  },
+  ProjectCancelled: {
+    title: "项目解散！",
+    description: "资方取消项目组，你随团队一并解散并离开公司。",
+    condition: "项目被砍",
+    type: "negative",
+    icon: "🛑"
+  },
+  Executive: {
+    title: "你成为高管！",
+    description: "你在组织里站稳了脚跟，成为了高管。",
+    condition: "职级 ≥ P10",
+    type: "positive",
+    icon: "👑"
+  },
+  Rich: {
+    title: "你财富自由！",
+    description: "奖金与投资带来财富自由，你选择提前退休。",
+    condition: "金钱 ≥ 1000万",
+    type: "positive",
+    icon: "💰"
+  },
+  Producer: {
+    title: "你成了金牌制作人！",
+    description: "你带队做出爆款，成为金牌制作人。",
+    condition: "职级 ≥ P8 & 项目营收 ≥ 10万",
+    type: "positive",
+    icon: "🏆"
+  },
+  Stable: {
+    title: "你被优化了",
+    description: "刚刚到达35周岁你就被开除了。",
+    condition: "存活满520周",
+    type: "negative",
+    icon: "👋"
+  },
+  Resignation: {
+    title: "你体面地递交了离职申请。",
+    description: "你体面地递交了离职申请。",
+    condition: "主动辞职",
+    type: "neutral",
+    icon: "✉️"
+  }
+};
+
+const getEndingConfig = (ending) => {
+  return ENDING_CONFIG[ending] || {
+    title: "游戏结束",
+    description: "你的职业生涯阶段性收官。",
+    condition: "未知条件",
+    type: "negative",
+    icon: "!"
+  };
+};
+
 function App() {
   const [gameState, setGameState] = useState(null);
   const [npcList, setNpcList] = useState(NPC_LIST_FALLBACK);
@@ -80,12 +184,13 @@ function App() {
   const [onboardData, setOnboardData] = useState({ name: "", role: "Dev", project_name: "Genshin" });
   const [isOnboarding, setIsOnboarding] = useState(true);
   const [selectedChat, setSelectedChat] = useState('group'); // 'group' or NPC ID
-  const [currentView, setCurrentView] = useState('chat'); // 'chat' or 'workbench'
+  const [currentView, setCurrentView] = useState('chat'); // 'chat' or 'workbench' or 'profile'
   const [searchQuery, setSearchQuery] = useState("");
   const [showProfile, setShowProfile] = useState(false);
   const [showShop, setShowShop] = useState(false);
   const [showAcademy, setShowAcademy] = useState(false);
   const [showRice, setShowRice] = useState(false);
+  const [showHouse, setShowHouse] = useState(false);
   const [loading, setLoading] = useState(false); // Global loading for onboard/commands
   const [isTyping, setIsTyping] = useState(false); // Chat stream typing indicator
   const [isQuickReplyLoading, setIsQuickReplyLoading] = useState(false);
@@ -99,75 +204,20 @@ function App() {
   });
   const [tutorialFocusRect, setTutorialFocusRect] = useState(null);
   const [tutorialClaiming, setTutorialClaiming] = useState(false);
+  const [profileTab, setProfileTab] = useState('bag'); // 'bag' or 'house'
   
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
+  const [mentionOpen, setMentionOpen] = useState(false);
+  const [mentionQuery, setMentionQuery] = useState("");
+  const [mentionIndex, setMentionIndex] = useState(0);
+  const [mentionStart, setMentionStart] = useState(null);
   const searchInputRef = useRef(null);
   const tutorialInitRef = useRef(false);
   const quickCommandRef = useRef(null);
   const workbenchButtonRef = useRef(null);
   const riceCardRef = useRef(null);
   const riceModalRef = useRef(null);
-
-  const [mentionState, setMentionState] = useState({
-    active: false,
-    query: "",
-    selectedIndex: 0,
-    triggerIndex: -1
-  });
-
-  const mentionFilteredNPCs = useMemo(() => {
-    if (!mentionState.active) return [];
-    const q = mentionState.query.toLowerCase();
-    return npcList.filter(npc => 
-      npc.name.toLowerCase().includes(q) || 
-      (npc.id && npc.id.toLowerCase().includes(q))
-    );
-  }, [npcList, mentionState.active, mentionState.query]);
-
-  const insertMention = (npc) => {
-    if (!npc) return;
-    const nameToInsert = npc.name + " ";
-    const preMention = input.slice(0, mentionState.triggerIndex);
-    const postCursor = input.slice(inputRef.current?.selectionStart || input.length);
-    
-    const newValue = `${preMention}@${nameToInsert}${postCursor}`;
-    setInput(newValue);
-    setMentionState(prev => ({ ...prev, active: false }));
-    
-    setTimeout(() => {
-        if(inputRef.current) {
-            inputRef.current.focus();
-            const newCursorPos = preMention.length + 1 + nameToInsert.length;
-            inputRef.current.setSelectionRange(newCursorPos, newCursorPos);
-        }
-    }, 0);
-  };
-
-  const handleInputChange = (e) => {
-    const newVal = e.target.value;
-    setInput(newVal);
-    
-    const cursorPos = e.target.selectionStart;
-    const textBeforeCursor = newVal.slice(0, cursorPos);
-    const atIndex = textBeforeCursor.lastIndexOf('@');
-    
-    if (atIndex !== -1 && (atIndex === 0 || /[\s\n]/.test(textBeforeCursor[atIndex - 1]))) {
-       const query = textBeforeCursor.slice(atIndex + 1);
-       if (query.length < 20 && !query.includes('\n')) {
-         setMentionState({
-           active: true,
-           query,
-           selectedIndex: 0,
-           triggerIndex: atIndex
-         });
-         return;
-       }
-    }
-    if (mentionState.active) {
-        setMentionState(prev => ({ ...prev, active: false }));
-    }
-  };
 
   const formatTime = (isoString) => {
     if (!isoString) return "";
@@ -551,6 +601,36 @@ function App() {
     }
   };
 
+  const mentionSuggestions = (() => {
+    if (!mentionOpen) return [];
+    const q = (mentionQuery || "").toLowerCase();
+    const base = npcList || [];
+    const list = q ? base.filter(n => (n.name || "").toLowerCase().includes(q)) : base.slice();
+    return list.slice(0, 8);
+  })();
+
+  const insertMention = (name) => {
+    const el = inputRef.current;
+    const text = input || "";
+    const pos = el ? el.selectionStart : text.length;
+    const start = mentionStart ?? Math.max(0, text.lastIndexOf("@", pos));
+    const left = text.slice(0, start);
+    const right = text.slice(pos);
+    const next = `${left}@${name} ${right}`;
+    setInput(next);
+    setMentionOpen(false);
+    setMentionQuery("");
+    setMentionIndex(0);
+    setMentionStart(null);
+    setTimeout(() => {
+      if (inputRef.current) {
+        const newPos = left.length + name.length + 2;
+        inputRef.current.focus();
+        inputRef.current.selectionStart = newPos;
+        inputRef.current.selectionEnd = newPos;
+      }
+    }, 0);
+  };
   const handleMsgContextMenu = (event, msg) => {
     event.preventDefault();
     if (msg.type === 'player' || msg.type === 'system') return;
@@ -726,6 +806,15 @@ function App() {
     { id: "vip_gym", name: "健身房年卡", summary: "¥1800 · 精力上限体验提升 · 有概率悟性+0.1 · P6 推荐", note: "cmd:shop:vip_gym", emoji: "🏋️" },
   ];
 
+  const HOUSE_ITEMS_UI = [
+    { id: "rent_studio", name: "桂林路小单间", summary: "¥3000 · P5 解锁 · 每周疲劳 -2 · 桂林路步行通勤，夜宵丰富", note: "cmd:house:rent_studio", emoji: "🛏️" },
+    { id: "old_apartment", name: "田林路一居", summary: "¥6000 · P5 解锁 · 每周疲劳 -3 · 田林路烟火气，小区生活踏实", note: "cmd:house:old_apartment", emoji: "🏠" },
+    { id: "new_apartment", name: "徐家汇两居", summary: "¥12000 · P6 解锁 · 每周疲劳 -4 · 徐家汇通勤与生活品质升级", note: "cmd:house:new_apartment", emoji: "🏢" },
+    { id: "city_center_loft", name: "黄浦区LOFT", summary: "¥20000 · P6 解锁 · 每周疲劳 -5 · 黄浦区夜景与海风，下班即 Citywalk", note: "cmd:house:city_center_loft", emoji: "🌃" },
+    { id: "river_view_house", name: "外滩大平层", summary: "¥35000 · P7 解锁 · 每周疲劳 -6 · 外滩浦江江景，回家即度假", note: "cmd:house:river_view_house", emoji: "🌅" },
+    { id: "villa", name: "佘山大别墅", summary: "¥50000 · P8 解锁 · 每周疲劳 -7 · 佘山山林躺平，远离喧嚣", note: "cmd:house:villa", emoji: "🌳" },
+  ];
+
   const ACADEMY_COURSES_UI = [
     { id: "base", name: "基础进阶课", summary: "¥100 · 精力 -30 · 有概率悟性+0.05 · 综合向上", emoji: "📘" },
     { id: "hard_camp", name: "硬核技术训练营", summary: "¥200 · 精力 -40 · 硬技能 +4 · 高概率悟性+0.1", emoji: "🧪" },
@@ -749,11 +838,18 @@ function App() {
     { id: "random_inspiration", name: "灵感涌现工作坊", summary: "¥200 · 精力 -25 · 硬/软技能小幅提升 · 有概率悟性+0.2 爆发", emoji: "💡" },
   ];
 
+  const HOUSE_OWNED_META = [
+    { id: "starter_rent", name: "滴水湖小单间", summary: "默认持有 · 每周疲劳 -1 · 滴水湖小单间", emoji: "🏚️" },
+    ...HOUSE_ITEMS_UI,
+  ];
+
   const WorkbenchItemCard = ({ item, type, onAction }) => {
     const badges = [];
     if (item.summary.includes("限购")) badges.push("限购");
+    if (item.summary.includes("P5")) badges.push("P5");
     if (item.summary.includes("P6")) badges.push("P6");
     if (item.summary.includes("P7")) badges.push("P7");
+    if (item.summary.includes("P8")) badges.push("P8");
     if (
       item.summary.includes("必定悟性") ||
       item.summary.includes("高概率悟性") ||
@@ -763,7 +859,13 @@ function App() {
     }
 
     const actionText =
-      type === "academy" ? "报名" : type === "rice" ? "点这份" : "购买";
+      type === "academy"
+        ? "报名"
+        : type === "rice"
+        ? "点这份"
+        : type === "house"
+        ? "购入"
+        : "购买";
 
     const buttonBase =
       type === "rice"
@@ -815,6 +917,8 @@ function App() {
         ? "bg-orange-100 text-orange-600"
         : type === "academy"
         ? "bg-purple-100 text-purple-600"
+        : type === "house"
+        ? "bg-emerald-100 text-emerald-600"
         : "bg-blue-100 text-blue-600";
 
     return (
@@ -951,6 +1055,23 @@ function App() {
   if (!gameState) return <div className="flex h-screen items-center justify-center">Loading...</div>;
 
   const { player } = gameState;
+  const fatigue = Math.max(0, Math.min(100, player.fatigue ?? 0));
+  let fatigueColor = "bg-emerald-400";
+  if (fatigue >= 70) {
+    fatigueColor = "bg-red-500";
+  } else if (fatigue >= 40) {
+    fatigueColor = "bg-amber-400";
+  }
+  const ending = gameState.ending;
+  const endingConfig = getEndingConfig(ending);
+  const endingType = endingConfig.type;
+  
+  const modalBorder = endingType === "positive" ? "border-emerald-500" : (endingType === "neutral" ? "border-gray-400" : "border-red-500");
+  const iconBg = endingType === "positive" ? "bg-emerald-100" : (endingType === "neutral" ? "bg-gray-100" : "bg-red-100");
+  const iconText = endingType === "positive" ? "text-emerald-600" : (endingType === "neutral" ? "text-gray-600" : "text-red-600");
+  const titleColor = endingType === "positive" ? "text-emerald-700" : (endingType === "neutral" ? "text-gray-800" : "text-red-600");
+  const buttonColor = endingType === "positive" ? "bg-emerald-600 hover:bg-emerald-700" : (endingType === "neutral" ? "bg-gray-700 hover:bg-gray-800" : "bg-red-600 hover:bg-red-700");
+  const iconChar = endingConfig.icon;
   const currentProject = gameState?.projects?.[player.current_project];
   const projectDisplayName = mapProjectToCN(player.current_project);
   const computeRevenueTarget = (p) => {
@@ -1209,7 +1330,7 @@ function App() {
                   )}
                   {tutorialStep === 3 && (
                     <div className="text-sm text-gray-700 leading-relaxed">
-                      进入工作台 → 打开「米饭 · 干饭时间」→ 点任意一份完成首次购买。
+                      进入工作台 → 打开「米饭」→ 点任意一份完成首次购买。
                     </div>
                   )}
 
@@ -1311,30 +1432,23 @@ function App() {
       {/* Game Over Modal */}
       {gameState.game_over && (
          <div className="absolute inset-0 bg-black bg-opacity-70 z-[100] flex items-center justify-center backdrop-blur-sm">
-            <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full text-center border-4 border-red-500 animate-bounce-slow">
-               <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6 text-red-600 text-3xl font-bold">
-                  !
+            <div className={`bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full text-center border-4 ${modalBorder} animate-bounce-slow`}>
+               <div className={`w-20 h-20 ${iconBg} rounded-full flex items-center justify-center mx-auto mb-6 ${iconText} text-3xl font-bold`}>
+                  {iconChar}
                </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">游戏结束</h2>
-               <p className="text-xl text-red-600 font-bold mb-6">
-                 {{
-                   Fired: "你被开除了！",
-                   Exhausted: "你累倒了！",
-                   Executive: "你成为高管！",
-                   Rich: "你财富自由！",
-                   Producer: "你成了金牌制作人！",
-                   Stable: "你平稳度过一年",
-                   Resignation: "你体面地递交了离职申请。",
-                 }[gameState.ending] || "游戏结束"}
+              <h2 className={`text-3xl font-bold ${titleColor} mb-2`}>游戏结束</h2>
+               <p className="text-xl text-red-600 font-bold mb-2">
+                 {endingConfig.title}
+               </p>
+               <p className="text-sm text-gray-500 mb-6 font-mono bg-gray-50 py-1 px-3 rounded-lg inline-block">
+                 触发条件：{endingConfig.condition}
                </p>
                <p className="text-gray-600 mb-8">
-                  {gameState.ending === "Fired" 
-                    ? "由于信任度过低，你收到了HR的辞退通知。保安正在护送你离开园区..." 
-                    : (gameState.ending === "Exhausted" ? "请注意休息，身体是革命的本钱。" : "你的职业生涯阶段性收官。")}
+                  {endingConfig.description}
                </p>
                <button 
                   onClick={handleRestart}
-                  className="bg-red-600 text-white px-8 py-3 rounded-xl hover:bg-red-700 transition font-bold text-lg w-full"
+                  className={`${buttonColor} text-white px-8 py-3 rounded-xl transition font-bold text-lg w-full`}
                >
                   重新开始
                </button>
@@ -1384,6 +1498,12 @@ function App() {
              className={`p-2 rounded-lg transition ${currentView === 'workbench' ? 'text-blue-600 bg-blue-100' : 'text-gray-500 hover:bg-gray-200'}`}
           >
              <Briefcase className="w-6 h-6"/>
+          </button>
+          <button 
+             onClick={() => setCurrentView('profile')}
+             className={`p-2 rounded-lg transition ${currentView === 'profile' ? 'text-blue-600 bg-blue-100' : 'text-gray-500 hover:bg-gray-200'}`}
+          >
+             <Users className="w-6 h-6"/>
           </button>
         </div>
       </div>
@@ -1478,7 +1598,9 @@ function App() {
             <h2 className="text-lg font-bold text-gray-800">
                {currentView === 'chat' 
                   ? (selectedChat === 'group' ? `${projectDisplayName} 项目组` : npcList.find(n => n.id === selectedChat)?.name)
-                  : '工作台'
+                  : currentView === 'workbench'
+                    ? '工作台'
+                    : '我的'
                }
             </h2>
             {(currentView !== 'chat' || selectedChat === 'group') && (
@@ -1531,61 +1653,87 @@ function App() {
 
         {/* Profile Dropdown / Panel */}
         {showProfile && (
-          <div className="absolute top-16 right-4 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 p-6 animate-fade-in max-h-[80vh] overflow-y-auto">
-             <div className="flex justify-between items-center mb-4">
+          <div
+            className="fixed inset-0 z-40 flex justify-end items-start"
+            onClick={() => setShowProfile(false)}
+          >
+            <div
+              className="mt-16 mr-4 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 p-6 animate-fade-in max-h-[80vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-bold text-gray-800">个人中心</h3>
-                <button onClick={() => setShowProfile(false)} className="text-gray-400 hover:text-gray-600">×</button>
-             </div>
-             
-             <div className="space-y-6">
+                <button
+                  onClick={() => setShowProfile(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-6">
                 {/* 1. 产出 */}
                 <h4 className="text-xs text-gray-400 font-bold uppercase tracking-wider">产出</h4>
                 <div className="grid grid-cols-2 gap-4">
-                   <div className="bg-blue-50 p-3 rounded-lg text-center">
-                      <p className="text-xs text-blue-500 uppercase font-bold">KPI</p>
-                      <p className="text-2xl font-bold text-blue-700">{player.kpi}</p>
-                   </div>
-                   <div className="bg-yellow-50 p-3 rounded-lg text-center">
-                      <p className="text-xs text-yellow-600 uppercase font-bold">金钱</p>
-                      <p className="text-xl font-bold text-yellow-700">¥ {player.money}</p>
-                   </div>
-                   <div className="bg-purple-50 p-3 rounded-lg text-center">
-                      <p className="text-xs text-purple-600 uppercase font-bold">政治资本</p>
-                      <p className="text-xl font-bold text-purple-700">{player.political_capital}</p>
-                   </div>
-                   <div className="bg-gray-50 p-3 rounded-lg text-center">
-                      <p className="text-xs text-gray-600 uppercase font-bold">等级</p>
-                      <p className="text-xl font-bold text-gray-700">{player.level}</p>
-                   </div>
+                  <div className="bg-blue-50 p-3 rounded-lg text-center">
+                    <p className="text-xs text-blue-500 uppercase font-bold">KPI</p>
+                    <p className="text-2xl font-bold text-blue-700">{player.kpi}</p>
+                  </div>
+                  <div className="bg-yellow-50 p-3 rounded-lg text-center">
+                    <p className="text-xs text-yellow-600 uppercase font-bold">金钱</p>
+                    <p className="text-xl font-bold text-yellow-700">¥ {player.money}</p>
+                  </div>
+                  <div className="bg-purple-50 p-3 rounded-lg text-center">
+                    <p className="text-xs text-purple-600 uppercase font-bold">政治资本</p>
+                    <p className="text-xl font-bold text-purple-700">{player.political_capital}</p>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-lg text-center">
+                    <p className="text-xs text-gray-600 uppercase font-bold">等级</p>
+                    <p className="text-xl font-bold text-gray-700">{player.level}</p>
+                  </div>
                 </div>
 
                 {/* 2. 能力 */}
-                <h4 className="text-xs text-gray-400 font-bold uppercase tracking-wider border-t border-gray-100 pt-4">能力</h4>
+                <h4 className="text-xs text-gray-400 font-bold uppercase tracking-wider border-t border-gray-100 pt-4">
+                  能力
+                </h4>
                 <div className="space-y-3">
-                   <div className="grid grid-cols-2 gap-2 mt-2">
-                      <div className="flex justify-between text-sm bg-gray-50 p-2 rounded">
-                         <span className="text-gray-600">硬技能</span>
-                         <span className="font-mono font-bold">{player.hard_skill}</span>
-                      </div>
-                      <div className="flex justify-between text-sm bg-gray-50 p-2 rounded">
-                         <span className="text-gray-600">软技能</span>
-                         <span className="font-mono font-bold">{player.soft_skill}</span>
-                      </div>
-                   </div>
-                   <div className="mt-2 space-y-1 text-xs text-gray-500">
-                      <div>显卡等级：Lv{player.gear_gpu_level}</div>
-                      <div>显示器等级：Lv{player.gear_monitor_level}</div>
-                      <div>工位椅子等级：Lv{player.gear_chair_level}</div>
-                   </div>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    <div className="flex justify-between text-sm bg-gray-50 p-2 rounded">
+                      <span className="text-gray-600">硬技能</span>
+                      <span className="font-mono font-bold">{player.hard_skill}</span>
+                    </div>
+                    <div className="flex justify-between text-sm bg-gray-50 p-2 rounded">
+                      <span className="text-gray-600">软技能</span>
+                      <span className="font-mono font-bold">{player.soft_skill}</span>
+                    </div>
+                  </div>
                 </div>
 
                 {/* 3. 元属性 */}
-                <h4 className="text-xs text-gray-400 font-bold uppercase tracking-wider border-t border-gray-100 pt-4">元属性</h4>
-                <div className="flex justify-between text-sm">
-                   <span className="text-gray-500">悟性倍率</span>
-                   <span className="font-mono">{player.learning_rate.toFixed(1)}x</span>
+                <h4 className="text-xs text-gray-400 font-bold uppercase tracking-wider border-t border-gray-100 pt-4">
+                  元属性
+                </h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">悟性倍率</span>
+                    <span className="font-mono">{player.learning_rate.toFixed(1)}x</span>
+                  </div>
+                  <div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">疲劳值</span>
+                      <span className="font-mono">{fatigue}/100</span>
+                    </div>
+                    <div className="mt-1 h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full ${fatigueColor}`}
+                        style={{ width: `${fatigue}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
-             </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -1594,7 +1742,7 @@ function App() {
               <div className="max-w-4xl mx-auto space-y-6">
                
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                  <div
                   className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition cursor-pointer"
                   onClick={() => setShowRice(true)}
@@ -1603,11 +1751,11 @@ function App() {
                     <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 mb-4">
                        <Coffee className="w-6 h-6"/>
                     </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">米饭 · 干饭时间</h3>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">米饭</h3>
                     <p className="text-sm text-gray-500 mb-4">根据钱包、时间与职级选择不同档位的干饭方案。</p>
                   <button 
                     onClick={() => setShowRice(true)}
-                    className="w-full py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-medium"
+                    className="w-full h-10 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-medium text-sm"
                   >
                     打开米饭
                   </button>
@@ -1624,7 +1772,7 @@ function App() {
                     <p className="text-sm text-gray-500 mb-4">购买礼物与固定商品升级，打造最强工位。</p>
                     <button 
                        onClick={() => setShowShop(true)}
-                       className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium"
+                       className="w-full h-10 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium text-sm"
                     >
                        打开米购
                     </button>
@@ -1638,12 +1786,29 @@ function App() {
                        <Briefcase className="w-6 h-6"/>
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 mb-2">米忽悠学院</h3>
-                    <p className="text-sm text-gray-500 mb-4">多种课程选择，定向提升硬技能、软技能与管理力。</p>
+                    <p className="text-sm text-gray-500 mb-4">多种课程选择，提升硬技能、软技能与管理力。</p>
                     <button 
                        onClick={() => setShowAcademy(true)}
-                       className="w-full py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 font-medium"
+                       className="w-full h-10 bg-purple-500 text-white rounded-lg hover:bg-purple-600 font-medium text-sm"
                     >
                        打开课程
+                    </button>
+                 </div>
+
+                 <div
+                   className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition cursor-pointer"
+                   onClick={() => setShowHouse(true)}
+                 >
+                    <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600 mb-4">
+                       <Home className="w-6 h-6"/>
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">米哈房</h3>
+                    <p className="text-sm text-gray-500 mb-4">购入不同档位房产，享受持续的疲劳减轻效果。</p>
+                    <button 
+                       onClick={() => setShowHouse(true)}
+                       className="w-full h-10 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 font-medium text-sm"
+                    >
+                       打开米哈房
                     </button>
                  </div>
                 </div>
@@ -1723,7 +1888,7 @@ function App() {
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-40">
                   <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 relative" ref={riceModalRef}>
                     <button onClick={() => setShowRice(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl">×</button>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">米饭 · 干饭时间</h3>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">米饭</h3>
                     <div className="space-y-2 text-sm text-gray-500 mb-4">
                       <div className="font-mono">当前余额：¥ {player.money} · 精力：{player.energy}/{player.max_energy}</div>
                       <div>根据钱包、时间与职级选择不同档位的干饭方案。</div>
@@ -1754,7 +1919,209 @@ function App() {
                 </div>
               )}
 
+              {showHouse && (
+                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-40">
+                  <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 relative">
+                    <button onClick={() => setShowHouse(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl">×</button>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">米哈房</h3>
+                    <div className="space-y-2 text-sm text-gray-500 mb-4">
+                      <div className="font-mono">当前余额：¥ {player.money} · 职级：{player.level}</div>
+                      <div>每套房产仅可购入一次，购入后每周自动减轻一定疲劳值，档位越高效果越明显。</div>
+                    </div>
+                    {(() => {
+                      const list = gameState?.workbench_feedback || [];
+                      const last = [...list].reverse().find(f => f?.source === 'house');
+                      if (!last) return null;
+                      return (
+                        <div className="mb-4 p-3 rounded-lg border border-emerald-200 bg-emerald-50 text-xs text-emerald-700">
+                          {last.content}
+                        </div>
+                      );
+                    })()}
+                    <div className="max-h-[60vh] overflow-y-auto">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {HOUSE_ITEMS_UI.map((item) => (
+                          <WorkbenchItemCard
+                            key={item.id}
+                            item={item}
+                            type="house"
+                            onAction={sendWorkbenchCommand}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
            </div>
+        )}
+
+        {currentView === 'profile' && (
+          <div className="flex-1 overflow-y-auto p-8 bg-gray-50">
+            <div className="max-w-4xl mx-auto space-y-6">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 flex items-center justify-between">
+                <div>
+                  <div className="text-sm font-semibold text-gray-800">我的</div>
+                  <div className="text-xs text-gray-500 mt-1">查看已购道具、礼物与房产情况。</div>
+                </div>
+                <div className="inline-flex items-center bg-gray-100 rounded-full p-0.5 border border-gray-200">
+                  <button
+                    onClick={() => setProfileTab('bag')}
+                    className={`px-3 py-1.5 text-xs rounded-full transition ${
+                      profileTab === 'bag'
+                        ? 'bg-white text-blue-700 shadow-sm'
+                        : 'bg-transparent text-gray-600'
+                    }`}
+                  >
+                    背包
+                  </button>
+                  <button
+                    onClick={() => setProfileTab('house')}
+                    className={`px-3 py-1.5 text-xs rounded-full transition ${
+                      profileTab === 'house'
+                        ? 'bg-white text-blue-700 shadow-sm'
+                        : 'bg-transparent text-gray-600'
+                    }`}
+                  >
+                    房产
+                  </button>
+                </div>
+              </div>
+
+              {profileTab === 'bag' && (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                  <h3 className="text-sm font-semibold text-gray-800 mb-4">背包 · 道具与礼物</h3>
+                  {(() => {
+                    const purchases = gameState?.player?.workbench_purchases || {};
+                    const shopEntries = Object.entries(purchases).filter(
+                      ([key, count]) => key.startsWith('shop:') && count > 0
+                    );
+                    if (shopEntries.length === 0) {
+                      return (
+                        <p className="text-xs text-gray-500">
+                          暂无已购道具或礼物。可以前往「工作台 - 米购商城」购买。
+                        </p>
+                      );
+                    }
+                    const uiMap = SHOP_ITEMS_UI.reduce((acc, item) => {
+                      acc[item.id] = item;
+                      return acc;
+                    }, {});
+                    return (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {shopEntries.map(([key, count]) => {
+                          const [, itemId] = key.split(':');
+                          const meta = uiMap[itemId] || {};
+                          const isGift = itemId === 'gift';
+                          const isGpu = itemId === 'gpu';
+                          const isMonitor = itemId === 'monitor';
+                          const isChair = itemId === 'chair';
+                          let levelText = '';
+                          if (isGpu) {
+                            levelText = `显卡 Lv${player.gear_gpu_level}`;
+                          } else if (isMonitor) {
+                            levelText = `显示器 Lv${player.gear_monitor_level}`;
+                          } else if (isChair) {
+                            levelText = `工位椅 Lv${player.gear_chair_level}`;
+                          }
+                          return (
+                            <div
+                              key={key}
+                              className="border border-gray-100 rounded-xl p-4 flex items-start gap-3 bg-gray-50"
+                            >
+                              <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center text-lg">
+                                {meta.emoji || (isGift ? '🎁' : '🎒')}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between gap-2">
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    <div className="text-sm font-medium text-gray-800 truncate">
+                                      {meta.name || (isGift ? '礼物' : itemId)}
+                                    </div>
+                                    {levelText && (
+                                      <span className="px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] flex-shrink-0">
+                                        {levelText}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="text-xs text-gray-500 flex-shrink-0">持有次数 ×{count}</div>
+                                </div>
+                                {meta.summary && (
+                                  <div className="mt-1 text-xs text-gray-500 line-clamp-2">
+                                    {meta.summary}
+                                  </div>
+                                )}
+                                {isGift && (
+                                  <div className="mt-1 text-[11px] text-pink-600">
+                                    对应赠送玩法，可提升同事/老板信任。
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+
+              {profileTab === 'house' && (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                  <h3 className="text-sm font-semibold text-gray-800 mb-4">房产 · 已持有资产</h3>
+                  {(() => {
+                    const ownedIds = gameState?.player?.houses_owned || [];
+                    const houseMap = HOUSE_OWNED_META.reduce((acc, item) => {
+                      acc[item.id] = item;
+                      return acc;
+                    }, {});
+                    const items = ownedIds.length
+                      ? ownedIds.map(id => houseMap[id]).filter(Boolean)
+                      : [];
+                    if (items.length === 0) {
+                      return (
+                        <p className="text-xs text-gray-500">
+                          暂无已持有房产。可以在「工作台 - 米哈房」中购入房产。
+                        </p>
+                      );
+                    }
+                    return (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {items.map(item => (
+                          <div
+                            key={item.id}
+                            className="border border-gray-100 rounded-xl p-4 flex items-start gap-3 bg-gray-50"
+                          >
+                            <div className="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center text-lg">
+                              {item.emoji || '🏠'}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between">
+                                <div className="text-sm font-medium text-gray-800 truncate">
+                                  {item.name}
+                                </div>
+                              </div>
+                              {item.summary && (
+                                <div className="mt-1 text-xs text-gray-500 line-clamp-2">
+                                  {item.summary}
+                                </div>
+                              )}
+                              {item.id === 'starter_rent' && (
+                                <div className="mt-1 text-[11px] text-gray-500">
+                                  上帝赐予你的奖励，提供轻微的每周疲劳减轻效果。
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+            </div>
+          </div>
         )}
 
         {/* Chat Content */}
@@ -1877,32 +2244,7 @@ function App() {
               })}
             </div>
           )}
-          <div className="flex space-x-3 relative">
-            {/* Mention Popup */}
-            {mentionState.active && mentionFilteredNPCs.length > 0 && (
-              <div className="absolute bottom-full mb-2 left-0 w-64 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-50">
-                 <div className="bg-gray-50 px-3 py-2 border-b border-gray-100 text-xs font-bold text-gray-500">
-                   选择要艾特的人
-                 </div>
-                 <div className="max-h-48 overflow-y-auto">
-                   {mentionFilteredNPCs.map((npc, idx) => (
-                     <div
-                       key={npc.id}
-                       onClick={() => insertMention(npc)}
-                       className={`px-3 py-2 flex items-center cursor-pointer ${
-                         idx === mentionState.selectedIndex ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-50 text-gray-700'
-                       }`}
-                     >
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] mr-2 ${npc.bg}`}>
-                          {npc.avatar}
-                        </div>
-                        <div className="text-sm font-medium">{npc.name}</div>
-                     </div>
-                   ))}
-                 </div>
-              </div>
-            )}
-
+          <div className="relative flex space-x-3">
             <textarea
               disabled={inputDisabled}
               ref={inputRef}
@@ -1918,39 +2260,58 @@ function App() {
                   : `发送给 ${selectedChat === 'group' ? '项目组' : npcList.find(n => n.id === selectedChat)?.name}... (试着说: "帮我修个Bug" 或 "请你喝奶茶")`
               }
               value={input}
-              onChange={handleInputChange}
+              onChange={e => {
+                const val = e.target.value;
+                setInput(val);
+                const pos = e.target.selectionStart ?? val.length;
+                const before = val.slice(0, pos);
+                const atIdx = before.lastIndexOf("@");
+                if (selectedChat === 'group' && atIdx >= 0) {
+                  const prev = atIdx > 0 ? before[atIdx - 1] : ' ';
+                  const valid = /\s/.test(prev) || atIdx === 0;
+                  const tail = before.slice(atIdx + 1);
+                  const hasSpace = tail.includes(" ");
+                  const query = hasSpace ? "" : tail;
+                  if (valid && !hasSpace) {
+                    setMentionOpen(true);
+                    setMentionStart(atIdx);
+                    setMentionQuery(query);
+                    setMentionIndex(0);
+                  } else {
+                    setMentionOpen(false);
+                    setMentionQuery("");
+                    setMentionStart(null);
+                  }
+                } else {
+                  setMentionOpen(false);
+                  setMentionQuery("");
+                  setMentionStart(null);
+                }
+              }}
               onKeyDown={e => {
-                if (mentionState.active && mentionFilteredNPCs.length > 0) {
+                if (e.nativeEvent.isComposing) {
+                  return;
+                }
+                if (mentionOpen) {
+                  if (e.key === 'ArrowDown' || e.key === 'Tab') {
+                    e.preventDefault();
+                    setMentionIndex(idx => Math.min(idx + 1, (mentionSuggestions.length || 0) - 1));
+                    return;
+                  }
                   if (e.key === 'ArrowUp') {
                     e.preventDefault();
-                    setMentionState(prev => ({
-                        ...prev,
-                        selectedIndex: (prev.selectedIndex - 1 + mentionFilteredNPCs.length) % mentionFilteredNPCs.length
-                    }));
+                    setMentionIndex(idx => Math.max(idx - 1, 0));
                     return;
                   }
-                  if (e.key === 'ArrowDown') {
+                  if (e.key === 'Enter') {
                     e.preventDefault();
-                    setMentionState(prev => ({
-                        ...prev,
-                        selectedIndex: (prev.selectedIndex + 1) % mentionFilteredNPCs.length
-                    }));
-                    return;
-                  }
-                  if (e.key === 'Enter' || e.key === 'Tab') {
-                    e.preventDefault();
-                    insertMention(mentionFilteredNPCs[mentionState.selectedIndex]);
+                    const sel = mentionSuggestions[mentionIndex];
+                    if (sel) insertMention(sel.name);
                     return;
                   }
                   if (e.key === 'Escape') {
-                    e.preventDefault();
-                    setMentionState(prev => ({ ...prev, active: false }));
-                    return;
+                    setMentionOpen(false);
                   }
-                }
-
-                if (e.nativeEvent.isComposing) {
-                  return;
                 }
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
@@ -1958,6 +2319,22 @@ function App() {
                 }
               }}
             />
+            {mentionOpen && selectedChat === 'group' && mentionSuggestions.length > 0 && (
+              <div className="absolute bottom-14 left-4 bg-white border border-gray-200 shadow-lg rounded-md z-50 w-56">
+                {mentionSuggestions.map((n, idx) => (
+                  <div
+                    key={n.id}
+                    className={`px-3 py-2 text-sm cursor-pointer ${idx === mentionIndex ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100'}`}
+                    onMouseDown={(ev) => { ev.preventDefault(); insertMention(n.name); }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className={`w-6 h-6 rounded-full ${n.bg} flex items-center justify-center text-white text-xs`}>{n.avatar}</div>
+                      <div className="flex-1 truncate">{n.name}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
             <button 
               onClick={sendMessage}
               disabled={inputDisabled || !input.trim()}

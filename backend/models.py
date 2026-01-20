@@ -62,6 +62,7 @@ class Player(BaseModel):
     # 2. Capabilities (Dynamic)
     energy: int = 100
     mood: int = 80
+    fatigue: int = 0
     hard_skill: int
     soft_skill: int
     gear_gpu_level: int = 0
@@ -78,6 +79,7 @@ class Player(BaseModel):
     launched_projects: List[str] = []
     major_accidents: int = 0
     workbench_purchases: Dict[str, int] = {}
+    houses_owned: List[str] = ["starter_rent"]
 
 class GameState(BaseModel):
     player: Optional[Player] = None

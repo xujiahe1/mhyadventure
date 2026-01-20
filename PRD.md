@@ -322,10 +322,10 @@
 | Bad Ending：Fired/Pip | 任意高管 Trust ≤0 / 直属上级 Trust ≤0 | 社交作死或长期表现拉胯 |
 | 项目失败：ProjectCollapse | 当前项目 Risk ≥95 且 Morale ≤10 | 项目崩盘，玩家被迫背锅 |
 | 项目失败：ProjectCancelled | 当前项目 StakeholderTrust ≤0 | 资方彻底失去信任，项目解散 |
-| Good Ending：Executive | Week ≥52，KPI ≥5000，PoliticalCapital ≥30 | 晋升为高管 |
-| Good Ending：Rich | Week ≥52，Money ≥60,000 | 财富自由 |
-| Good Ending：Producer | Week ≥52，总营收 ≥100,000 且 KPI ≥3500 | 成为金牌制作人 |
-| Normal Ending：Stable | Week ≥52，未满足其它好结局条件 | 稳定度过一年，成为靠谱中坚 |
+| Good Ending：Executive | Week ≥52，职级 ≥P10 | 晋升为高管 (P10) |
+| Good Ending：Rich | Week ≥52，Money ≥10,000,000 | 财富自由 (存款>1000万) |
+| Good Ending：Producer | Week ≥52，职级 ≥P8 且 本项目营收 ≥100,000 | 成为金牌制作人 |
+| Negative Ending：Stable | Week ≥520，未满足其它好结局条件 | 你被优化了（35周岁危机） |
 
 #### 4.7.6 周薪与生活成本（经济循环）
 
