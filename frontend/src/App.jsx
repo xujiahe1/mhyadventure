@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Send, MessageSquare, Briefcase, ShoppingBag, Coffee, Search, Users, Home, LayoutDashboard } from 'lucide-react';
+import { Send, MessageSquare, Briefcase, ShoppingBag, Coffee, Search, Users, Home, LayoutDashboard, ArrowLeft } from 'lucide-react';
 
 const MinimalBackpackIcon = ({ className }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -227,6 +227,7 @@ function App() {
   const workbenchButtonRef = useRef(null);
   const riceCardRef = useRef(null);
   const riceModalRef = useRef(null);
+  const [mobileChatOpen, setMobileChatOpen] = useState(false);
 
   const formatTime = (isoString) => {
     if (!isoString) return "";
@@ -967,7 +968,7 @@ function App() {
                 </div>
                 <div className="flex items-center gap-2">
                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-gray-100 text-gray-600 border border-gray-200">
-                    v0.1.2
+                    v0.1.3
                   </span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200">
                     内测
@@ -1007,7 +1008,7 @@ function App() {
               <h3 className="text-lg font-bold text-gray-800 mb-4">
                 选择岗位
               </h3>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {ROLES.map(role => (
                   <div 
                     key={role.id}
@@ -1032,7 +1033,7 @@ function App() {
               <h3 className="text-lg font-bold text-gray-800 mb-4">
                 意向项目组
               </h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {PROJECTS.map(proj => (
                   <div 
                     key={proj.id}
@@ -1343,7 +1344,7 @@ function App() {
                     </div>
                   )}
 
-                  <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
+                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-xs">
                     <div className={`rounded-xl border px-3 py-2 flex items-center justify-between ${tutorialProgress.firstMessage ? "border-blue-200 bg-blue-50 text-blue-700" : "border-gray-200 bg-gray-50 text-gray-600"}`}>
                       <span>第一句话</span>
                       <span>{tutorialProgress.firstMessage ? "已完成" : "未完成"}</span>
@@ -1490,27 +1491,27 @@ function App() {
       )}
 
       {/* 1. App Sidebar (Narrow Left) */}
-      <div className="w-16 bg-gray-100 border-r border-gray-200 flex flex-col items-center py-4 space-y-6">
+      <div className="hidden sm:flex w-16 md:w-20 bg-gray-100 border-r border-gray-200 flex-col items-center py-4 space-y-6">
         <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-sm">
           M
         </div>
         <div className="flex flex-col space-y-4 w-full items-center">
           <button 
              onClick={() => setCurrentView('chat')}
-             className={`p-2 rounded-lg transition ${currentView === 'chat' ? 'text-blue-600 bg-blue-100' : 'text-gray-500 hover:bg-gray-200'}`}
+             className={`p-3 rounded-lg transition ${currentView === 'chat' ? 'text-blue-600 bg-blue-100' : 'text-gray-500 hover:bg-gray-200'}`}
           >
              <MessageSquare className="w-6 h-6"/>
           </button>
           <button 
              onClick={() => setCurrentView('workbench')}
              ref={workbenchButtonRef}
-             className={`p-2 rounded-lg transition ${currentView === 'workbench' ? 'text-blue-600 bg-blue-100' : 'text-gray-500 hover:bg-gray-200'}`}
+             className={`p-3 rounded-lg transition ${currentView === 'workbench' ? 'text-blue-600 bg-blue-100' : 'text-gray-500 hover:bg-gray-200'}`}
           >
              <LayoutDashboard className="w-6 h-6"/>
           </button>
           <button 
              onClick={() => setCurrentView('profile')}
-             className={`p-2 rounded-lg transition ${currentView === 'profile' ? 'text-blue-600 bg-blue-100' : 'text-gray-500 hover:bg-gray-200'}`}
+             className={`p-3 rounded-lg transition ${currentView === 'profile' ? 'text-blue-600 bg-blue-100' : 'text-gray-500 hover:bg-gray-200'}`}
           >
             <MinimalBackpackIcon className="w-7 h-7"/>
           </button>
@@ -1519,7 +1520,7 @@ function App() {
 
       {/* 2. List Sidebar (Chat List) - Only visible in Chat View */}
       {currentView === 'chat' && (
-      <div className="w-64 bg-gray-50 border-r border-gray-200 flex flex-col">
+      <div className="hidden sm:flex w-64 bg-gray-50 border-r border-gray-200 flex-col">
         <div className="p-4 border-b border-gray-200 flex items-center justify-between">
           <h2 className="font-bold text-gray-800">消息</h2>
         </div>
@@ -1600,26 +1601,36 @@ function App() {
       )}
 
       {/* 3. Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-white relative">
+      <div className="flex-1 flex flex-col min-w-0 bg-white relative pb-16 sm:pb-0">
         {/* Header */}
-        <div className="h-16 border-b border-gray-200 flex justify-between items-center px-6">
-          <div>
-            <h2 className="text-lg font-bold text-gray-800">
+        <div className="min-h-[3.5rem] sm:h-16 py-2 border-b border-gray-200 flex justify-between items-center px-3 sm:px-6">
+          <div className="flex-1 min-w-0 mr-4">
+            <div className="flex items-center gap-2">
+              {currentView === 'chat' && (
+                <button
+                  className="sm:hidden p-2 -ml-2 rounded-lg text-gray-600 hover:bg-gray-100"
+                  onClick={() => setMobileChatOpen(true)}
+                >
+                  <ArrowLeft className="w-5 h-5"/>
+                </button>
+              )}
+              <h2 className="text-lg font-bold text-gray-800 truncate">
                {currentView === 'chat' 
                   ? (selectedChat === 'group' ? `${projectDisplayName} 项目组` : npcList.find(n => n.id === selectedChat)?.name)
                   : currentView === 'workbench'
                     ? '工作台'
                     : '我的'
                }
-            </h2>
+              </h2>
+            </div>
             {(currentView !== 'chat' || selectedChat === 'group') && (
-            <p className="text-xs text-gray-500">
+            <p className="text-[11px] sm:text-xs text-gray-500 break-words leading-tight mt-0.5">
               第 {gameState.year || 1} 年 Q{gameState.quarter || 1} · 第 {gameState.week} 周
               {currentView === 'chat' && selectedChat === 'group' && currentProject ? ` · 风险 ${currentProject.risk}/100 · 士气 ${currentProject.morale}/100 · 信任 ${currentProject.stakeholder_trust}/100 · 进度 ${currentProject.progress}/100 · 营收 ¥${currentProject.revenue} · 营收目标 ¥${computeRevenueTarget(currentProject)}` : ""}
             </p>
             )}
             {currentView === 'chat' && selectedChat !== 'group' && (
-              <p className="text-xs text-gray-500">
+              <p className="text-[11px] sm:text-xs text-gray-500 break-words leading-tight mt-0.5">
                 {selectedBackendNpc 
                   ? `${mapRoleToCN(selectedBackendNpc.role)} · 职级 ${selectedBackendNpc.level} · 项目组 ${mapProjectToCN(selectedBackendNpc.project)}`
                   : ""}
@@ -1645,6 +1656,14 @@ function App() {
                  </span>
                </div>
              </div>
+             {currentView === 'chat' && (
+               <button
+                 className="sm:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 hidden"
+                 onClick={() => setMobileChatOpen(true)}
+               >
+                 <Users className="w-5 h-5"/>
+               </button>
+             )}
              <div 
                 className="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded-lg transition"
                 onClick={() => setShowProfile(!showProfile)}
@@ -1751,7 +1770,7 @@ function App() {
               <div className="max-w-4xl mx-auto space-y-6">
                
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                  <div
                   className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition cursor-pointer"
                   onClick={() => setShowRice(true)}
@@ -1843,7 +1862,7 @@ function App() {
                       );
                     })()}
                     <div className="max-h-[60vh] overflow-y-auto">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
                         {SHOP_ITEMS_UI.map((item) => (
                           <WorkbenchItemCard
                             key={item.id}
@@ -1878,7 +1897,7 @@ function App() {
                       );
                     })()}
                     <div className="max-h-[60vh] overflow-y-auto">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
                         {ACADEMY_COURSES_UI.map((course) => (
                           <WorkbenchItemCard
                             key={course.id}
@@ -1913,7 +1932,7 @@ function App() {
                       );
                     })()}
                     <div className="max-h-[60vh] overflow-y-auto">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
                         {RICE_OPTIONS.map((item) => (
                           <WorkbenchItemCard
                             key={item.id}
@@ -1948,7 +1967,7 @@ function App() {
                       );
                     })()}
                     <div className="max-h-[60vh] overflow-y-auto">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
                         {HOUSE_ITEMS_UI.map((item) => (
                           <WorkbenchItemCard
                             key={item.id}
@@ -1967,7 +1986,7 @@ function App() {
         )}
 
         {currentView === 'profile' && (
-          <div className="flex-1 overflow-y-auto p-8 bg-gray-50">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-gray-50">
             <div className="max-w-4xl mx-auto space-y-6">
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 flex items-center justify-between">
                 <div>
@@ -2018,7 +2037,7 @@ function App() {
                       return acc;
                     }, {});
                     return (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
                         {shopEntries.map(([key, count]) => {
                           const [, itemId] = key.split(':');
                           const meta = uiMap[itemId] || {};
@@ -2096,7 +2115,7 @@ function App() {
                       );
                     }
                     return (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
                         {items.map(item => (
                           <div
                             key={item.id}
@@ -2199,8 +2218,74 @@ function App() {
           <div ref={chatEndRef} />
         </div>
 
+    {currentView === 'chat' && mobileChatOpen && (
+      <div className="fixed inset-0 z-50 bg-white flex flex-col sm:hidden">
+        <div className="p-4 border-b border-gray-200 flex items-center justify-between min-h-[3.5rem]">
+          <h2 className="font-bold text-gray-800 text-lg">消息</h2>
+        </div>
+        <div className="px-3 py-2">
+          <div className="relative">
+            <input 
+              type="text" 
+              placeholder="搜索" 
+              className="w-full bg-gray-100 text-sm rounded-lg pl-9 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
+            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto">
+          <div 
+            onClick={() => { setSelectedChat('group'); setMobileChatOpen(false); }}
+            className={`flex items-center px-4 py-4 cursor-pointer active:bg-gray-50 border-b border-gray-50 ${selectedChat === 'group' ? 'bg-blue-50' : ''}`}
+          >
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold mr-4 flex-shrink-0 shadow-sm">
+              #{projectDisplayName ? projectDisplayName[0] : ''}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex justify-between items-baseline">
+                <h3 className="text-sm font-medium text-gray-900 truncate">{projectDisplayName} 项目组</h3>
+                <span className="text-xs text-gray-400">{getLastMsgTime('group', true)}</span>
+              </div>
+              <p className="text-xs text-gray-500 truncate">System: 欢迎新同学加入...</p>
+            </div>
+          </div>
+            {filteredNPCs.map(npc => (
+              <div 
+                key={npc.id}
+                onClick={() => { setSelectedChat(npc.id); setMobileChatOpen(false); }}
+                className={`flex items-center px-3 py-3 cursor-pointer hover:bg-gray-200 ${selectedChat === npc.id ? 'bg-blue-100' : ''}`}
+              >
+                <div className={`w-10 h-10 rounded-full ${npc.bg} flex items-center justify-center text-white font-bold mr-3 flex-shrink-0`}>
+                  {npc.avatar}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-baseline">
+                    <h3 className="text-sm font-medium text-gray-900 truncate">{npc.name}</h3>
+                    <span className="text-xs text-gray-400">{getLastMsgTime(npc.id)}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 truncate">
+                    {(() => {
+                      const backendNpc = gameState?.npcs?.[npc.id];
+                      const baseInfo = backendNpc 
+                        ? `${mapRoleToCN(backendNpc.role)} · ${backendNpc.level} · ${mapProjectToCN(backendNpc.project)}`
+                        : mapRoleToCN(npc.role);
+                      if (!gameState?.chat_history) return baseInfo;
+                      const recent = gameState.chat_history.slice(-20);
+                      const active = recent.some(msg => msg.sender === npc.name && msg.type === 'npc');
+                      return baseInfo + (active ? " · 最近活跃" : " · 潜水中");
+                    })()}
+                  </p>
+                </div>
+              </div>
+            ))}
+        </div>
+      </div>
+    )}
+
         {/* Input Area */}
-        <div className="p-4 bg-white border-t border-gray-200">
+        <div className="p-3 sm:p-4 bg-white border-t border-gray-200">
           {!gameState.game_over && !gameState.active_global_event && (
             <div className="mb-2 flex flex-wrap gap-2">
               {isQuickReplyLoading && (!dynamicQuickReplies || dynamicQuickReplies.length === 0) && (
@@ -2347,7 +2432,7 @@ function App() {
             <button 
               onClick={sendMessage}
               disabled={inputDisabled || !input.trim()}
-              className={`bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium text-sm flex items-center ${inputDisabled || !input.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`bg-blue-600 text-white px-6 py-3 sm:py-2 rounded-lg hover:bg-blue-700 transition font-medium text-sm flex items-center ${inputDisabled || !input.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               发送
             </button>
@@ -2386,6 +2471,19 @@ function App() {
             </div>
           </div>
         )}
+        <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+          <div className="flex items-center justify-around py-2">
+            <button className={`p-3 rounded-lg ${currentView === 'chat' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-100'}`} onClick={() => { setCurrentView('chat'); setSelectedChat('group'); }}>
+              <MessageSquare className="w-7 h-7"/>
+            </button>
+            <button className={`p-3 rounded-lg ${currentView === 'workbench' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-100'}`} onClick={() => setCurrentView('workbench')}>
+              <LayoutDashboard className="w-7 h-7"/>
+            </button>
+            <button className={`p-3 rounded-lg ${currentView === 'profile' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-100'}`} onClick={() => setCurrentView('profile')}>
+              <MinimalBackpackIcon className="w-7 h-7"/>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
