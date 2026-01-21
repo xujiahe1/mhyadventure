@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Send, MessageSquare, Briefcase, ShoppingBag, Coffee, Search, Users, Home } from 'lucide-react';
+import { Send, MessageSquare, Briefcase, ShoppingBag, Coffee, Search, Users, Home, LayoutDashboard } from 'lucide-react';
+
+const MinimalBackpackIcon = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M6 9a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2Z"></path>
+    <path d="M10 5h4"></path>
+    <path d="M9 10h6"></path>
+    <path d="M9 16h6"></path>
+  </svg>
+);
 
 const API_URL = (import.meta.env.VITE_API_BASE_URL || "/api");
 
@@ -957,8 +966,8 @@ function App() {
                   <span className="text-white font-bold text-2xl">M</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-gray-100 text-gray-600 border border-gray-200">
-                    V0.1.1
+                   <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-gray-100 text-gray-600 border border-gray-200">
+                    v0.1.2
                   </span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200">
                     内测
@@ -1497,13 +1506,13 @@ function App() {
              ref={workbenchButtonRef}
              className={`p-2 rounded-lg transition ${currentView === 'workbench' ? 'text-blue-600 bg-blue-100' : 'text-gray-500 hover:bg-gray-200'}`}
           >
-             <Briefcase className="w-6 h-6"/>
+             <LayoutDashboard className="w-6 h-6"/>
           </button>
           <button 
              onClick={() => setCurrentView('profile')}
              className={`p-2 rounded-lg transition ${currentView === 'profile' ? 'text-blue-600 bg-blue-100' : 'text-gray-500 hover:bg-gray-200'}`}
           >
-             <Users className="w-6 h-6"/>
+            <MinimalBackpackIcon className="w-7 h-7"/>
           </button>
         </div>
       </div>
