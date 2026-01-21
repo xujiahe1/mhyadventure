@@ -755,12 +755,12 @@ function App() {
 
   // Project Config
   const PROJECTS = [
-    { id: "Genshin", name: "原神", status: "Live", statusCN: "已上线", risk: "高压", desc: "技术宅拯救世界" },
-    { id: "Honkai3", name: "崩坏3", status: "Live", statusCN: "已上线", risk: "稳定", desc: "为世界上所有的美好而战" },
-    { id: "HSR", name: "星穹铁道", status: "RD", statusCN: "预研", risk: "冲刺", desc: "银河冒险之旅" },
-    { id: "ZZZ", name: "绝区零", status: "RD", statusCN: "预研", risk: "创新", desc: "潮流动作新游" },
-  { id: "HYG", name: "神秘新作", status: "Pre", statusCN: "预研", risk: "高风险", desc: "神秘新作" },
-  { id: "IAM", name: "iam", status: "Live", statusCN: "已上线", risk: "基建", desc: "通行证与基础设施" },
+    { id: "Genshin", name: "原神", status: "Live", statusCN: "已上线", risk: 25, desc: "技术宅拯救世界" },
+    { id: "Honkai3", name: "崩坏3", status: "Live", statusCN: "已上线", risk: 10, desc: "为世界上所有的美好而战" },
+    { id: "HSR", name: "星穹铁道", status: "RD", statusCN: "预研", risk: 15, desc: "银河冒险之旅" },
+    { id: "ZZZ", name: "绝区零", status: "RD", statusCN: "预研", risk: 20, desc: "潮流动作新游" },
+    { id: "HYG", name: "神秘新作", status: "Pre", statusCN: "预研", risk: 30, desc: "神秘新作" },
+    { id: "IAM", name: "iam", status: "Live", statusCN: "已上线", risk: 15, desc: "通行证与基础设施" },
   ];
 
   const ROLES = [
@@ -1050,7 +1050,7 @@ function App() {
                       </span>
                     </div>
                     <div className="text-xs text-gray-500 mb-2">{proj.desc}</div>
-                    <div className="text-xs font-mono text-gray-400 bg-gray-100 inline-block px-2 py-0.5 rounded">风险：{proj.risk}</div>
+                    <div className="text-xs font-mono text-gray-400 bg-gray-100 inline-block px-2 py-0.5 rounded">风险：{proj.risk}/100</div>
                   </div>
                 ))}
               </div>
