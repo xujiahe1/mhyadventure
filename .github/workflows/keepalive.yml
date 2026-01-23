@@ -2,7 +2,7 @@ name: keepalive
 
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "*/5 * * * *"
   workflow_dispatch: {}
 
 jobs:
@@ -17,4 +17,10 @@ jobs:
             echo "Missing KEEPALIVE_URL secret"
             exit 1
           fi
-          curl -fsSL --max-time 20 "$KEEPALIVE_URL/healthz" > /dev/null
+          BASE_URL="${KEEPALIVE_URL%/}"
+          BASE_URL="${BASE_URL%/healthz}"
+          echo "Pinging: ${BASE_URL}/healthz"
+          if ! curl -fsSL --retry 3 --retry-delay 2 --max-time 25 "${BASE_URL}/healthz" > /dev/null; then
+            echo "healthz failed, fallback to /"
+            curl -fsSL --retry 3 --retry-delay 2 --max-time 25 "${BASE_URL}/" > /dev/null
+          fi
