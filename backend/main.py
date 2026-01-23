@@ -69,6 +69,10 @@ def _set_session_cookie(response: Response, session_id: str):
 def read_root():
     return {"message": "Welcome to MiHoYo Adventure API"}
 
+@app.get("/healthz")
+def healthz():
+    return {"ok": True, "ts": int(time.time())}
+
 @app.post("/api/init", response_model=GameState)
 async def init_game(req: OnboardRequest, request: Request, response: Response):
     session_id, ctx, created = await _get_or_create_session(request)
