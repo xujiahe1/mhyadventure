@@ -73,6 +73,10 @@ def read_root():
 def healthz():
     return {"ok": True, "ts": int(time.time())}
 
+@app.head("/healthz")
+def healthz_head():
+    return Response(status_code=200)
+
 @app.post("/api/init", response_model=GameState)
 async def init_game(req: OnboardRequest, request: Request, response: Response):
     session_id, ctx, created = await _get_or_create_session(request)
